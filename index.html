@@ -472,12 +472,26 @@
     list-style:none; margin:0 0 4px; padding:0;
     display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; max-width:1040px;
   }
-  .hero-features li{
-    display:flex; gap:12px; align-items:flex-start;
+  /* Each tile is now the tab control itself (role="tab") — clickable, with a selected state —
+     so the four tools aren't repeated in a separate tab row below. */
+  .hero-features .hero-tab{
+    display:flex; gap:12px; align-items:flex-start; text-align:left; width:100%; cursor:pointer;
+    font:inherit; color:inherit; -webkit-appearance:none; appearance:none;
     background:var(--paper-alt); border:1px solid var(--line); border-radius:14px; padding:14px 16px;
-    transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    position:relative;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease, background .15s ease;
   }
-  .hero-features li:hover{border-color:#cdd6e2; box-shadow:var(--shadow-sm); transform:translateY(-1px);}
+  .hero-features .hero-tab:hover{border-color:#cdd6e2; box-shadow:var(--shadow-sm); transform:translateY(-1px);}
+  .hero-features .hero-tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .hero-features .hero-tab.active{
+    border-color:var(--accent); background:linear-gradient(180deg,#fdf3f4,#fbe9eb);
+    box-shadow:0 0 0 1px var(--accent) inset, var(--shadow-sm);
+  }
+  .hero-features .hero-tab.active .hf-t{color:var(--accent-deep,var(--accent));}
+  .hero-features .hero-tab.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:-1px; height:3px; border-radius:3px;
+    background:var(--accent);
+  }
   .hero-features .hf-ico{font-size:20px; line-height:1.1; flex-shrink:0;}
   .hero-features .hf-t{font-weight:700; font-size:13.5px; color:var(--ink); display:block; margin-bottom:3px;}
   .hero-features .hf-d{font-size:12.5px; color:var(--ink-soft); line-height:1.48;}
@@ -517,20 +531,13 @@
     </div>
     <h1 id="heroHeading">Recruiting Toolkit</h1>
     <p class="hero-lead">Describe a role once, and get everything you need to fill it — <strong>candidate searches, job-ad copy, resume scoring, and interview notes</strong> — generated instantly, right in your browser. No signup, no seat limits, and nothing ever sent to a server.</p>
-    <ul class="hero-features">
-      <li><span class="hf-ico" aria-hidden="true">🔎</span><span><span class="hf-t">Source Candidates</span><span class="hf-d">Ready-to-run Boolean &amp; X-ray searches for LinkedIn, Google, GitHub, Indeed, and more.</span></span></li>
-      <li><span class="hf-ico" aria-hidden="true">📣</span><span><span class="hf-t">Job Ad Kit</span><span class="hf-d">Platform-matched ad copy, sized to each job board, with an inclusive-language check.</span></span></li>
-      <li><span class="hf-ico" aria-hidden="true">🎯</span><span><span class="hf-t">Resume Match</span><span class="hf-d">Score any resume against the job description and see matched vs. missing keywords.</span></span></li>
-      <li><span class="hf-ico" aria-hidden="true">🗣️</span><span><span class="hf-t">Interview Feedback</span><span class="hf-d">Capture structured ratings and notes to compare candidates side by side.</span></span></li>
-    </ul>
+    <div class="hero-features" role="tablist" aria-label="Recruiting tools">
+      <button type="button" class="hero-tab active" id="tabBtnSource" role="tab" aria-selected="true" aria-controls="appBody" aria-label="Source Candidates" tabindex="0" onclick="switchTab('source')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🔎</span><span><span class="hf-t">Source Candidates</span><span class="hf-d">Ready-to-run Boolean &amp; X-ray searches for LinkedIn, Google, GitHub, Indeed, and more.</span></span></button>
+      <button type="button" class="hero-tab" id="tabBtnAdkit" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Job Ad Kit" tabindex="-1" onclick="switchTab('adkit')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">📣</span><span><span class="hf-t">Job Ad Kit</span><span class="hf-d">Platform-matched ad copy, sized to each job board, with an inclusive-language check.</span></span></button>
+      <button type="button" class="hero-tab" id="tabBtnMatch" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Resume Match" tabindex="-1" onclick="switchTab('match')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🎯</span><span><span class="hf-t">Resume Match</span><span class="hf-d">Score any resume against the job description and see matched vs. missing keywords.</span></span></button>
+      <button type="button" class="hero-tab" id="tabBtnFeedback" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Interview Feedback" tabindex="-1" onclick="switchTab('feedback')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🗣️</span><span><span class="hf-t">Interview Feedback</span><span class="hf-d">Capture structured ratings and notes to compare candidates side by side.</span></span></button>
+    </div>
   </section>
-
-  <div class="tabbar" role="tablist" aria-label="Recruiting tools">
-    <button class="tabbtn active" id="tabBtnSource" role="tab" aria-selected="true" aria-controls="appBody" tabindex="0" onclick="switchTab('source')" onkeydown="tabKey(event)"><span aria-hidden="true">🔎</span> Source Candidates</button>
-    <button class="tabbtn" id="tabBtnAdkit" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('adkit')" onkeydown="tabKey(event)"><span aria-hidden="true">📣</span> Job Ad Kit</button>
-    <button class="tabbtn" id="tabBtnMatch" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('match')" onkeydown="tabKey(event)"><span aria-hidden="true">🎯</span> Resume Match</button>
-    <button class="tabbtn" id="tabBtnFeedback" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('feedback')" onkeydown="tabKey(event)"><span aria-hidden="true">🗣️</span> Interview Feedback</button>
-  </div>
 
   <p class="tab-intro" id="tabIntro" aria-live="polite"><span><strong>Source Candidates.</strong> Enter the role details on the left, then Generate ready-to-run search strings for each platform — copy them or open the search in one click.</span></p>
 
@@ -757,13 +764,13 @@
           <h2 style="margin-top:0;">Log Interview Feedback</h2>
           <p class="hint" style="margin:-4px 0 14px;">A simple log of how each interview went — not tied to Resume Match, so you can log feedback for anyone you've interviewed.</p>
 
-          <div class="row">
-            <div>
-              <label class="field-label" for="fbRole">Job Role <span class="hint">(appears in the Selected/Rejection emails)</span></label>
+          <div class="row" style="align-items:end;">
+            <div style="display:flex; flex-direction:column;">
+              <label class="field-label" for="fbRole" style="flex:1 0 auto;">Job Role <span class="hint">(shown in emails)</span></label>
               <input type="text" id="fbRole" placeholder="Manufacturing Engineer">
             </div>
-            <div>
-              <label class="field-label" for="fbJobId">Job ID / Req # <span class="hint">(optional)</span></label>
+            <div style="display:flex; flex-direction:column;">
+              <label class="field-label" for="fbJobId" style="flex:1 0 auto;">Job ID / Req # <span class="hint">(optional)</span></label>
               <input type="text" id="fbJobId" placeholder="REQ-1042">
             </div>
           </div>
@@ -1140,6 +1147,29 @@ function buildIncludeCore(s){
   return core;
 }
 
+// High-recall core for Google X-Ray: keep the job title(s) required, but collapse ALL
+// must-have skill groups into a single OR group ("any of these skills") instead of
+// AND-ing each group. On Google, requiring every skill phrase to co-occur in one
+// document is the main cause of zero-result searches; requiring the title plus any one
+// skill keeps results relevant while dramatically widening recall.
+function buildBroadCore(s){
+  const parts = [];
+  if (s.titles.length) parts.push(orGroup(s.titles));
+  const allSkills = s.mustHaveGroups.flat().filter(Boolean);
+  if (allSkills.length) parts.push(orGroup(allSkills));
+  else if (!s.titles.length && s.niceToHave.length) parts.push(orGroup(s.niceToHave));
+  return parts.filter(Boolean).join(" AND ");
+}
+
+// Does the precise (all-groups-AND'd) query meaningfully differ from the broad one?
+// Only true when there are 2+ mandatory groups to AND together — otherwise the two
+// queries are identical and we shouldn't show a redundant second card.
+function hasMultipleMustGroups(s){
+  const groups = s.mustHaveGroups.filter(g => g.length).length + (s.titles.length ? 1 : 0)
+    + (s.niceRequired && s.niceToHave.length ? 1 : 0);
+  return groups >= 2;
+}
+
 function advancedNoteText(s){
   if (s.bakeAdvanced) return "";
   const groups = buildAdvancedGroups(s);
@@ -1223,15 +1253,32 @@ function buildCards(s, batch){
         note: `Every must-have group required at once — most likely to return 0 results if any group's wording doesn't literally appear on a profile. Drop back to Broad/Medium if this comes up empty. ${notePrefix}${otwNote}${locNote}${advNote}${overrideNote}` });
     }
   }
+  const broadCore = buildBroadCore(s);
+  const showPrecise = hasMultipleMustGroups(s) && squeeze(broadCore) !== squeeze(liveCore);
+  const gUrl = q => "https://www.google.com/search?q=" + encodeURIComponent(q);
   if (s.platforms.googleli){
-    let q = squeeze(`site:linkedin.com/in/ ${liveCore} ${batch.loc} ${excludeAll.map(t=>"-"+quote(t)).join(" ")} -intitle:"jobs" -"hiring"`);
-    cards.push({ name: "Google X-Ray → LinkedIn Profiles", live: true, query: q, url: "https://www.google.com/search?q=" + encodeURIComponent(q),
-      note: "Reaches public LinkedIn profiles beyond your network/search-limit restrictions. If this returns nothing, remove the location phrase or drop a skill group." + otwNoteGeneric + advNote + overrideNote });
+    const excl = `${excludeAll.map(t=>"-"+quote(t)).join(" ")} -intitle:"jobs" -"hiring" -inurl:jobs -"job description"`;
+    const broadQ = squeeze(`site:linkedin.com/in/ ${broadCore} ${batch.loc} ${excl}`);
+    cards.push({ name: "Google X-Ray → LinkedIn Profiles" + (showPrecise ? " (Broad)" : ""), live: true, query: broadQ, url: gUrl(broadQ),
+      note: "Reaches public LinkedIn profiles beyond your network/search-limit restrictions. Requires the job title plus any one of your skills, so it stays high-recall. If this returns nothing, remove the location phrase." + otwNoteGeneric + advNote + overrideNote });
+    if (showPrecise){
+      const preciseQ = squeeze(`site:linkedin.com/in/ ${liveCore} ${batch.loc} ${excl}`);
+      cards.push({ name: "Google X-Ray → LinkedIn Profiles (Precise)", live: true, query: preciseQ, url: gUrl(preciseQ),
+        note: "Every must-have skill group required at once — highest precision, but most likely to return 0 results because all those exact phrases must appear on the same profile. Use the Broad version above if this comes up empty." + otwNoteGeneric + advNote + overrideNote });
+    }
   }
   if (s.platforms.googleresume){
-    let q = squeeze(`(filetype:pdf OR filetype:doc OR filetype:docx) "resume" ${liveCore} ${batch.loc} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
-    cards.push({ name: "Google X-Ray → Resumes/CVs", live: true, query: q, url: "https://www.google.com/search?q=" + encodeURIComponent(q),
-      note: "Surfaces publicly posted resumes/CVs matching your criteria." + otwNoteGeneric + advNote + overrideNote });
+    const RESUME_PREFIX = `(filetype:pdf OR filetype:doc OR filetype:docx) (resume OR CV OR "curriculum vitae")`;
+    const resumeNoise = `-"job description" -"apply now" -jobs -sample -template`;
+    const excl = squeeze(`${excludeAll.map(t=>"-"+quote(t)).join(" ")} ${resumeNoise}`);
+    const broadQ = squeeze(`${RESUME_PREFIX} ${broadCore} ${batch.loc} ${excl}`);
+    cards.push({ name: "Google X-Ray → Resumes/CVs" + (showPrecise ? " (Broad)" : ""), live: true, query: broadQ, url: gUrl(broadQ),
+      note: "Surfaces publicly posted resumes/CVs matching the job title plus any one of your skills — the widest net. Also excludes job-postings and resume templates that pollute results." + otwNoteGeneric + advNote + overrideNote });
+    if (showPrecise){
+      const preciseQ = squeeze(`${RESUME_PREFIX} ${liveCore} ${batch.loc} ${excl}`);
+      cards.push({ name: "Google X-Ray → Resumes/CVs (Precise)", live: true, query: preciseQ, url: gUrl(preciseQ),
+        note: "Requires every must-have skill group to appear in the same document — highest precision, likely fewer (or zero) hits. Fall back to the Broad version above if empty." + otwNoteGeneric + advNote + overrideNote });
+    }
   }
   if (s.platforms.github){
     // GitHub people-search is NOT a resume/full-text database: free text only matches a user's
@@ -1348,9 +1395,9 @@ function parseQueryStructure(rawQuery){
   }
   q = q.replace(/(^|\s)-intitle:"jobs"/g, '$1').replace(/(^|\s)-"hiring"/g, '$1').trim();
 
-  const resumeFileMatch = q.match(/^\(filetype:pdf OR filetype:doc OR filetype:docx\)\s*"resume"\s*/);
+  const resumeFileMatch = q.match(/^\(filetype:pdf OR filetype:doc OR filetype:docx\)\s*(?:"resume"|\(resume OR CV OR "curriculum vitae"\))\s*/);
   if (resumeFileMatch){
-    notes.push('Looking specifically for PDF/Word resume files with "resume" in the text.');
+    notes.push('Looking specifically for PDF/Word resume or CV files.');
     q = q.slice(resumeFileMatch[0].length).trim();
   }
 

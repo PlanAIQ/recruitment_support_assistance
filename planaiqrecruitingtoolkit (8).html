@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recruiting Toolkit | Plan AIQ</title>
+<meta name="description" content="Plan AIQ's Recruiting Toolkit — build Boolean/X-ray candidate searches and platform-matched job ad copy from one shared role profile.">
+<style>
+  :root{
+    --ink:#1c1f26; --ink-soft:#5b6472; --paper:#ffffff; --paper-alt:#f4f6f8; --line:#e2e6ea;
+    --navy:#1c1f26; --navy-deep:#0d0f13; --accent:#7a1e2e; --accent-deep:#5e1523; --accent-soft:#f6e8ea;
+    --good:#1f7a4d; --warn:#b45309; --code-bg:#0f1220; --code-ink:#e6e8f2;
+    --chip:#f6e8ea; --chip-ink:#7a1e2e; --radius:10px;
+    --header-bg:#f4f5f7; --header-line:#e2e6ea;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper-alt); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45;
+  }
+  a{color:var(--accent-deep);}
+  .app{max-width:1440px; margin:0 auto; padding:0 0 60px;}
+
+  /* ---- Branding header (matches planaiq.co logo lockup: maroon "Pi" badge, charcoal
+         wordmark, light panel, thin bottom rule) ---- */
+  .brandbar{
+    background:var(--header-bg); color:var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    border-bottom:1px solid var(--header-line);
+  }
+  .brandbar .brand{display:flex; align-items:center; gap:12px;}
+  .logo-mark{
+    width:44px; height:44px; border-radius:10px;
+    background:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; box-shadow:0 1px 2px rgba(0,0,0,.12);
+  }
+  .logo-mark span{
+    color:#fff; font-weight:800; font-size:19px; letter-spacing:-0.02em;
+    font-family:Georgia,'Times New Roman',serif;
+  }
+  .brand-word{font-size:20px; font-weight:800; letter-spacing:-0.01em; color:var(--ink);}
+  .brand-word span{color:var(--ink);}
+  .brand-tagline{font-size:11px; color:var(--ink-soft); margin-top:2px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;}
+  .brandbar .madeby{font-size:12px; color:var(--ink-soft); text-align:right;}
+  .brandbar .madeby strong{color:var(--ink); font-weight:700;}
+
+  header.intro{padding:28px 24px 6px;}
+  header.intro h1{font-size:22px; margin:0 0 6px; letter-spacing:-0.01em; color:var(--navy);}
+  header.intro p{margin:0; color:var(--ink-soft); font-size:14px; max-width:860px;}
+
+  /* ---- Tabs ---- */
+  .tabbar{display:flex; gap:8px; padding:18px 24px 0; border-bottom:1px solid var(--line); margin-top:14px;}
+  .tabbtn{
+    background:transparent; border:none; cursor:pointer; font-family:inherit;
+    font-size:14.5px; font-weight:700; color:var(--ink-soft); padding:10px 16px;
+    border-bottom:3px solid transparent; margin-bottom:-1px; display:flex; align-items:center; gap:7px;
+  }
+  .tabbtn.active{color:var(--navy); border-bottom-color:var(--accent);}
+  .tabbtn:hover{color:var(--navy);}
+
+  .app-body{padding:20px 24px 0;}
+  .badge{display:inline-block; background:var(--accent-soft); color:var(--accent-deep); font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; margin:0 8px 10px 0; letter-spacing:.03em; text-transform:uppercase;}
+
+  .grid{display:grid; grid-template-columns:420px 1fr; gap:18px; align-items:start;}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr;} }
+  .panel{background:var(--panel,#fff); background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:18px;}
+  .panel + .panel{position:sticky; top:16px;}
+  h2{font-size:14px; margin:22px 0 8px; color:var(--ink); text-transform:uppercase; letter-spacing:.04em;}
+  h2:first-child{margin-top:0;}
+  .hint{font-size:12px; color:var(--ink-soft); margin:2px 0 8px; opacity:.85;}
+  label.field-label{display:block; font-size:13px; font-weight:600; margin-bottom:4px;}
+  textarea, input[type=text], input[type=email], select{
+    width:100%; border:1px solid var(--line); background:var(--paper-alt); color:var(--ink);
+    border-radius:8px; padding:9px 10px; font-size:13px; font-family:inherit; resize:vertical;
+  }
+  textarea{min-height:64px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;}
+  textarea:focus, input:focus, select:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .row{display:flex; gap:10px; flex-wrap:wrap;}
+  .row > div{flex:1; min-width:140px;}
+  .checkline{display:flex; align-items:center; gap:7px; font-size:13px; margin:6px 0;}
+  .checkline input{width:auto;}
+  fieldset{border:1px solid var(--line); border-radius:8px; padding:10px; margin:0 0 4px;}
+  legend{font-size:12px; font-weight:700; padding:0 6px; color:var(--ink-soft);}
+  .states-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:2px 8px; max-height:170px; overflow-y:auto; padding-right:4px;}
+  .states-grid label{display:flex; align-items:center; gap:5px; font-size:12px; padding:2px 0;}
+  .states-grid input{width:auto;}
+  .platform-list{display:flex; flex-direction:column; gap:6px;}
+  .platform-list label{display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; cursor:pointer;}
+  .platform-list label small{display:block; color:var(--ink-soft); font-weight:400;}
+  .platform-list input{width:auto; margin-top:3px;}
+
+  .btn{display:inline-flex; align-items:center; gap:6px; border:none; cursor:pointer; border-radius:8px; padding:9px 14px; font-size:13px; font-weight:700; font-family:inherit;}
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{background:var(--accent-deep);}
+  .btn-secondary{background:var(--chip); color:var(--chip-ink);}
+  .btn-ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--line);}
+  .btn:active{transform:translateY(1px);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .btn-full{width:100%; justify-content:center; padding:12px; font-size:14px;}
+
+  details.advanced{border:1px dashed var(--line); border-radius:8px; padding:2px 12px 10px; margin-top:14px;}
+  details.advanced.has-overrides{border:1px solid var(--accent); border-style:solid;}
+  details.advanced summary{cursor:pointer; font-size:13px; font-weight:700; color:var(--accent-deep); padding:10px 0;}
+  details.advanced[open] summary{margin-bottom:6px;}
+  .adv-active{display:inline-block; margin-left:8px; font-size:11px; font-weight:700; color:#fff; background:var(--accent); padding:2px 8px; border-radius:999px; letter-spacing:.02em;}
+  .req{color:var(--accent); font-weight:800; margin-left:1px;}
+  .req-legend{font-size:12px; color:var(--ink-soft); margin:-4px 0 12px; padding:8px 10px; background:var(--accent-soft); border-radius:6px;}
+  .req-legend .req{margin-left:0; margin-right:2px;}
+  .states-toolbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; flex-wrap:wrap;}
+  .states-selected-badge{color:var(--accent-deep); font-weight:700;}
+
+  .results-empty{color:var(--ink-soft); font-size:13px; padding:40px 10px; text-align:center;}
+  .batch{margin-bottom:22px;}
+  .batch-title{font-size:13px; font-weight:700; color:var(--accent-deep); margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+  .batch-title::after{content:""; flex:1; height:1px; background:var(--line);}
+  .card{border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px; background:var(--paper);}
+  .card-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;}
+  .card-head .pname{font-size:13px; font-weight:700;}
+  .tag{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:2px 7px; border-radius:999px;}
+  .tag.live{background:var(--accent-soft); color:var(--accent-deep);}
+  .tag.manual{background:var(--chip); color:var(--ink-soft);}
+  .card-tags{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;}
+  .tag.health-broad{background:#eef2f6; color:#4a5568; cursor:help;}
+  .tag.health-balanced{background:#e5f3ea; color:#1f7a4d; cursor:help;}
+  .tag.health-narrow{background:#fdf1e3; color:#b45309; cursor:help;}
+  details.plain-eng{margin:10px 0 0; border:1px dashed var(--line); border-radius:6px; padding:0 10px;}
+  details.plain-eng summary{cursor:pointer; font-size:11.5px; font-weight:700; color:var(--accent-deep); padding:7px 0; list-style:revert;}
+  details.plain-eng p{margin:0 0 9px; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+  pre.query{background:var(--code-bg); color:var(--code-ink); border-radius:8px; padding:10px 12px; font-size:12px; white-space:pre-wrap; word-break:break-word; margin:0 0 8px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .card-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .note{font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
+  .len-warn{color:var(--warn); font-weight:600;}
+  .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--navy); color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:50;}
+  .toast.show{opacity:1;}
+  .legend{font-size:12px; color:var(--ink-soft); line-height:1.7;}
+  .legend code{background:var(--chip); color:var(--chip-ink); padding:1px 5px; border-radius:4px; font-size:11.5px;}
+  .footer-note{font-size:11.5px; color:var(--ink-soft); margin-top:24px; border-top:1px dashed var(--line); padding-top:12px;}
+
+  /* ---- Ad kit tickets ---- */
+  .tickets{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){.tickets{grid-template-columns:1fr;}}
+  .ticket{background:var(--paper); border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .ticket-top{display:flex; justify-content:space-between; align-items:center; padding:14px 16px 12px;}
+  .platform-name{font-weight:800; font-size:15.5px; color:var(--navy);}
+  .match{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:11px; background:var(--good); color:#fff; padding:3px 8px; border-radius:20px; letter-spacing:.03em;}
+  .match.mid{background:var(--warn);}
+  .perf{border-top:1px dashed var(--line);}
+  .ticket-body{padding:16px;}
+  .ad-copy{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; line-height:1.65; white-space:pre-wrap; color:var(--ink); min-height:70px;}
+  .ticket-foot{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);}
+  .charcount{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:11px; color:var(--ink-soft);}
+  .charcount.warn{color:var(--warn);}
+  .copy-btn{background:none; border:1px solid var(--navy); color:var(--navy); font-size:11px; letter-spacing:.05em; text-transform:uppercase; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:700;}
+  .copy-btn:hover{background:var(--navy); color:#fff;}
+  .copy-btn.copied{background:var(--good); border-color:var(--good); color:#fff;}
+
+  /* ---- Inclusive language checker ---- */
+  .inclusive-panel{border-radius:10px; padding:0 16px; margin-bottom:16px; border:1px solid;}
+  .inclusive-panel.flagged{background:#fdf1e3; border-color:#f3d9b3;}
+  .inclusive-panel.clean{background:#e5f3ea; border-color:#c3e3cd;}
+  .inclusive-panel summary{cursor:pointer; font-weight:700; font-size:13.5px; padding:13px 0; list-style:revert;}
+  .inclusive-panel.flagged summary{color:#8a4b09;}
+  .inclusive-panel.clean summary{color:#1f7a4d;}
+  .inclusive-list{list-style:none; margin:0 0 4px; padding:0;}
+  .inclusive-list li{display:flex; gap:10px; flex-wrap:wrap; align-items:baseline; padding:9px 0; border-top:1px solid rgba(0,0,0,.06);}
+  .inc-term{font-weight:800; color:var(--ink); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;}
+  .inc-cat{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#8a4b09; background:rgba(180,83,9,.12); padding:2px 8px; border-radius:999px;}
+  .inc-sug{font-size:12.5px; color:var(--ink-soft);}
+
+  /* ---- JD auto-fill (Source Candidates + shared Role Basics) ---- */
+  .jd-autofill-box{background:var(--paper-alt); border:1px solid var(--line); border-radius:10px; padding:14px 16px 6px; margin:14px 0 22px;}
+  .jd-autofill-box h2{margin-top:0;}
+  .autofill-review{background:#e5f3ea; border:1px solid #c3e3cd; border-radius:10px; padding:12px 14px; margin:8px 0 12px; font-size:13px; color:#1f5c39;}
+  .autofill-review strong{color:#1f7a4d;}
+  .autofill-list{list-style:none; margin:8px 0 0; padding:0;}
+  .autofill-list li{margin:3px 0; padding-left:0;}
+  .autofill-key{font-weight:700; color:var(--ink); margin-right:4px;}
+
+  /* ---- Resume Match ---- */
+  .upload-row{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+  .file-status{font-size:11.5px; color:var(--ink-soft); margin:2px 0 12px; min-height:14px;}
+  .score-wrap{display:flex; align-items:center; gap:18px; margin-bottom:20px; flex-wrap:wrap;}
+  .score-circle{width:92px; height:92px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; font-weight:800; font-size:23px; color:#fff; flex-shrink:0; line-height:1.1;}
+  .score-circle.good{background:var(--good);}
+  .score-circle.mid{background:var(--warn);}
+  .score-circle.low{background:#b3261e;}
+  .score-circle small{font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; opacity:.85; margin-top:2px;}
+  .score-summary{font-size:13.5px; color:var(--ink-soft); flex:1; min-width:220px;}
+  .score-summary strong{color:var(--ink);}
+  .kw-section{margin-top:18px;}
+  .kw-section h3{font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin:0 0 8px; font-weight:700;}
+  .kw-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .kw-chip{font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px; border:1px solid transparent;}
+  .kw-chip.matched{background:#e5f3ea; color:#1f7a4d; border-color:#c3e3cd;}
+  .kw-chip.matched::before{content:"✓ "; }
+  .kw-chip.missing{background:#fbeceb; color:#b3261e; border-color:#f3d2cf;}
+  .kw-chip.missing::before{content:"✕ "; }
+  .missing-callout{border-radius:10px; padding:10px 14px; margin:0 0 16px; font-size:13px; border:1px solid; line-height:1.5;}
+  .missing-callout.has-gaps{background:#fbeceb; border-color:#f3d2cf; color:#8a2419;}
+  .missing-callout.clean{background:#e5f3ea; border-color:#c3e3cd; color:#1f5c39;}
+  .missing-callout strong{color:inherit;}
+  .missing-callout .missing-line{margin-top:4px;}
+  .signal-list{list-style:none; padding:0; margin:8px 0 0; font-size:13px;}
+  .signal-list li{display:flex; gap:8px; padding:7px 0; border-bottom:1px solid var(--line); align-items:flex-start;}
+  .signal-list li:last-child{border-bottom:none;}
+  .signal-icon{flex-shrink:0; font-weight:800;}
+  .signal-icon.ok{color:var(--good);}
+  .signal-icon.warn{color:var(--warn);}
+  .signal-icon.info{color:var(--ink-soft);}
+
+  /* ---- Candidate cards (bulk resume input) ---- */
+  .cand-card{border:1px solid var(--line); border-radius:8px; padding:12px; margin-bottom:10px; background:var(--paper-alt);}
+  .cand-card-head{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
+  .cand-card-head input.cand-name{flex:1; font-weight:700; background:var(--paper);}
+  .cand-remove{background:var(--paper); border:1px solid var(--line); color:var(--ink-soft); border-radius:6px; width:32px; height:32px; cursor:pointer; flex-shrink:0; font-size:14px;}
+  .cand-remove:hover{border-color:#b3261e; color:#b3261e;}
+
+  /* ---- Leaderboard (multi-candidate ranked results) ---- */
+  .leaderboard-head{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; padding-bottom:14px; border-bottom:1px solid var(--line);}
+  .cand-result{border:1px solid var(--line); border-radius:10px; margin-bottom:10px; overflow:hidden;}
+  .cand-result summary{cursor:pointer; list-style:none;}
+  .cand-result summary::-webkit-details-marker{display:none;}
+  .cand-result-summary{display:flex; align-items:center; gap:12px; padding:14px 16px; flex-wrap:wrap;}
+  .cand-result[open] .cand-result-summary{border-bottom:1px solid var(--line); background:var(--paper-alt);}
+  .lb-rank{font-weight:800; color:var(--ink-soft); font-size:13px; min-width:26px;}
+  .lb-name{font-weight:800; font-size:14.5px; color:var(--ink); flex:1; min-width:120px;}
+  .lb-score{display:inline-block; padding:4px 12px; border-radius:999px; font-weight:800; font-size:13px; color:#fff;}
+  .lb-score.good{background:var(--good);}
+  .lb-score.mid{background:var(--warn);}
+  .lb-score.low{background:#b3261e;}
+  .lb-sub{font-size:12px; color:var(--ink-soft); flex-basis:100%;}
+  @media (min-width:640px){ .lb-sub{flex-basis:auto; margin-left:auto;} }
+  .lb-chevron{font-size:12px; color:var(--ink-soft); transition:transform .15s ease; margin-left:2px;}
+  .cand-result[open] .lb-chevron{transform:rotate(180deg);}
+  .cand-result-body{padding:16px;}
+
+  /* ---- Outreach message + interview questions ---- */
+  .outreach-panel{margin-top:14px; border:1px dashed var(--line); border-radius:8px; padding:0 14px;}
+  .outreach-panel summary{cursor:pointer; font-size:13px; font-weight:700; color:var(--accent-deep); padding:11px 0; list-style:revert;}
+  .outreach-text{white-space:pre-wrap; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-size:13px; line-height:1.6; color:var(--ink); background:var(--paper-alt); border-radius:8px; padding:14px; margin:0 0 4px;}
+  .interview-questions{margin:0 0 4px; padding-left:20px; font-size:13px; color:var(--ink); line-height:1.6;}
+  .interview-questions li{margin-bottom:8px;}
+
+  /* ---- Mini-ATS status tracker ---- */
+  .status-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+  .status-dot{width:10px; height:10px; border-radius:50%; flex-shrink:0; box-shadow:0 0 0 2px rgba(0,0,0,.04);}
+  select.status-select{width:auto; min-width:130px; flex:0 0 auto;}
+  input.status-notes{flex:1; min-width:160px;}
+
+  /* ---- Interview Feedback log ---- */
+  .fb-summary{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px;}
+  .fb-card{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px;}
+  .fb-card-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;}
+  .fb-name{font-weight:800; color:var(--ink); font-size:14.5px;}
+  .fb-rating{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; padding:2px 9px; border-radius:999px;}
+  .fb-rating.strong-yes{background:#e5f3ea; color:#1f7a4d;}
+  .fb-rating.yes{background:#e5f3ea; color:#2f8f5f;}
+  .fb-rating.neutral{background:#fdf1e3; color:#8a4b09;}
+  .fb-rating.no{background:#fbeceb; color:#b3261e;}
+  .fb-rating.strong-no{background:#fbeceb; color:#8a2419;}
+  .fb-rating.unrated{background:var(--chip); color:var(--ink-soft);}
+  .fb-remove{margin-left:auto; background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:14px; padding:2px 4px;}
+  .fb-remove:hover{color:#b3261e;}
+  .fb-meta{font-size:12px; color:var(--ink-soft); margin-bottom:6px;}
+  .fb-notes{font-size:13.5px; color:var(--ink); white-space:pre-wrap;}
+
+  footer.appfoot{padding:30px 24px 10px; text-align:center;}
+  footer.appfoot p{font-size:12px; color:var(--ink-soft); margin:0 0 6px;}
+  footer.appfoot .fbrand{color:var(--navy); font-weight:800;}
+  footer.appfoot .fbrand span{color:var(--navy);}
+
+  /* ---- Privacy/trust badge ---- */
+  .privacy-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700;
+    color:var(--good); background:#e5f3ea; border:1px solid #c3e3cd; padding:5px 11px;
+    border-radius:999px; letter-spacing:.01em; margin-bottom:10px;
+  }
+  .privacy-badge .dot{width:6px; height:6px; border-radius:50%; background:var(--good); flex-shrink:0;}
+  footer.appfoot .privacy-badge{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="brandbar">
+    <div class="brand">
+      <div class="logo-mark" aria-hidden="true"><span>Pi</span></div>
+      <div>
+        <div class="brand-word">Plan<span>AIQ</span></div>
+        <div class="brand-tagline">Business Intelligence &amp; Analytics Consulting</div>
+      </div>
+    </div>
+    <div class="madeby">Built by <strong>Plan AIQ</strong><br>Recruiting Toolkit</div>
+  </div>
+
+  <header class="intro">
+    <span class="badge">Sourcing + Ad Kit + Resume Match + Interview Feedback, one workflow</span>
+    <span class="privacy-badge" title="This page runs entirely in your browser — searches, ad copy, and resume matching are all computed locally. Nothing you type or upload is ever sent to a server."><span class="dot"></span> 🔒 Private by design — nothing you type or upload ever leaves your browser</span>
+    <h1>Recruiting Toolkit</h1>
+    <p>Describe the role once — title, skills, location, seniority — and get a ready-to-run candidate sourcing plan (Boolean &amp; X-ray searches across LinkedIn, Google, GitHub, Indeed, and more), platform-matched job ad copy sized to fit each board, and a keyword match score for any resume against a job description. No signup, no seat limits, nothing stored on a server — switch tabs any time; results stay in sync with the same role profile.</p>
+  </header>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tabBtnSource" onclick="switchTab('source')">🔎 Source Candidates</button>
+    <button class="tabbtn" id="tabBtnAdkit" onclick="switchTab('adkit')">📣 Job Ad Kit</button>
+    <button class="tabbtn" id="tabBtnMatch" onclick="switchTab('match')">🎯 Resume Match</button>
+    <button class="tabbtn" id="tabBtnFeedback" onclick="switchTab('feedback')">🗣️ Interview Feedback</button>
+  </div>
+
+  <div class="app-body">
+    <div class="grid">
+
+      <!-- FORM PANEL -->
+      <section class="panel">
+        <div id="quickStartBlock">
+        <h2>Quick Start</h2>
+        <label class="field-label" for="presetSelect">Load an example</label>
+        <select id="presetSelect">
+          <option value="">— Choose an example to auto-fill —</option>
+          <option value="embedded">Embedded Software / RF / FPGA Engineer (defense)</option>
+          <option value="nurse">ICU Registered Nurse</option>
+          <option value="sales">Enterprise SaaS Sales Executive</option>
+          <option value="datasci">Senior Data Scientist</option>
+          <option value="cdl">CDL-A Truck Driver</option>
+        </select>
+        </div>
+
+        <div class="jd-autofill-box" id="jdAutofillBox">
+          <h2>Auto-fill from a JD file <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(optional — any file format)</span></h2>
+          <p class="hint">Upload a job description as a <strong>PDF, Word (.docx), Excel/CSV, plain text — or almost any other file type</strong>, and Job Title, Key Skills, Location, and Seniority below will be auto-filled from it. <span class="hint">(On the Resume Match tab, use the single "Upload JD" button below instead — it does this automatically.)</span></p>
+          <div class="upload-row">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('jdAutofillFile').click()">📂 Upload JD to auto-fill <span class="hint" style="text-transform:none; font-weight:400;">(.pdf/.docx/.xlsx/.csv/.txt/…)</span></button>
+            <input type="file" id="jdAutofillFile" accept=".txt,.csv,.tsv,.pdf,.docx,.doc,.xlsx,.xls,.rtf,.json,.md" style="display:none" onchange="handleJDAutofillUpload(event)">
+          </div>
+          <div class="file-status" id="jdAutofillStatus"></div>
+          <div id="jdAutofillReview" style="display:none;"></div>
+        </div>
+
+        <div id="roleBasicsBlock">
+        <h2>Role Basics <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(shared by all three tabs)</span></h2>
+        <p class="req-legend"><span class="req">*</span> required — fill in at least one of Job Title or Key Skills to generate candidate searches; Job Description and Resume are required on the Resume Match tab.</p>
+        <label class="field-label" for="title">Job Title(s) / Synonyms <span class="req" title="Required — or fill in Key Skills instead">*</span> <span class="hint">(comma-separated)</span></label>
+        <textarea id="title" placeholder="Embedded Software Engineer, Firmware Engineer, Embedded Systems Engineer" style="min-height:44px;"></textarea>
+
+        <label class="field-label" style="margin-top:10px;" for="skills">Key Skills <span class="req" title="Required — or fill in Job Title instead">*</span> <span class="hint">(comma-separated)</span></label>
+        <textarea id="skills" placeholder="FPGA, RF, embedded C, firmware development" style="min-height:50px;"></textarea>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label class="field-label" for="location">Location <span class="hint">(US — city/state, or blank for nationwide)</span></label>
+            <input type="text" id="location" placeholder="Austin, TX">
+          </div>
+          <div>
+            <label class="field-label" for="seniority">Seniority</label>
+            <select id="seniority">
+              <option value="">Any level</option>
+              <option value="entry">Entry-level</option>
+              <option value="mid">Mid-level</option>
+              <option value="senior">Senior</option>
+              <option value="lead">Lead / Principal / Staff</option>
+              <option value="manager">Manager / Director</option>
+              <option value="executive">Executive</option>
+            </select>
+          </div>
+        </div>
+        </div>
+
+        <!-- ============ SOURCING-ONLY FIELDS ============ -->
+        <div id="sourceFields">
+          <h2 style="margin-top:26px;">Eligibility (optional)</h2>
+          <div class="row">
+            <div>
+              <label class="field-label">Security Clearance</label>
+              <select id="clearance">
+                <option value="none">Not required</option>
+                <option value="any">Any active clearance</option>
+                <option value="public-trust">Public Trust</option>
+                <option value="secret">Active Secret</option>
+                <option value="top-secret">Active Top Secret</option>
+                <option value="tssci">Active TS/SCI</option>
+                <option value="willing">Willing/eligible to obtain</option>
+              </select>
+            </div>
+          </div>
+          <div class="checkline"><input type="checkbox" id="workAuthOnly"><label for="workAuthOnly">US Citizens / Green Card only — adds citizenship terms, excludes H1B/OPT/CPT/sponsorship language</label></div>
+          <div class="checkline">
+            <input type="checkbox" id="openToWorkOnly">
+            <label for="openToWorkOnly">Only "Open to Work" candidates <span class="hint">— keyword proxy (#opentowork etc.), not LinkedIn's Recruiter-only flag</span></label>
+          </div>
+
+          <h2>Companies (optional)</h2>
+          <div class="row">
+            <div>
+              <label class="field-label">Target companies <span class="hint">(comma-separated)</span></label>
+              <input type="text" id="companiesInclude" placeholder="Abaco Systems, Curtiss-Wright, Mercury Systems">
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <div>
+              <label class="field-label">Exclude companies <span class="hint">(recruiting agencies, current employer, etc.)</span></label>
+              <input type="text" id="companiesExclude" placeholder="Robert Half, TEKsystems">
+            </div>
+          </div>
+
+          <h2>Location refinement</h2>
+          <p class="hint">Leave states unchecked for a nationwide search. Selecting states narrows results; "separate search per state" gives the most thorough coverage.</p>
+          <fieldset>
+            <legend>States (optional multi-select)</legend>
+            <div class="states-toolbar">
+              <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
+              <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
+            </div>
+            <div class="states-grid" id="statesGrid"></div>
+          </fieldset>
+          <div class="checkline"><input type="checkbox" id="remoteOk"><label for="remoteOk">Include remote candidates</label></div>
+          <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
+
+          <h2>Search Platforms <span class="req" title="Select at least one platform">*</span> <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(select at least one)</span></h2>
+          <div class="platform-list">
+            <label><input type="checkbox" id="p_linkedin" checked><span><strong>LinkedIn</strong> — keyword people search<br><small>Opens LinkedIn with your Boolean string pre-filled; apply Location in LinkedIn's UI.</small></span></label>
+            <label><input type="checkbox" id="p_googleli" checked><span><strong>Google X-ray → LinkedIn profiles</strong><br><small>site:linkedin.com/in search — reaches profiles beyond your LinkedIn network/search limits.</small></span></label>
+            <label><input type="checkbox" id="p_googleresume"><span><strong>Google X-ray → Resumes/CVs</strong><br><small>Finds publicly posted PDF/Word resumes matching your criteria.</small></span></label>
+            <label><input type="checkbox" id="p_github"><span><strong>GitHub</strong> — developer search<br><small>Best for engineering roles with public code activity.</small></span></label>
+            <label><input type="checkbox" id="p_indeed" checked><span><strong>Indeed Resumes</strong><br><small>May require an Indeed employer/recruiter login.</small></span></label>
+            <label><input type="checkbox" id="p_clearancejobs"><span><strong>ClearanceJobs</strong><br><small>Cleared-candidate database — requires a recruiter account.</small></span></label>
+            <label><input type="checkbox" id="p_monster"><span><strong>Monster Resume DB</strong><br><small>Requires a recruiter seat — string only, no deep link.</small></span></label>
+            <label><input type="checkbox" id="p_zip"><span><strong>ZipRecruiter Resume DB</strong><br><small>Requires a recruiter seat — string only, no deep link.</small></span></label>
+          </div>
+
+          <details class="advanced">
+            <summary id="advancedSummary">Advanced Boolean (optional) — override the simple skills OR-group</summary>
+            <label class="field-label">Must-Have Skills <span class="hint">(one group per line = AND; commas within a line = OR)</span></label>
+            <textarea id="mustHave" placeholder="FPGA, field programmable gate array&#10;RF, radio frequency&#10;embedded C, firmware development" style="min-height:78px;"></textarea>
+            <label class="field-label" style="margin-top:10px;">Nice-to-Have Skills <span class="hint">(comma-separated, optional)</span></label>
+            <textarea id="niceToHave" placeholder="RTOS, VxWorks, hardware debugging" style="min-height:44px;"></textarea>
+            <div class="checkline"><input type="checkbox" id="niceRequired"><label for="niceRequired">Require at least one nice-to-have term too</label></div>
+            <label class="field-label" style="margin-top:10px;">Exclude Terms <span class="hint">(comma-separated — NOT)</span></label>
+            <textarea id="excludeTerms" placeholder="recruiter, staffing agency, intern" style="min-height:44px;"></textarea>
+            <div class="checkline" style="margin-top:10px;">
+              <input type="checkbox" id="bakeAdvanced">
+              <label for="bakeAdvanced">Require clearance / work-auth / seniority / target-company terms directly in the LinkedIn, Google, and Indeed query text <span class="hint">(off by default — these are rarely written verbatim on a profile, so ANDing them in usually returns 0 results)</span></label>
+            </div>
+          </details>
+        </div>
+
+        <!-- ============ AD-KIT-ONLY FIELDS ============ -->
+        <div id="adkitFields" style="display:none;">
+          <h2 style="margin-top:26px;">Ad Kit Details</h2>
+          <label class="field-label" for="category">Role category <span class="hint">(used to rank which platforms fit best)</span></label>
+          <select id="category">
+            <option value="corporate">Corporate / Office / General</option>
+            <option value="tech">Tech &amp; Engineering</option>
+            <option value="sales">Sales &amp; Marketing</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="retail">Retail, Hospitality &amp; Trades</option>
+            <option value="entry">Entry-Level / Internship</option>
+          </select>
+
+          <div class="row" style="margin-top:10px;">
+            <div>
+              <label class="field-label" for="type">Employment type</label>
+              <select id="type">
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Contract</option>
+                <option>Remote</option>
+                <option>Hybrid</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="salary">Salary (optional)</label>
+              <input type="text" id="salary" placeholder="$55K–$65K">
+            </div>
+          </div>
+
+          <label class="checkline" style="margin-top:14px;">
+            <input type="checkbox" id="urgent">
+            <span>Mark as urgent hire</span>
+          </label>
+
+          <p class="hint" style="margin-top:14px;">Ad copy is generated per platform, sized to each site's practical character limit, with a Copy button — paste it directly into that platform's job posting form. (Earlier drafts of this tool included a "Post directly" / API-relay feature; it's been left out here since it required storing OAuth tokens and a self-hosted relay server that most teams don't have running — copy/paste is simpler and safer to ship as a standalone tool.)</p>
+        </div>
+
+        <!-- ============ RESUME MATCH FIELDS ============ -->
+        <div id="matchFields" style="display:none;">
+          <h2 style="margin-top:26px;">Job Description <span class="req" title="Required">*</span> <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(one upload does it all)</span></h2>
+          <div class="upload-row">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('jdFile').click()">📂 Upload JD <span class="hint" style="text-transform:none; font-weight:400;">(any format — PDF, Word, Excel/CSV, text…)</span></button>
+            <input type="file" id="jdFile" accept=".txt,.csv,.tsv,.pdf,.docx,.doc,.xlsx,.xls,.rtf,.json,.md" style="display:none" onchange="handleMatchJDUpload(event)">
+          </div>
+          <textarea id="jdText" placeholder="Paste the job description here, or upload a file above." style="min-height:150px;"></textarea>
+          <div class="file-status" id="jdFileStatus"></div>
+          <div id="jdMatchAutofillReview" style="display:none;"></div>
+
+          <h2>Candidate Resume(s) <span class="req" title="Required">*</span> <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(one or more — add extra candidates to rank them)</span></h2>
+          <div class="upload-row">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('resumeFiles').click()">📂 Upload resume(s) <span class="hint" style="text-transform:none; font-weight:400;">(.txt / .docx / .pdf — pick multiple to compare at once)</span></button>
+            <input type="file" id="resumeFiles" accept=".txt,.pdf,.docx" multiple style="display:none" onchange="handleBulkFileUpload(event)">
+            <button class="btn btn-ghost" type="button" onclick="addCandidateCard()">+ Add candidate manually</button>
+          </div>
+          <div id="candidateList"></div>
+
+          <p class="hint" style="margin-top:4px;">This scores keyword overlap only — it's a fast triage/screening signal, not a hiring decision. Add one candidate for a detailed single view, or several to get a ranked leaderboard with a % match per person — like a lightweight ATS screen. The shared <strong>Key Skills</strong> field above (Role Basics) is treated as "must-have" and weighted higher; everything else is auto-extracted from the job description text. PDF/DOCX parsing runs in your browser via a small library loaded on demand — if it can't load (offline, blocked network), paste the text in directly instead. Nothing you paste or upload here is sent anywhere; it's processed entirely in this page.</p>
+        </div>
+
+        <!-- ============ INTERVIEW FEEDBACK FIELDS ============ -->
+        <div id="feedbackFields" style="display:none;">
+          <h2 style="margin-top:0;">Log Interview Feedback</h2>
+          <p class="hint" style="margin:-4px 0 14px;">A simple log of how each interview went — not tied to Resume Match, so you can log feedback for anyone you've interviewed.</p>
+
+          <label class="field-label" for="fbCompany">Company Name <span class="hint">(shown in the sign-off of the Selected/Rejection emails below)</span></label>
+          <input type="text" id="fbCompany" placeholder="Acme Corp" style="margin-bottom:14px;">
+
+          <label class="field-label" for="fbCandidate">Candidate Name <span class="req" title="Required">*</span></label>
+          <input type="text" id="fbCandidate" placeholder="Jane Doe">
+
+          <label class="field-label" style="margin-top:10px;" for="fbEmail">Candidate Email <span class="hint">(optional — needed to send a follow-up email)</span></label>
+          <input type="email" id="fbEmail" placeholder="jane.doe@example.com">
+
+          <div class="row" style="margin-top:10px;">
+            <div>
+              <label class="field-label" for="fbStage">Interview Stage</label>
+              <select id="fbStage">
+                <option>Phone Screen</option>
+                <option>Technical / Skills</option>
+                <option>Panel</option>
+                <option>Final Round</option>
+                <option>Reference Check</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="fbRating">Overall Rating</label>
+              <select id="fbRating">
+                <option value="">— Select —</option>
+                <option>Strong Yes</option>
+                <option>Yes</option>
+                <option>Neutral</option>
+                <option>No</option>
+                <option>Strong No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <div>
+              <label class="field-label" for="fbInterviewer">Interviewer</label>
+              <input type="text" id="fbInterviewer" placeholder="Your name">
+            </div>
+            <div>
+              <label class="field-label" for="fbDate">Date</label>
+              <input type="date" id="fbDate">
+            </div>
+          </div>
+
+          <label class="field-label" style="margin-top:10px;" for="fbNotes">Notes</label>
+          <textarea id="fbNotes" placeholder="Strengths, concerns, follow-up items…" style="min-height:80px;"></textarea>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="addFeedbackEntry()">+ Add Feedback</button>
+            <button class="btn btn-ghost" onclick="resetFeedbackForm()">Reset</button>
+          </div>
+        </div>
+
+        <div id="mainActionRows">
+        <div class="btn-row">
+          <button class="btn btn-primary btn-full" onclick="generate()">Generate ↦</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+          <button class="btn btn-secondary" onclick="saveProfile()">💾 Save profile (.json)</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('loadFile').click()">📂 Load profile</button>
+          <input type="file" id="loadFile" accept="application/json" style="display:none" onchange="loadProfile(event)">
+        </div>
+        </div>
+
+        <div class="footer-note" id="sourceFooterNote">
+          <strong>Boolean legend:</strong> <span class="legend"><code>AND</code> all terms required · <code>OR</code> any term inside <code>( )</code> matches · <code>NOT</code> / <code>-term</code> excludes · <code>"quoted phrase"</code> matches exact wording.</span><br><br>
+          Deep links open public search pages; sites with paid recruiter databases (Indeed Resumes, ClearanceJobs, Monster, ZipRecruiter) may require a recruiter seat login, and platforms occasionally change how search operators behave — verify results and adjust as needed.<br><br>
+          LinkedIn generates a Broad → Medium → Precise ladder: if Precise returns 0 results, try Medium, then Broad. Standard LinkedIn search also caps out around ~1,000 characters.
+        </div>
+      </section>
+
+      <!-- RESULTS PANEL -->
+      <section class="panel">
+        <h2 style="margin-top:0;" id="resultsHeading">Generated Searches</h2>
+        <div id="sourceResults">
+          <div class="results-empty">Fill in the role details on the left, then click <strong>Generate</strong>.</div>
+        </div>
+        <div id="adkitResults" style="display:none;">
+          <div class="results-empty">Fill in the role details on the left, then click <strong>Generate</strong>.</div>
+        </div>
+        <div id="matchResults" style="display:none;">
+          <div class="results-empty">Paste or upload a job description and a resume on the left, then click <strong>Generate</strong>.</div>
+        </div>
+        <div id="feedbackResults" style="display:none;">
+          <div class="results-empty">No interview feedback logged yet. Fill in the form on the left and click <strong>Add Feedback</strong>.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="appfoot">
+    <p>Recruiting Toolkit — <span class="fbrand">Plan<span>AIQ</span></span> · Built in Michigan, serving nationwide.</p>
+    <span class="privacy-badge"><span class="dot"></span> 🔒 No signup · no server · nothing you enter here is ever stored or transmitted</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* ============================================================
+   SHARED CONSTANTS
+   ============================================================ */
+const US_STATES = [
+  ["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],
+  ["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["DC","District of Columbia"],["FL","Florida"],
+  ["GA","Georgia"],["HI","Hawaii"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],
+  ["IA","Iowa"],["KS","Kansas"],["KY","Kentucky"],["LA","Louisiana"],["ME","Maine"],
+  ["MD","Maryland"],["MA","Massachusetts"],["MI","Michigan"],["MN","Minnesota"],["MS","Mississippi"],
+  ["MO","Missouri"],["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","New Hampshire"],
+  ["NJ","New Jersey"],["NM","New Mexico"],["NY","New York"],["NC","North Carolina"],["ND","North Dakota"],
+  ["OH","Ohio"],["OK","Oklahoma"],["OR","Oregon"],["PA","Pennsylvania"],["RI","Rhode Island"],
+  ["SC","South Carolina"],["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],
+  ["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]
+];
+
+const CLEARANCE_TERMS = {
+  "any": ["active clearance","security clearance","cleared"],
+  "public-trust": ["Public Trust"],
+  "secret": ["Secret Clearance","Active Secret"],
+  "top-secret": ["Top Secret Clearance","Active Top Secret","TS Clearance"],
+  "tssci": ["TS/SCI","Top Secret/SCI","TS SCI"],
+  "willing": ["willing to obtain clearance","eligible for clearance","clearable"]
+};
+
+const SENIORITY_TERMS = {
+  "entry": ["entry level","junior"],
+  "mid": ["3+ years","mid-level"],
+  "senior": ["senior","6+ years"],
+  "lead": ["lead","principal","staff","10+ years"],
+  "manager": ["manager","director"],
+  "executive": ["executive","VP","vice president","C-level"]
+};
+
+const SENIORITY_LABELS = {
+  "": "", entry:"Entry-level", mid:"Mid-level", senior:"Senior",
+  lead:"Lead/Principal", manager:"Manager/Director", executive:"Executive"
+};
+
+// LinkedIn's official "Open to Work" filter (the green-frame Spotlights toggle) only exists
+// inside a full paid LinkedIn Recruiter seat — not Recruiter Lite, not standard search — and
+// has no public URL. For everything else, this keyword set is the practical proxy recruiters
+// use, since many candidates add the phrase/hashtag to their headline or About section.
+const OPEN_TO_WORK_TERMS = ["#opentowork", "open to work", "actively seeking new opportunities", "seeking new opportunities", "open to new opportunities"];
+
+const AD_PLATFORMS = [
+  {id:'linkedin', name:'LinkedIn', tone:'professional', limit:700, skillCap:3, base:6, cat:{tech:9,sales:9,healthcare:7,retail:3,corporate:9,entry:6}},
+  {id:'indeed', name:'Indeed', tone:'plain', limit:500, skillCap:3, base:9, cat:{tech:8,sales:8,healthcare:9,retail:8,corporate:8,entry:7}},
+  {id:'zip', name:'ZipRecruiter', tone:'plain', limit:500, skillCap:3, base:7, cat:{tech:6,sales:7,healthcare:7,retail:7,corporate:7,entry:6}},
+  {id:'glassdoor', name:'Glassdoor', tone:'professional', limit:500, skillCap:3, base:6, cat:{tech:8,sales:7,healthcare:6,retail:5,corporate:8,entry:5}},
+  {id:'facebook', name:'Facebook Jobs', tone:'casual', limit:280, skillCap:2, base:5, cat:{tech:3,sales:6,healthcare:5,retail:9,corporate:4,entry:7}},
+  {id:'instagram', name:'Instagram', tone:'casual', limit:220, skillCap:1, base:3, cat:{tech:2,sales:5,healthcare:3,retail:8,corporate:3,entry:8}},
+  {id:'tiktok', name:'TikTok', tone:'hook', limit:150, skillCap:0, base:2, cat:{tech:2,sales:4,healthcare:2,retail:8,corporate:2,entry:9}},
+  {id:'craigslist', name:'Craigslist', tone:'plain', limit:400, skillCap:3, base:4, cat:{tech:3,sales:5,healthcare:4,retail:8,corporate:4,entry:4}},
+  {id:'dice', name:'Dice', tone:'professional', limit:500, skillCap:3, base:1, cat:{tech:10,sales:1,healthcare:1,retail:1,corporate:2,entry:3}},
+  {id:'builtin', name:'Built In', tone:'professional', limit:500, skillCap:3, base:1, cat:{tech:9,sales:4,healthcare:1,retail:1,corporate:5,entry:5}},
+  {id:'handshake', name:'Handshake', tone:'casual', limit:300, skillCap:2, base:1, cat:{tech:5,sales:4,healthcare:4,retail:3,corporate:3,entry:10}},
+  {id:'health', name:'Health eCareers', tone:'professional', limit:500, skillCap:3, base:1, cat:{tech:1,sales:1,healthcare:10,retail:1,corporate:1,entry:2}},
+  {id:'nextdoor', name:'Nextdoor', tone:'casual', limit:250, skillCap:1, base:2, cat:{tech:1,sales:3,healthcare:3,retail:7,corporate:2,entry:3}},
+];
+
+function el(id){ return document.getElementById(id); }
+
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+let CURRENT_TAB = 'source';
+function switchTab(tab){
+  CURRENT_TAB = tab;
+  el('tabBtnSource').classList.toggle('active', tab==='source');
+  el('tabBtnAdkit').classList.toggle('active', tab==='adkit');
+  el('tabBtnMatch').classList.toggle('active', tab==='match');
+  el('tabBtnFeedback').classList.toggle('active', tab==='feedback');
+  el('sourceFields').style.display = tab==='source' ? '' : 'none';
+  el('adkitFields').style.display = tab==='adkit' ? '' : 'none';
+  el('matchFields').style.display = tab==='match' ? '' : 'none';
+  el('feedbackFields').style.display = tab==='feedback' ? '' : 'none';
+  // Interview Feedback is a standalone log, unrelated to Role Basics/searching/matching — hide
+  // everything specific to the other three tabs (including the shared Generate/Reset/Save row)
+  // rather than showing controls that don't apply to it.
+  el('roleBasicsBlock').style.display = tab==='feedback' ? 'none' : '';
+  el('quickStartBlock').style.display = tab==='feedback' ? 'none' : '';
+  el('mainActionRows').style.display = tab==='feedback' ? 'none' : '';
+  // Resume Match has its own single "Upload JD" button that both fills the JD text box and
+  // auto-fills Role Basics — showing the shared auto-fill uploader too would mean two
+  // different-looking "upload a JD" controls on the same screen, so hide it on that tab only.
+  el('jdAutofillBox').style.display = (tab==='match' || tab==='feedback') ? 'none' : '';
+  el('sourceFooterNote').style.display = tab==='source' ? '' : 'none';
+  el('sourceResults').style.display = tab==='source' ? '' : 'none';
+  el('adkitResults').style.display = tab==='adkit' ? '' : 'none';
+  el('matchResults').style.display = tab==='match' ? '' : 'none';
+  el('feedbackResults').style.display = tab==='feedback' ? '' : 'none';
+  el('resultsHeading').textContent = tab==='source' ? 'Generated Searches' : tab==='adkit' ? 'Recommended Platforms & Ad Copy' : tab==='match' ? 'Resume ↔ Job Description Match' : 'Interview Feedback Log';
+}
+
+/* ============================================================
+   STATES GRID
+   ============================================================ */
+function buildStatesGrid(){
+  const grid = el('statesGrid');
+  grid.innerHTML = US_STATES.map(([abbr,name]) =>
+    `<label><input type="checkbox" class="stateChk" value="${abbr}" data-name="${name}"> ${abbr}</label>`
+  ).join('');
+}
+buildStatesGrid();
+
+/* ============================================================
+   STATES SELECTION — visible summary + quick clear
+   (The checkbox list is a scrollable 50-state grid; states checked earlier
+   by a preset/profile load can scroll out of view and stay checked without
+   the person noticing, silently widening "one state" searches to several.)
+   ============================================================ */
+function updateStatesSummary(){
+  const checked = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
+  const summaryEl = el('statesSelectedSummary');
+  summaryEl.innerHTML = checked.length
+    ? `<span class="states-selected-badge">${checked.length} state${checked.length>1?'s':''} selected:</span> ${checked.join(', ')}`
+    : 'No states selected — nationwide.';
+}
+function clearStates(){
+  document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
+  updateStatesSummary();
+}
+el('statesGrid').addEventListener('change', updateStatesSummary);
+updateStatesSummary();
+
+/* ============================================================
+   ADVANCED BOOLEAN — visible "active override" indicator
+   (Prevents leftover Must-Have/Exclude terms from an earlier preset or
+   saved profile silently getting baked into a new search.)
+   ============================================================ */
+function updateAdvancedSummary(){
+  const mustHave = parseLines(el('mustHave').value).map(parseCSV).filter(g=>g.length);
+  const nice = parseCSV(el('niceToHave').value);
+  const exclude = parseCSV(el('excludeTerms').value);
+  const bits = [];
+  if (mustHave.length) bits.push(`${mustHave.length} must-have override${mustHave.length>1?'s':''} (overrides Key Skills)`);
+  if (nice.length) bits.push(`${nice.length} nice-to-have`);
+  if (exclude.length) bits.push(`${exclude.length} exclude term${exclude.length>1?'s':''}`);
+  const summaryEl = el('advancedSummary');
+  const base = "Advanced Boolean (optional) — override the simple skills OR-group";
+  summaryEl.innerHTML = bits.length ? `${base}<span class="adv-active">● active — ${bits.join(', ')}</span>` : base;
+  summaryEl.closest('details').classList.toggle('has-overrides', bits.length > 0);
+}
+['mustHave','niceToHave','excludeTerms'].forEach(id => el(id).addEventListener('input', updateAdvancedSummary));
+updateAdvancedSummary();
+
+/* ============================================================
+   PARSING HELPERS
+   ============================================================ */
+function parseCSV(str){ return (str || "").split(",").map(s => s.trim()).filter(Boolean); }
+function parseLines(str){ return (str || "").split(/\r?\n/).map(s => s.trim()).filter(Boolean); }
+function quote(term){
+  const t = String(term).trim();
+  if (!t) return "";
+  if (t.includes(" ") || /[^\w-]/.test(t)) return `"${t.replace(/"/g,'')}"`;
+  return t;
+}
+function orGroup(arr){
+  const clean = arr.map(String).map(s=>s.trim()).filter(Boolean);
+  if (!clean.length) return "";
+  if (clean.length === 1) return quote(clean[0]);
+  return "(" + clean.map(quote).join(" OR ") + ")";
+}
+function stateFullNames(abbrs){ return abbrs.map(a => (US_STATES.find(s => s[0]===a) || [a,a])[1]); }
+function squeeze(str){ return str.replace(/\s+/g," ").trim(); }
+function escapeHTML(str){ return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+/* ============================================================
+   SHARED FIELD READER (Role Basics used by both tabs)
+   ============================================================ */
+function readShared(){
+  return {
+    titles: parseCSV(el('title').value),
+    skills: parseCSV(el('skills').value),
+    location: el('location').value.trim(),
+    seniority: el('seniority').value,
+  };
+}
+
+/* ============================================================
+   SOURCING LOGIC
+   ============================================================ */
+function readSourceForm(){
+  const shared = readShared();
+  const mustHaveGroups = parseLines(el('mustHave').value).map(parseCSV).filter(g=>g.length);
+  const niceToHave = parseCSV(el('niceToHave').value);
+  const niceRequired = el('niceRequired').checked;
+  const excludeTerms = parseCSV(el('excludeTerms').value);
+  const clearance = el('clearance').value;
+  const workAuthOnly = el('workAuthOnly').checked;
+  const openToWorkOnly = el('openToWorkOnly').checked;
+  const bakeAdvanced = el('bakeAdvanced').checked;
+  const companiesInclude = parseCSV(el('companiesInclude').value);
+  const companiesExclude = parseCSV(el('companiesExclude').value);
+  const states = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
+  const remoteOk = el('remoteOk').checked;
+  const splitPerState = el('splitPerState').checked;
+  const platforms = {
+    linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
+    github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
+    monster: el('p_monster').checked, zip: el('p_zip').checked
+  };
+  // If no advanced must-have groups were given, fall back to the shared Skills field as one OR group.
+  const usingAdvancedMustHave = mustHaveGroups.length > 0;
+  const effectiveMustHave = usingAdvancedMustHave ? mustHaveGroups : (shared.skills.length ? [shared.skills] : []);
+  return { titles: shared.titles, mustHaveGroups: effectiveMustHave, usingAdvancedMustHave, niceToHave, niceRequired, excludeTerms,
+           seniority: shared.seniority, clearance, workAuthOnly, openToWorkOnly, bakeAdvanced,
+           companiesInclude, companiesExclude, metro: shared.location, states, remoteOk, splitPerState, platforms };
+}
+
+function buildCoreQuery(s){
+  const parts = [];
+  if (s.titles.length) parts.push(orGroup(s.titles));
+  s.mustHaveGroups.forEach(g => { if (g.length) parts.push(orGroup(g)); });
+  if (s.niceRequired && s.niceToHave.length) parts.push(orGroup(s.niceToHave));
+  if (s.openToWorkOnly) parts.push(orGroup(OPEN_TO_WORK_TERMS));
+  return parts.filter(Boolean).join(" AND ");
+}
+
+function buildAdvancedGroups(s){
+  const groups = [];
+  if (s.companiesInclude.length) groups.push({ label: "Target companies", terms: s.companiesInclude });
+  if (s.clearance !== "none" && CLEARANCE_TERMS[s.clearance]) groups.push({ label: "Clearance", terms: CLEARANCE_TERMS[s.clearance] });
+  if (s.workAuthOnly) groups.push({ label: "Work authorization", terms: ["US Citizen","U.S. Citizen","Green Card","Permanent Resident"] });
+  if (s.seniority && SENIORITY_TERMS[s.seniority]) groups.push({ label: "Seniority", terms: SENIORITY_TERMS[s.seniority] });
+  return groups;
+}
+
+function buildIncludeCore(s){
+  let core = buildCoreQuery(s);
+  if (s.bakeAdvanced){ buildAdvancedGroups(s).forEach(g => { core += (core ? " AND " : "") + orGroup(g.terms); }); }
+  return core;
+}
+
+function advancedNoteText(s){
+  if (s.bakeAdvanced) return "";
+  const groups = buildAdvancedGroups(s);
+  if (!groups.length) return "";
+  return " Also apply manually: " + groups.map(g => `${g.label} (${g.terms.slice(0,3).join(", ")}${g.terms.length>3?"…":""})`).join("; ") + " — these are rarely written verbatim on a profile, so ANDing them into the search text usually returns zero results. Use each platform's own filters, or mention the requirement in your outreach message instead.";
+}
+
+function buildExcludeAll(s){
+  const ex = [...s.excludeTerms, ...s.companiesExclude];
+  if (s.workAuthOnly) ex.push("H1B","OPT","CPT","requires sponsorship","sponsorship required");
+  return ex.filter(Boolean);
+}
+
+function locationClause(states, metro, remoteOk){
+  const statePart = states.length ? orGroup(stateFullNames(states)) : "";
+  const metroPart = metro ? quote(metro) : "";
+  let core = "";
+  if (metroPart && statePart) core = `${metroPart} AND ${statePart}`;
+  else core = metroPart || statePart || "";
+  if (remoteOk){ core = core ? `(${core} OR "Remote")` : `"Remote"`; }
+  return core;
+}
+
+function makeBatches(s){
+  if (s.splitPerState && s.states.length > 1){
+    return s.states.map(abbr => {
+      const name = stateFullNames([abbr])[0];
+      return { label: name, loc: locationClause([abbr], s.metro, s.remoteOk), locParam: s.metro ? `${s.metro}, ${abbr}` : name };
+    });
+  }
+  const loc = locationClause(s.states, s.metro, s.remoteOk);
+  const label = s.metro ? s.metro : (s.states.length ? stateFullNames(s.states).join(" / ") : "Nationwide (USA)");
+  const locParam = s.metro || (s.states.length ? stateFullNames(s.states).join(", ") : "");
+  return [{ label, loc, locParam }];
+}
+
+function buildCards(s, batch){
+  const liveCore = buildIncludeCore(s);
+  const advGroups = buildAdvancedGroups(s);
+  const advClause = advGroups.map(g => orGroup(g.terms)).filter(Boolean).join(" AND ");
+  const coreOnly = buildCoreQuery(s);
+  const fullCore = advClause ? squeeze(`${coreOnly} AND ${advClause}`) : coreOnly;
+  const advNote = advancedNoteText(s);
+  const excludeAll = buildExcludeAll(s);
+  const otwNoteGeneric = s.openToWorkOnly ? ` Includes "#opentowork"/"open to work" keyword signals as a proxy for LinkedIn's Recruiter-only Open to Work flag.` : "";
+  const overrideNote = s.usingAdvancedMustHave ? ` ⚠ Using the "Must-Have Skills" override in Advanced Boolean below instead of your Key Skills field above — if these terms look stale/unexpected, expand Advanced Boolean and clear or edit them.` : "";
+  const cards = [];
+
+  if (s.platforms.linkedin){
+    const hasLoc = !!batch.loc;
+    const notePrefix = (batch.label !== "Nationwide (USA)" ? `Also set the Locations filter to: ${batch.label} after it opens — that's what actually restricts LinkedIn results by geography. ` : "Nationwide — narrow with LinkedIn's Locations filter if needed. ") + "Make sure you're logged into LinkedIn in this tab — logged-out/free-account search shows very few or no results, regardless of the query.";
+    const titleGroup = s.titles.length ? orGroup(s.titles) : "";
+    const skillGroups = s.mustHaveGroups.filter(g => g.length).map(orGroup);
+    const excludeClause = excludeAll.length ? ` NOT ${orGroup(excludeAll)}` : "";
+    const otwClause = s.openToWorkOnly ? orGroup(OPEN_TO_WORK_TERMS) : "";
+    const otwNote = s.openToWorkOnly ? ` Includes "#opentowork"/"open to work" keyword signals — this is a proxy, not LinkedIn's official Recruiter-only Open to Work flag.` : "";
+    const locSuffix = hasLoc ? ` AND ${batch.loc}` : "";
+    const locNote = hasLoc ? ` Includes "${batch.label}" as a keyword to narrow by geography, but LinkedIn's keyword search doesn't reliably filter by location the way Indeed/Google do (it can still surface other locations) — the Locations filter is the only reliable restriction.` : "";
+
+    let broadParts = [titleGroup || skillGroups[0] || "", otwClause].filter(Boolean);
+    let broadQ = squeeze(broadParts.join(" AND ") + locSuffix + excludeClause);
+
+    let mediumParts = [titleGroup, skillGroups[0], otwClause].filter(Boolean);
+    let mediumQ = mediumParts.length > 1 ? squeeze(mediumParts.join(" AND ") + locSuffix + excludeClause) : "";
+
+    let preciseQ = liveCore + locSuffix;
+    if (excludeAll.length) preciseQ += ` NOT ${orGroup(excludeAll)}`;
+    preciseQ = squeeze(preciseQ);
+
+    const liOpenUrl = q => "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(q) + "&origin=GLOBAL_SEARCH";
+
+    cards.push({ name: "LinkedIn — Broad", live: true, limit: 1000, query: broadQ, url: liOpenUrl(broadQ),
+      note: `Start here if the more specific searches show 0 results. ${notePrefix}${otwNote}${locNote}${overrideNote}` });
+    if (mediumQ && mediumQ !== broadQ){
+      cards.push({ name: "LinkedIn — Medium", live: true, limit: 1000, query: mediumQ, url: liOpenUrl(mediumQ),
+        note: `One skill group added. Standard LinkedIn search supports AND/OR/NOT/quotes but caps around 1,000 characters and gets unreliable the more mandatory AND groups you stack. ${notePrefix}${otwNote}${locNote}${overrideNote}` });
+    }
+    const lastShown = mediumQ || broadQ;
+    if (preciseQ && preciseQ !== lastShown){
+      cards.push({ name: "LinkedIn — Precise (all must-have groups)", live: true, limit: 1000, query: preciseQ, url: liOpenUrl(preciseQ),
+        note: `Every must-have group required at once — most likely to return 0 results if any group's wording doesn't literally appear on a profile. Drop back to Broad/Medium if this comes up empty. ${notePrefix}${otwNote}${locNote}${advNote}${overrideNote}` });
+    }
+  }
+  if (s.platforms.googleli){
+    let q = squeeze(`site:linkedin.com/in/ ${liveCore} ${batch.loc} ${excludeAll.map(t=>"-"+quote(t)).join(" ")} -intitle:"jobs" -"hiring"`);
+    cards.push({ name: "Google X-Ray → LinkedIn Profiles", live: true, query: q, url: "https://www.google.com/search?q=" + encodeURIComponent(q),
+      note: "Reaches public LinkedIn profiles beyond your network/search-limit restrictions. If this returns nothing, remove the location phrase or drop a skill group." + otwNoteGeneric + advNote + overrideNote });
+  }
+  if (s.platforms.googleresume){
+    let q = squeeze(`(filetype:pdf OR filetype:doc OR filetype:docx) "resume" ${liveCore} ${batch.loc} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
+    cards.push({ name: "Google X-Ray → Resumes/CVs", live: true, query: q, url: "https://www.google.com/search?q=" + encodeURIComponent(q),
+      note: "Surfaces publicly posted resumes/CVs matching your criteria." + otwNoteGeneric + advNote + overrideNote });
+  }
+  if (s.platforms.github){
+    const skillTerms = [...s.titles, ...s.mustHaveGroups.flat()];
+    let q = squeeze(`${skillTerms.map(quote).join(" ")} ${batch.locParam ? `location:"${batch.locParam}"` : ""} type:user`);
+    cards.push({ name: "GitHub — Developer Search", live: true, query: q, url: "https://github.com/search?q=" + encodeURIComponent(q) + "&type=users",
+      note: "Best for engineering roles with public code activity; location tags are self-reported." + overrideNote });
+  }
+  if (s.platforms.indeed){
+    let q = squeeze(`${liveCore} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
+    cards.push({ name: "Indeed — Resume Search", live: true, query: q,
+      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (batch.locParam ? "&l=" + encodeURIComponent(batch.locParam) : ""),
+      note: "Indeed's resume database is a paid Employer/Recruiter feature — log into an Indeed Employer account with resume access first." + otwNoteGeneric + advNote + overrideNote });
+  }
+  if (s.platforms.clearancejobs){
+    let q = fullCore; if (excludeAll.length) q += ` NOT ${orGroup(excludeAll)}`;
+    cards.push({ name: "ClearanceJobs — Candidate Search", live: false, query: squeeze(q), url: "https://www.clearancejobs.com/",
+      note: "Requires a ClearanceJobs recruiter account. Paste the Boolean string into their candidate search." + overrideNote });
+  }
+  if (s.platforms.monster){
+    let q = fullCore; if (excludeAll.length) q += ` NOT ${orGroup(excludeAll)}`;
+    cards.push({ name: "Monster — Resume Database", live: false, query: squeeze(q), url: "https://hiring.monster.com/",
+      note: "Requires a Monster recruiter seat. Paste the Boolean string into their resume search." + overrideNote });
+  }
+  if (s.platforms.zip){
+    let q = fullCore; if (excludeAll.length) q += ` NOT ${orGroup(excludeAll)}`;
+    cards.push({ name: "ZipRecruiter — Resume Database", live: false, query: squeeze(q), url: "https://www.ziprecruiter.com/",
+      note: "Requires a ZipRecruiter recruiter seat. Paste the Boolean string into their resume search." + overrideNote });
+  }
+  return cards;
+}
+
+/* ============================================================
+   QUERY HEALTH + PLAIN-ENGLISH TRANSLATION
+   (Heuristics computed from the final Boolean string — not perfect for
+   every edge case, but gives recruiters a quick read on volume vs.
+   precision, and a readable translation of what the string actually does.)
+   ============================================================ */
+function tokenizeAtoms(str){
+  // Splits a Boolean string into top-level atoms: "quoted phrases", (parenthesized groups),
+  // and bare words — treating consecutive atoms as implicitly AND'd, since Google/GitHub-style
+  // queries rely on space-adjacency for AND rather than a literal "AND" keyword.
+  const atoms = [];
+  const s = String(str).trim();
+  let i = 0;
+  while (i < s.length){
+    while (i < s.length && /\s/.test(s[i])) i++;
+    if (i >= s.length) break;
+    if (s[i] === '"'){
+      let j = i + 1;
+      while (j < s.length && s[j] !== '"') j++;
+      atoms.push(s.slice(i, j + 1));
+      i = j + 1;
+    } else if (s[i] === '('){
+      let depth = 1, j = i + 1;
+      while (j < s.length && depth > 0){
+        if (s[j] === '(') depth++;
+        else if (s[j] === ')') depth--;
+        j++;
+      }
+      atoms.push(s.slice(i, j));
+      i = j;
+    } else {
+      let j = i;
+      while (j < s.length && !/\s/.test(s[j])) j++;
+      atoms.push(s.slice(i, j));
+      i = j;
+    }
+  }
+  return atoms;
+}
+function humanizeGroup(group){
+  let g = String(group).trim();
+  if (g.startsWith('(') && g.endsWith(')')) g = g.slice(1, -1);
+  const terms = tokenizeAtoms(g).filter(a => a !== 'OR').map(t => t.replace(/^"|"$/g, '')).filter(Boolean);
+  if (!terms.length) return `"${g}"`;
+  if (terms.length === 1) return `"${terms[0]}"`;
+  if (terms.length === 2) return `"${terms[0]}" or "${terms[1]}"`;
+  return terms.slice(0,-1).map(t=>`"${t}"`).join(', ') + `, or "${terms[terms.length-1]}"`;
+}
+// Shared structural parse used by both the plain-English translator and the health gauge,
+// so the two features always agree on what a query actually requires.
+function parseQueryStructure(rawQuery){
+  let q = String(rawQuery).trim();
+  const notes = [];
+
+  if (/^site:linkedin\.com\/in\//.test(q)){
+    notes.push('Restricted to LinkedIn profile pages (via Google).');
+    q = q.replace(/^site:linkedin\.com\/in\/\s*/, '');
+  }
+  q = q.replace(/(^|\s)-intitle:"jobs"/g, '$1').replace(/(^|\s)-"hiring"/g, '$1').trim();
+
+  const resumeFileMatch = q.match(/^\(filetype:pdf OR filetype:doc OR filetype:docx\)\s*"resume"\s*/);
+  if (resumeFileMatch){
+    notes.push('Looking specifically for PDF/Word resume files with "resume" in the text.');
+    q = q.slice(resumeFileMatch[0].length).trim();
+  }
+
+  const locMatch = q.match(/location:"([^"]+)"/);
+  if (locMatch){ notes.push(`Location tagged as "${locMatch[1]}" (self-reported).`); q = q.replace(/location:"[^"]+"/, '').trim(); }
+  q = q.replace(/(^|\s)type:user(\s|$)/, '$1').trim();
+
+  let mainPart = q, excludePart = '';
+  const notIdx = q.indexOf(' NOT ');
+  if (notIdx !== -1){ mainPart = q.slice(0, notIdx); excludePart = q.slice(notIdx + 5).trim(); }
+
+  // Strip "-term"/-"quoted term" exclusions — only when the "-" starts a token (preceded by
+  // whitespace or string-start), so hyphenated words like "Curtiss-Wright" are left untouched.
+  const minusTerms = [];
+  mainPart = mainPart.replace(/(^|\s)-("[^"]+"|\S+)/g, (m, pre, term) => {
+    minusTerms.push(term.replace(/^"|"$/g, ''));
+    return pre;
+  }).trim();
+
+  const requireGroups = tokenizeAtoms(mainPart).filter(a => a && a !== 'AND' && a !== 'OR');
+
+  return { notes, requireGroups, excludePart, minusTerms };
+}
+function queryToPlainEnglish(rawQuery){
+  const { notes, requireGroups, excludePart, minusTerms } = parseQueryStructure(rawQuery);
+
+  const sentenceParts = requireGroups.map(a => {
+    if (a.startsWith('(')) return `mentions ${humanizeGroup(a)}`;
+    if (a.startsWith('"')) return `mentions "${a.slice(1, -1)}"`;
+    return `mentions "${a}"`;
+  });
+
+  let sentence = sentenceParts.length
+    ? 'Looking for results that ' + sentenceParts.join(', and that ') + '.'
+    : "Looking for the platform's default results for this search — no specific AND-requirements.";
+
+  const allExcludes = [];
+  if (excludePart) allExcludes.push(humanizeGroup(excludePart));
+  if (minusTerms.length) allExcludes.push(minusTerms.map(t=>`"${t}"`).join(', '));
+  if (allExcludes.length) sentence += ` Excluding anything mentioning ${allExcludes.join(', ')}.`;
+
+  return (notes.length ? notes.join(' ') + ' ' : '') + sentence;
+}
+function assessQueryHealth(query){
+  const { requireGroups } = parseQueryStructure(query);
+  const count = requireGroups.length;
+  if (count <= 1) return {level:'broad', label:'Broad', desc:"Single term or one OR-group — high volume, lower precision. Good for casting a wide net, or as a fallback if a narrower search returns 0."};
+  if (count <= 3) return {level:'balanced', label:'Balanced', desc:"A few AND’d requirements stacked together — usually a solid mix of relevance and result volume."};
+  return {level:'narrow', label:'Narrow', desc:"Several AND’d requirements stacked together — higher precision, but more likely to return 0 results if any one group's exact wording isn't literally on a profile."};
+}
+
+let CARD_DATA = [];
+function cardHTML(c){
+  const idx = CARD_DATA.length;
+  CARD_DATA.push(c);
+  const limit = c.limit || 380;
+  const lenWarn = c.query.length > limit ? `<div class="note len-warn">⚠ ${c.query.length} chars — over the ~${limit}-char practical limit; it may get truncated or silently drop terms.</div>` : "";
+  const health = assessQueryHealth(c.query);
+  const plain = queryToPlainEnglish(c.query);
+  return `
+    <div class="card">
+      <div class="card-head">
+        <span class="pname">${escapeHTML(c.name)}</span>
+        <span class="card-tags">
+          <span class="tag ${c.live ? 'live' : 'manual'}">${c.live ? 'One-click open' : 'Copy & paste'}</span>
+          <span class="tag health-${health.level}" title="${escapeHTML(health.desc)}">${health.label}</span>
+        </span>
+      </div>
+      <pre class="query">${escapeHTML(c.query)}</pre>
+      <div class="card-actions">
+        <button class="btn btn-secondary" onclick="doCopyCard(${idx}, this)">Copy query</button>
+        ${c.live ? `<button class="btn btn-primary" onclick="doOpenCard(${idx})">Open search ↗</button>` : `<button class="btn btn-ghost" onclick="doOpenCard(${idx})">Open site ↗</button>`}
+      </div>
+      <details class="plain-eng">
+        <summary>🗣 Plain English</summary>
+        <p>${escapeHTML(plain)}</p>
+      </details>
+      <div class="note">${escapeHTML(c.note)}${lenWarn}</div>
+    </div>`;
+}
+function doCopyCard(idx, btn){ const c = CARD_DATA[idx]; if (c) copyText(c.query, btn); }
+function doOpenCard(idx){ const c = CARD_DATA[idx]; if (c) window.open(c.url, '_blank'); }
+
+function generateSourcing(){
+  const s = readSourceForm();
+  if (!s.titles.length && !s.mustHaveGroups.length){
+    el('sourceResults').innerHTML = `<div class="results-empty">Add at least a job title or a skill in Role Basics, then click Generate.</div>`;
+    return;
+  }
+  CARD_DATA = [];
+  const batches = makeBatches(s);
+  const results = el('sourceResults');
+  results.innerHTML = batches.map(batch => {
+    const cards = buildCards(s, batch);
+    return `<div class="batch"><div class="batch-title">📍 ${escapeHTML(batch.label)}</div>${cards.map(cardHTML).join("")}</div>`;
+  }).join("");
+  if (!results.innerHTML.trim()){
+    results.innerHTML = `<div class="results-empty">Select at least one search platform on the left.</div>`;
+  }
+}
+
+/* ============================================================
+   AD KIT LOGIC
+   ============================================================ */
+function readAdkitForm(){
+  const shared = readShared();
+  return {
+    title: shared.titles[0] || 'this role',
+    category: el('category').value,
+    location: shared.location || 'the USA',
+    type: el('type').value,
+    seniority: SENIORITY_LABELS[shared.seniority] || '',
+    salary: el('salary').value.trim(),
+    urgent: el('urgent').checked,
+    skillsList: shared.skills,
+  };
+}
+
+function buildSkills(list, cap){
+  if (cap<=0 || list.length===0) return '';
+  return list.slice(0,cap).join(', ');
+}
+
+function adTemplates(tone, d){
+  switch(tone){
+    case 'professional':
+      return `${d.urgent?'Now hiring — ':'Hiring: '}${d.seniority} ${d.title} in ${d.location} (${d.type}).\n\nWe're looking for someone with experience in ${d.skills||'the core skills for this role'}.${d.salary?` Salary: ${d.salary}.`:''} Join a team that's growing.\n\nApply today.`;
+    case 'plain':
+      return `${d.title} — ${d.location}. ${d.type}. ${d.seniority} level.${d.skills?` Requirements: ${d.skills}.`:''}${d.salary?` Pay: ${d.salary}.`:''} Apply now.`;
+    case 'casual':
+      return `${d.urgent?'🔥 URGENT: ':'🚀 '}We're hiring a ${d.title} in ${d.location}! ${d.type} role${d.skills?` — skills in ${d.skills} are a plus`:''}.${d.salary?` 💰 ${d.salary}.`:''} Apply below 👇`;
+    case 'hook':
+      return `POV: your next job is ${d.title} in ${d.location} 👀 ${d.type} · apply now!${d.urgent?' ⏰ hiring fast':''}`;
+  }
+}
+
+/* ============================================================
+   INCLUSIVE LANGUAGE CHECK
+   (Scans generated ad copy for gendered/ageist/ableist/bias-prone phrasing
+   that's known to suppress application rates from qualified candidates —
+   flags the term and suggests a neutral alternative. Not legal advice.)
+   ============================================================ */
+const INCLUSIVE_LANGUAGE_FLAGS = [
+  { term: 'rockstar', category: 'Informal/gendered', suggestion: '"skilled" or "expert"' },
+  { term: 'ninja', category: 'Informal/gendered', suggestion: '"specialist" or "expert"' },
+  { term: 'guru', category: 'Informal/gendered', suggestion: '"expert" or "specialist"' },
+  { term: 'hacker', category: 'Informal/gendered', suggestion: '"engineer" or "developer" (unless literally hiring for security research)' },
+  { term: 'dominant', category: 'Masculine-coded', suggestion: '"skilled" or "accomplished"' },
+  { term: 'aggressive', category: 'Masculine-coded', suggestion: '"proactive" or "driven"' },
+  { term: 'chairman', category: 'Gendered', suggestion: '"chairperson" or "chair"' },
+  { term: 'salesman', category: 'Gendered', suggestion: '"salesperson" or "sales rep"' },
+  { term: 'manpower', category: 'Gendered', suggestion: '"workforce" or "staff"' },
+  { term: 'young', category: 'Ageist', suggestion: 'remove — age-coded language can discourage older applicants and carries legal risk in job ads' },
+  { term: 'energetic', category: 'Ageist (context-dependent)', suggestion: '"motivated" or "proactive"' },
+  { term: 'digital native', category: 'Ageist', suggestion: '"comfortable with digital tools"' },
+  { term: 'recent graduate', category: 'Ageist', suggestion: '"early-career" or state the actual experience range' },
+  { term: 'culture fit', category: 'Bias-prone', suggestion: '"culture add" or "team alignment"' },
+  { term: 'work hard play hard', category: 'Can deter caregivers', suggestion: '"collaborative, results-driven team"' },
+  { term: 'native english speaker', category: 'Exclusionary', suggestion: '"fluent in English" — native-speaker status isn’t a valid proxy for fluency' },
+  { term: 'able-bodied', category: 'Ableist', suggestion: 'remove, or state the specific physical requirement with accommodation language' },
+];
+function checkInclusiveLanguage(text){
+  const lower = String(text).toLowerCase();
+  return INCLUSIVE_LANGUAGE_FLAGS.filter(f => textHasTerm(lower, f.term));
+}
+
+function generateAdkit(){
+  const d = readAdkitForm();
+  const scored = AD_PLATFORMS.map(p => ({...p, score: p.base + (p.cat[d.category]||0)}))
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,6);
+  const maxScore = scored[0].score;
+
+  const allFlags = new Map();
+  const cards = scored.map(p => {
+    const skills = buildSkills(d.skillsList, p.skillCap);
+    const copy = adTemplates(p.tone, {title:d.title, location:d.location, type:d.type, seniority:d.seniority, salary:d.salary, urgent:d.urgent, skills});
+    checkInclusiveLanguage(copy).forEach(f => allFlags.set(f.term, f));
+    const over = copy.length > p.limit;
+    const matchPct = Math.round((p.score/maxScore)*100);
+    const matchClass = matchPct >= 75 ? '' : 'mid';
+    const safeCopy = escapeHTML(copy);
+    return `
+      <div class="ticket">
+        <div class="ticket-top">
+          <span class="platform-name">${p.name}</span>
+          <span class="match ${matchClass}">${matchPct}% match</span>
+        </div>
+        <div class="perf"></div>
+        <div class="ticket-body">
+          <div class="ad-copy" id="copy-${p.id}">${safeCopy}</div>
+          <div class="ticket-foot">
+            <span class="charcount ${over?'warn':''}">${copy.length} / ${p.limit} chars</span>
+            <button class="copy-btn" onclick="copyAdText('${p.id}', this)">Copy</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const flags = Array.from(allFlags.values());
+  const inclusivePanel = flags.length
+    ? `<details class="inclusive-panel flagged" open>
+        <summary>⚠ Inclusive language check — ${flags.length} term${flags.length>1?'s':''} flagged across your ad copy</summary>
+        <ul class="inclusive-list">
+          ${flags.map(f => `<li><span class="inc-term">"${escapeHTML(f.term)}"</span><span class="inc-cat">${escapeHTML(f.category)}</span><span class="inc-sug">Try instead: ${escapeHTML(f.suggestion)}</span></li>`).join('')}
+        </ul>
+        <p class="hint" style="margin:8px 0 0;">These come from your Job Title / Key Skills fields. Not legal advice — a quick pass, not a compliance guarantee.</p>
+      </details>`
+    : `<details class="inclusive-panel clean">
+        <summary>✓ Inclusive language check — no flagged terms found</summary>
+        <p class="hint" style="margin:8px 0 0;">Scanned against a list of gendered, ageist, ableist, and bias-prone phrasing known to suppress application rates. Not legal advice — a quick pass, not a compliance guarantee.</p>
+      </details>`;
+
+  el('adkitResults').innerHTML = `${inclusivePanel}<div class="tickets">${cards}</div>`;
+}
+
+function copyAdText(id, btn){
+  const text = el('copy-'+id).innerText;
+  copyText(text, btn, 'Copied');
+}
+
+/* ============================================================
+   RESUME MATCH LOGIC
+   ============================================================ */
+const STOPWORDS = new Set((
+  "a about above after again against all am an and any are aren't as at be because been before being below "+
+  "between both but by can't cannot could couldn't did didn't do does doesn't doing don't down during each few "+
+  "for from further had hadn't has hasn't have haven't having he he'd he'll he's her here here's hers herself "+
+  "him himself his how how's i i'd i'll i'm i've if in into is isn't it it's its itself let's me more most "+
+  "mustn't my myself no nor not of off on once only or other ought our ours ourselves out over own same shan't "+
+  "she she'd she'll she's should shouldn't so some such than that that's the their theirs them themselves then "+
+  "there there's these they they'd they'll they're they've this those through to too under until up very was "+
+  "wasn't we we'd we'll we're we've were weren't what what's when when's where where's which while who who's "+
+  "whom why why's with won't would wouldn't you you'd you'll you're you've your yours yourself yourselves "+
+  "will able using use used within across per etc via also may might must need needs required requiring "+
+  "requirement requirements responsibilities responsibility duties duty include includes including preferred "+
+  "plus strong excellent proven demonstrated ability abilities skill skills experience experienced years year "+
+  "work working works team teams role roles position positions company companies job jobs candidate candidates "+
+  "opportunity opportunities looking seeking join joining apply application applicants applicant employer "+
+  "employment employees employee benefits benefit compensation salary equal provide provides providing ensure "+
+  "ensures ensuring help helps helping support supports supporting new time full part high level levels great "+
+  "good better best set sets like just business businesses environment environments related bachelor bachelors "+
+  "degree degrees education educational field fields background backgrounds knowledge understanding minimum least"
+).split(/\s+/).filter(Boolean));
+
+function tokenizeWords(text){
+  return (String(text).toLowerCase().match(/[a-z][a-z0-9+#.]{1,30}/g) || []).map(w => w.replace(/\.+$/,''));
+}
+function escapeRegex(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function textHasTerm(haystackLower, term){
+  const t = String(term).trim().toLowerCase();
+  if (!t) return false;
+  if (t.includes(' ')) return haystackLower.includes(t);
+  return new RegExp('(^|[^a-z0-9])' + escapeRegex(t) + '([^a-z0-9]|$)', 'i').test(haystackLower);
+}
+
+function extractJDKeywords(jdText, explicitSkills){
+  const words = tokenizeWords(jdText);
+  const freq = {};
+  words.forEach(w => {
+    if (w.length < 3 || STOPWORDS.has(w) || /^\d+$/.test(w)) return;
+    freq[w] = (freq[w]||0) + 1;
+  });
+  const bigramFreq = {};
+  for (let i=0;i<words.length-1;i++){
+    const a = words[i], b = words[i+1];
+    if (a.length<3 || b.length<3 || STOPWORDS.has(a) || STOPWORDS.has(b)) continue;
+    const bg = a+' '+b;
+    bigramFreq[bg] = (bigramFreq[bg]||0)+1;
+  }
+  const topBigrams = Object.entries(bigramFreq).filter(([,c])=>c>=2).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([k])=>k);
+
+  const usedUnigrams = new Set();
+  explicitSkills.forEach(s => String(s).toLowerCase().split(/\s+/).forEach(w=>usedUnigrams.add(w)));
+  topBigrams.forEach(bg => bg.split(' ').forEach(w=>usedUnigrams.add(w)));
+
+  const topUnigrams = Object.entries(freq)
+    .filter(([w]) => !usedUnigrams.has(w))
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0, 16)
+    .map(([k])=>k);
+
+  return [...topBigrams, ...topUnigrams].slice(0, 22);
+}
+
+function extractMaxYears(text){
+  const matches = [...String(text).matchAll(/(\d{1,2})\+?\s*(?:years|yrs)/gi)];
+  if (!matches.length) return null;
+  return Math.max(...matches.map(m=>parseInt(m[1],10)));
+}
+
+function scoreMatch(requiredSkills, autoKeywords, resumeText){
+  const rt = resumeText.toLowerCase();
+  const reqResults = requiredSkills.map(term => ({term, matched: textHasTerm(rt, term)}));
+  const autoResults = autoKeywords.map((term, i) => ({term, matched: textHasTerm(rt, term), weight: i < 8 ? 2 : 1}));
+  const reqWeight = 3;
+  const totalWeight = reqResults.length*reqWeight + autoResults.reduce((s,r)=>s+r.weight,0);
+  const matchedWeight = reqResults.filter(r=>r.matched).length*reqWeight + autoResults.filter(r=>r.matched).reduce((s,r)=>s+r.weight,0);
+  const pct = totalWeight ? Math.round((matchedWeight/totalWeight)*100) : 0;
+  return { pct, reqResults, autoResults };
+}
+
+/* ---- Candidate cards (bulk resume input) ---- */
+let CANDIDATE_SEQ = 0;
+function addCandidateCard(name, text){
+  const id = 'cand-' + (++CANDIDATE_SEQ);
+  const wrap = document.createElement('div');
+  wrap.className = 'cand-card';
+  wrap.dataset.id = id;
+  wrap.innerHTML = `
+    <div class="cand-card-head">
+      <input type="text" class="cand-name" placeholder="Candidate name (e.g. Jane Doe)">
+      <button type="button" class="cand-remove" title="Remove candidate">✕</button>
+    </div>
+    <div class="upload-row">
+      <button type="button" class="btn btn-secondary cand-upload-btn">📂 Upload file <span class="hint" style="text-transform:none; font-weight:400;">(.txt/.docx/.pdf)</span></button>
+      <input type="file" class="cand-file-input" accept=".txt,.pdf,.docx" style="display:none">
+    </div>
+    <textarea class="cand-text" placeholder="Paste resume text here, or upload a file above." style="min-height:90px;"></textarea>
+    <div class="file-status cand-status"></div>`;
+  wrap.querySelector('.cand-name').value = name || '';
+  wrap.querySelector('.cand-text').value = text || '';
+  wrap.querySelector('.cand-remove').addEventListener('click', () => removeCandidateCard(id));
+  const fileInput = wrap.querySelector('.cand-file-input');
+  wrap.querySelector('.cand-upload-btn').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (evt) => handleCandidateFileUpload(evt, id));
+  el('candidateList').appendChild(wrap);
+  updateCandidateRemoveButtons();
+  return id;
+}
+function removeCandidateCard(id){
+  const card = document.querySelector(`.cand-card[data-id="${id}"]`);
+  if (card) card.remove();
+  if (!document.querySelectorAll('.cand-card').length) addCandidateCard();
+  updateCandidateRemoveButtons();
+}
+function updateCandidateRemoveButtons(){
+  const cards = document.querySelectorAll('.cand-card');
+  cards.forEach(c => { c.querySelector('.cand-remove').style.visibility = cards.length > 1 ? 'visible' : 'hidden'; });
+}
+function resetCandidates(){
+  el('candidateList').innerHTML = '';
+  CANDIDATE_TRACK.clear();
+  addCandidateCard();
+}
+function readCandidates(){
+  return Array.from(document.querySelectorAll('.cand-card')).map(card => ({
+    id: card.dataset.id,
+    name: card.querySelector('.cand-name').value.trim(),
+    text: card.querySelector('.cand-text').value.trim()
+  })).filter(c => c.text);
+}
+
+/* ---- Mini-ATS: pipeline status + notes per candidate (in-memory, keyed by candidate card id) ---- */
+const CANDIDATE_STATUSES = ['New','Contacted','Interviewing','Offer','Rejected'];
+const CANDIDATE_STATUS_COLOR = { New:'#8a94a0', Contacted:'#2f6fed', Interviewing:'#b45309', Offer:'#1f7a4d', Rejected:'#b3261e' };
+let CANDIDATE_TRACK = new Map();
+function getTrack(id){
+  if (!CANDIDATE_TRACK.has(id)) CANDIDATE_TRACK.set(id, {status:'New', notes:''});
+  return CANDIDATE_TRACK.get(id);
+}
+function escapeAttr(str){ return escapeHTML(str).replace(/"/g, '&quot;'); }
+function statusControlHTML(id){
+  const t = getTrack(id);
+  const options = CANDIDATE_STATUSES.map(s => `<option value="${s}" ${s===t.status?'selected':''}>${s}</option>`).join('');
+  return `
+    <div class="status-row">
+      <span class="status-dot" style="background:${CANDIDATE_STATUS_COLOR[t.status]}" data-status-dot="${id}" title="Pipeline status"></span>
+      <select class="status-select" data-status-id="${id}">${options}</select>
+      <input type="text" class="status-notes" data-notes-id="${id}" placeholder="Notes (e.g. phone screen scheduled 7/20)" value="${escapeAttr(t.notes)}">
+    </div>`;
+}
+el('matchResults').addEventListener('change', (e) => {
+  if (e.target.matches('.status-select')){
+    const id = e.target.dataset.statusId;
+    const t = getTrack(id);
+    t.status = e.target.value;
+    const dot = document.querySelector(`.status-dot[data-status-dot="${id}"]`);
+    if (dot) dot.style.background = CANDIDATE_STATUS_COLOR[t.status];
+  }
+});
+el('matchResults').addEventListener('input', (e) => {
+  if (e.target.matches('.status-notes')) getTrack(e.target.dataset.notesId).notes = e.target.value;
+});
+
+async function loadFileIntoCandidate(file, id){
+  const card = document.querySelector(`.cand-card[data-id="${id}"]`);
+  if (!card) return;
+  const textarea = card.querySelector('.cand-text');
+  const status = card.querySelector('.cand-status');
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  status.textContent = `Reading ${file.name}…`;
+  try {
+    let text = '';
+    if (ext === 'txt') text = await file.text();
+    else if (ext === 'pdf') text = await extractPdfText(file);
+    else if (ext === 'docx') text = await extractDocxText(file);
+    else { status.textContent = `Unsupported file type ".${ext}" — upload .txt, .docx, or .pdf, or paste the text directly.`; return; }
+    textarea.value = text;
+    status.textContent = text.trim()
+      ? `Loaded ${file.name} (${text.length.toLocaleString()} characters).`
+      : `${file.name} loaded, but no selectable text was found — it may be a scanned/image PDF. Paste the text manually instead.`;
+  } catch(err){
+    status.textContent = `Could not read ${file.name} (${(err && err.message) || 'parsing failed'}) — paste the text manually instead.`;
+  }
+}
+function handleCandidateFileUpload(evt, id){
+  const file = evt.target.files[0];
+  if (file) loadFileIntoCandidate(file, id);
+  evt.target.value = "";
+}
+async function handleBulkFileUpload(evt){
+  const files = Array.from(evt.target.files || []);
+  if (!files.length) return;
+  for (const file of files){
+    const cleanName = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+    const cards = document.querySelectorAll('.cand-card');
+    let id;
+    if (cards.length === 1 && !cards[0].querySelector('.cand-name').value.trim() && !cards[0].querySelector('.cand-text').value.trim()){
+      id = cards[0].dataset.id;
+      cards[0].querySelector('.cand-name').value = cleanName;
+    } else {
+      id = addCandidateCard(cleanName, '');
+    }
+    await loadFileIntoCandidate(file, id);
+  }
+  evt.target.value = "";
+}
+
+/* ---- Scoring + signals shared by single-view and leaderboard ---- */
+function buildMatchSignals(shared, jdText, resumeText){
+  const signals = [];
+  const jdYears = extractMaxYears(jdText);
+  const resumeYears = extractMaxYears(resumeText);
+  if (jdYears !== null){
+    if (resumeYears !== null && resumeYears >= jdYears){
+      signals.push({icon:'ok', text: `JD asks for ${jdYears}+ years — resume mentions ${resumeYears}+ years, meets or exceeds it.`});
+    } else if (resumeYears !== null){
+      signals.push({icon:'warn', text: `JD asks for ${jdYears}+ years — resume's highest mention is ${resumeYears} years, below the ask.`});
+    } else {
+      signals.push({icon:'warn', text: `JD asks for ${jdYears}+ years — no years-of-experience figure found in the resume text.`});
+    }
+  }
+  if (shared.seniority && SENIORITY_TERMS[shared.seniority]){
+    const hit = SENIORITY_TERMS[shared.seniority].some(t => textHasTerm(resumeText.toLowerCase(), t));
+    signals.push({icon: hit ? 'ok':'info', text: `Seniority (${SENIORITY_LABELS[shared.seniority]}): ${hit ? 'resume language matches this level.' : 'no explicit language for this level found — not necessarily disqualifying.'}`});
+  }
+  if (shared.location){
+    const locHit = textHasTerm(resumeText.toLowerCase(), shared.location) || textHasTerm(resumeText.toLowerCase(), 'remote');
+    signals.push({icon: locHit ? 'ok':'info', text: `Location (${escapeHTML(shared.location)}): ${locHit ? 'resume mentions this location or "remote."' : 'no mention of this location or remote work found — confirm separately.'}`});
+  }
+  return signals;
+}
+
+function humanJoin(arr){
+  const clean = arr.filter(Boolean);
+  if (!clean.length) return '';
+  if (clean.length === 1) return clean[0];
+  if (clean.length === 2) return `${clean[0]} and ${clean[1]}`;
+  return clean.slice(0,-1).join(', ') + `, and ${clean[clean.length-1]}`;
+}
+function buildOutreachMessage(result, shared){
+  const title = shared.titles[0] || 'this role';
+  const matchedSkills = result.reqResults.filter(r=>r.matched).map(r=>r.term);
+  const matchedAuto = result.autoResults.filter(r=>r.matched).map(r=>r.term).slice(0,3);
+  const skillsMention = [...matchedSkills, ...matchedAuto].slice(0,4);
+  const firstName = (result.name||'').trim().split(/\s+/)[0] || 'there';
+  const skillsPhrase = skillsMention.length ? `your background in ${humanJoin(skillsMention)}` : 'your background';
+  const locPhrase = shared.location ? ` (${shared.location})` : '';
+  return `Hi ${firstName},
+
+I came across your background while researching candidates for a ${title} role${locPhrase} and wanted to reach out directly — ${skillsPhrase} stood out as a strong fit for what we're looking for.
+
+Would you be open to a quick conversation this week to hear more about the role and see if it lines up with what you're looking for next?
+
+Happy to work around your schedule — let me know what works.
+
+Best,
+[Your name]`;
+}
+function buildInterviewQuestions(result, shared, jdText){
+  const questions = [];
+  const missingReq = result.reqResults.filter(r=>!r.matched).map(r=>r.term);
+  const missingAuto = result.autoResults.filter(r=>!r.matched).map(r=>r.term).slice(0,4);
+  missingReq.forEach(term => questions.push(`The JD lists "${term}" as a must-have, but it wasn't found in the resume — ask the candidate to walk through their hands-on experience with ${term}, if any.`));
+  missingAuto.forEach(term => questions.push(`"${term}" appears in the job description but not clearly in the resume — probe whether that's a real gap or just missing from the written resume.`));
+  buildMatchSignals(shared, jdText, result.resumeText).filter(s=>s.icon==='warn').forEach(s => questions.push(`Signal check: ${s.text} — worth asking about directly.`));
+  if (!questions.length){
+    questions.push('No obvious gaps found against the JD from a keyword pass — spend interview time validating the strongest matched skills in depth, plus motivation for the move and team/culture fit.');
+  }
+  return questions;
+}
+function matchDetailHTML(result, shared, jdText, opts){
+  opts = opts || {};
+  const { pct, reqResults, autoResults, resumeText } = result;
+  const band = pct >= 75 ? 'good' : pct >= 50 ? 'mid' : 'low';
+  const bandLabel = pct >= 75 ? 'Strong overlap' : pct >= 50 ? 'Partial overlap' : 'Weak overlap';
+  const signals = buildMatchSignals(shared, jdText, resumeText);
+
+  const reqChips = reqResults.length
+    ? reqResults.map(r => `<span class="kw-chip ${r.matched?'matched':'missing'}">${escapeHTML(r.term)}</span>`).join('')
+    : `<span class="hint">No Key Skills entered in Role Basics — add some there to weight must-haves in the score.</span>`;
+  const autoChips = autoResults.length
+    ? autoResults.map(r => `<span class="kw-chip ${r.matched?'matched':'missing'}">${escapeHTML(r.term)}</span>`).join('')
+    : `<span class="hint">Not enough distinct terms found in the job description text to extract keywords.</span>`;
+  const signalItems = signals.length
+    ? signals.map(s => `<li><span class="signal-icon ${s.icon}">${s.icon==='ok'?'✓':s.icon==='warn'?'!':'i'}</span><span>${s.text}</span></li>`).join('')
+    : `<li><span class="signal-icon info">i</span><span>No seniority/location set in Role Basics and no "X years" figure found in the JD — nothing extra to check.</span></li>`;
+
+  const scoreBlock = opts.showScore === false ? '' : `
+    <div class="score-wrap">
+      <div class="score-circle ${band}">${pct}%<small>${escapeHTML(bandLabel)}</small></div>
+      <div class="score-summary">Overall match: <strong>${pct} out of 100</strong>. Matched <strong>${reqResults.filter(r=>r.matched).length}/${reqResults.length}</strong> must-have skill${reqResults.length===1?'':'s'} and <strong>${autoResults.filter(r=>r.matched).length}/${autoResults.length}</strong> other JD keyword${autoResults.length===1?'':'s'} against this resume. This is a keyword-overlap screen, not a full evaluation — use it to triage and to see exactly which terms to probe in a phone screen.</div>
+    </div>`;
+
+  // Explicit "what's missing" callout — the chip clouds below already color-code missing terms
+  // red, but this pulls them into one place so the gaps are visible without scanning every chip.
+  const missingReqTerms = reqResults.filter(r=>!r.matched).map(r=>r.term);
+  const missingAutoTerms = autoResults.filter(r=>!r.matched).map(r=>r.term);
+  const totalMissing = missingReqTerms.length + missingAutoTerms.length;
+  const missingBlock = totalMissing === 0
+    ? `<div class="missing-callout clean">✓ <strong>No missing keywords</strong> — this resume covers every must-have skill and JD keyword checked.</div>`
+    : `<div class="missing-callout has-gaps">
+        <strong>Missing ${totalMissing} keyword${totalMissing===1?'':'s'} from the JD:</strong>
+        ${missingReqTerms.length ? `<div class="missing-line">Must-have (${missingReqTerms.length}): ${missingReqTerms.map(escapeHTML).join(', ')}</div>` : ''}
+        ${missingAutoTerms.length ? `<div class="missing-line">Other keywords (${missingAutoTerms.length}): ${missingAutoTerms.map(escapeHTML).join(', ')}</div>` : ''}
+      </div>`;
+
+  const outreachText = buildOutreachMessage(result, shared);
+  const questions = buildInterviewQuestions(result, shared, jdText);
+  const questionsText = questions.map((q,i) => `${i+1}. ${q}`).join('\n\n');
+
+  return `${scoreBlock}${missingBlock}
+    <div class="kw-section">
+      <h3>Must-Have Skills <span class="hint" style="text-transform:none; font-weight:400;">(from Role Basics → Key Skills)</span></h3>
+      <div class="kw-chips">${reqChips}</div>
+    </div>
+    <div class="kw-section">
+      <h3>Other Keywords Found in the Job Description</h3>
+      <div class="kw-chips">${autoChips}</div>
+    </div>
+    <div class="kw-section">
+      <h3>Additional Signals</h3>
+      <ul class="signal-list">${signalItems}</ul>
+    </div>
+    <details class="outreach-panel">
+      <summary>✉ Draft outreach message</summary>
+      <pre class="outreach-text">${escapeHTML(outreachText)}</pre>
+      <div class="btn-row" style="margin-top:2px;">
+        <button class="btn btn-secondary" onclick="copyText(this.dataset.copy, this)" data-copy="${escapeAttr(outreachText)}">📋 Copy message</button>
+      </div>
+    </details>
+    <details class="outreach-panel">
+      <summary>❓ Interview questions targeting gaps</summary>
+      <ol class="interview-questions">${questions.map(q => `<li>${escapeHTML(q)}</li>`).join('')}</ol>
+      <div class="btn-row" style="margin-top:2px;">
+        <button class="btn btn-secondary" onclick="copyText(this.dataset.copy, this)" data-copy="${escapeAttr(questionsText)}">📋 Copy questions</button>
+      </div>
+    </details>`;
+}
+
+function buildSingleReportText(result, shared, jdText){
+  const { id, name, pct, reqResults, autoResults, resumeText } = result;
+  const bandLabel = pct >= 75 ? 'Strong overlap' : pct >= 50 ? 'Partial overlap' : 'Weak overlap';
+  const signals = buildMatchSignals(shared, jdText, resumeText);
+  const track = getTrack(id);
+  const missingReqTerms = reqResults.filter(r=>!r.matched).map(r=>r.term);
+  const missingAutoTerms = autoResults.filter(r=>!r.matched).map(r=>r.term);
+  return `Resume ↔ JD Match — Overall match: ${pct} out of 100 (${bandLabel})
+Role: ${shared.titles[0] || '(no title set)'}
+Candidate: ${name}
+Status: ${track.status}${track.notes ? ` — ${track.notes}` : ''}
+
+Missing keywords (${missingReqTerms.length + missingAutoTerms.length}):
+${missingReqTerms.length ? `  Must-have: ${missingReqTerms.join(', ')}` : ''}${missingReqTerms.length && missingAutoTerms.length ? '\n' : ''}${missingAutoTerms.length ? `  Other: ${missingAutoTerms.join(', ')}` : ''}${!missingReqTerms.length && !missingAutoTerms.length ? '  (none — full coverage)' : ''}
+
+Must-have skills matched (${reqResults.filter(r=>r.matched).length}/${reqResults.length}):
+${reqResults.length ? reqResults.map(r => `  [${r.matched?'x':' '}] ${r.term}`).join('\n') : '  (none entered)'}
+
+Other JD keywords matched (${autoResults.filter(r=>r.matched).length}/${autoResults.length}):
+${autoResults.length ? autoResults.map(r => `  [${r.matched?'x':' '}] ${r.term}`).join('\n') : '  (none extracted)'}
+
+Signals:
+${signals.length ? signals.map(s => `  - ${s.text}`).join('\n') : '  (none)'}
+
+Generated by the Plan AIQ Recruiting Toolkit — keyword-overlap screen only, not a hiring decision.`;
+}
+
+let SINGLE_MATCH_CONTEXT = null;
+function renderSingleMatch(result, shared, jdText){
+  SINGLE_MATCH_CONTEXT = { result, shared, jdText };
+  const target = el('matchResults');
+  target.innerHTML = `
+    <div class="kw-section" style="margin-top:0;">
+      <h3>Pipeline Status</h3>
+      ${statusControlHTML(result.id)}
+    </div>` + matchDetailHTML(result, shared, jdText) + `
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="copyMatchReport(this)">📋 Copy report</button>
+    </div>`;
+}
+
+let LEADERBOARD_DATA = [];
+function renderLeaderboard(scored, shared, jdText){
+  LEADERBOARD_DATA = scored;
+  const target = el('matchResults');
+  const top = scored[0];
+  const rows = scored.map((r, i) => {
+    const band = r.pct >= 75 ? 'good' : r.pct >= 50 ? 'mid' : 'low';
+    const track = getTrack(r.id);
+    return `
+    <details class="cand-result">
+      <summary class="cand-result-summary">
+        <span class="lb-rank">#${i+1}</span>
+        <span class="status-dot" style="background:${CANDIDATE_STATUS_COLOR[track.status]}" data-status-dot="${r.id}" title="Pipeline status: ${track.status}"></span>
+        <span class="lb-name">${escapeHTML(r.name)}</span>
+        <span class="lb-score ${band}">${r.pct}%</span>
+        <span class="lb-sub">${r.reqResults.filter(x=>x.matched).length}/${r.reqResults.length} must-haves · ${r.autoResults.filter(x=>x.matched).length}/${r.autoResults.length} keywords</span>
+        <span class="lb-chevron">▾</span>
+      </summary>
+      <div class="cand-result-body">
+        <div class="kw-section" style="margin-top:0;">
+          <h3>Pipeline Status</h3>
+          ${statusControlHTML(r.id)}
+        </div>
+        ${matchDetailHTML(r, shared, jdText, {showScore:false})}
+      </div>
+    </details>`;
+  }).join('');
+
+  target.innerHTML = `
+    <div class="leaderboard-head">
+      <div class="hint" style="margin:0; font-size:13px;">🏆 Top match: <strong style="color:var(--ink);">${escapeHTML(top.name)}</strong> — <strong style="color:var(--ink);">${top.pct}%</strong> · ${scored.length} candidates ranked against this job description.</div>
+      <div class="btn-row" style="margin:0;">
+        <button class="btn btn-secondary" onclick="copyLeaderboard(this)">📋 Copy ranked list</button>
+        <button class="btn btn-secondary" onclick="downloadLeaderboardCSV()">⬇ Download CSV</button>
+      </div>
+    </div>
+    ${rows}`;
+}
+
+function copyLeaderboard(btn){
+  const lines = LEADERBOARD_DATA.map((r,i) => {
+    const t = getTrack(r.id);
+    const missing = [...r.reqResults.filter(x=>!x.matched).map(x=>x.term), ...r.autoResults.filter(x=>!x.matched).map(x=>x.term)];
+    return `#${i+1}  ${r.name} — ${r.pct} out of 100 (${r.reqResults.filter(x=>x.matched).length}/${r.reqResults.length} must-haves, ${r.autoResults.filter(x=>x.matched).length}/${r.autoResults.length} keywords) — ${t.status}${t.notes ? `: ${t.notes}` : ''}\n     Missing: ${missing.length ? missing.join(', ') : '(none — full coverage)'}`;
+  });
+  const text = `Resume ↔ JD Match — Ranked Candidates\n\n` + lines.join('\n') + `\n\nGenerated by the Plan AIQ Recruiting Toolkit — keyword-overlap screen only, not a hiring decision.`;
+  copyText(text, btn);
+}
+function downloadLeaderboardCSV(){
+  const header = ['Rank','Candidate','Match % (out of 100)','Must-Haves Matched','Must-Haves Total','Keywords Matched','Keywords Total','Missing Must-Haves','Missing Other Keywords','Status','Notes'];
+  const rows = LEADERBOARD_DATA.map((r,i) => {
+    const t = getTrack(r.id);
+    const missingReq = r.reqResults.filter(x=>!x.matched).map(x=>x.term).join(', ');
+    const missingAuto = r.autoResults.filter(x=>!x.matched).map(x=>x.term).join(', ');
+    return [i+1, r.name, r.pct, r.reqResults.filter(x=>x.matched).length, r.reqResults.length, r.autoResults.filter(x=>x.matched).length, r.autoResults.length, missingReq, missingAuto, t.status, t.notes];
+  });
+  const csvEscape = v => { const s = String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+  const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'resume-match-ranking.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('CSV downloaded');
+}
+
+function generateMatch(){
+  const shared = readShared();
+  const jdText = el('jdText').value.trim();
+  const candidates = readCandidates();
+  const target = el('matchResults');
+  if (!jdText || !candidates.length){
+    target.innerHTML = `<div class="results-empty">Paste or upload a job description, and add at least one candidate resume, then click <strong>Generate</strong>.</div>`;
+    return;
+  }
+  const auto = extractJDKeywords(jdText, shared.skills);
+  const scored = candidates.map((c, i) => {
+    const { pct, reqResults, autoResults } = scoreMatch(shared.skills, auto, c.text);
+    return { id: c.id, name: c.name || `Candidate ${i+1}`, pct, reqResults, autoResults, resumeText: c.text };
+  }).sort((a,b) => b.pct - a.pct);
+
+  if (scored.length === 1) renderSingleMatch(scored[0], shared, jdText);
+  else renderLeaderboard(scored, shared, jdText);
+}
+
+function copyMatchReport(btn){
+  if (!SINGLE_MATCH_CONTEXT) return;
+  const { result, shared, jdText } = SINGLE_MATCH_CONTEXT;
+  copyText(buildSingleReportText(result, shared, jdText), btn);
+}
+
+/* ---- File upload → text extraction (JD) ----
+   The Resume Match tab has exactly ONE "Upload JD" control (unlike Source/Ad Kit, it doesn't
+   also show the shared jd-autofill-box — see switchTab). That single upload has to do double
+   duty: fill the full JD text box used for resume scoring below, AND auto-fill the shared
+   Job Title / Key Skills / Location / Seniority fields above — see handleMatchJDUpload. */
+async function handleMatchJDUpload(evt){
+  const file = evt.target.files[0];
+  evt.target.value = "";
+  if (!file) return;
+  const statusEl = el('jdFileStatus');
+  const reviewEl = el('jdMatchAutofillReview');
+  reviewEl.style.display = 'none';
+  statusEl.textContent = `Reading ${file.name}…`;
+  try {
+    const text = await extractTextFromAnyFile(file);
+    el('jdText').value = text;
+    if (!text.trim()){
+      statusEl.textContent = `${file.name} loaded, but no selectable text was found — it may be a scanned/image file. Paste the text manually instead.`;
+      return;
+    }
+    const result = applyJDAutofill(text, file.name);
+    statusEl.textContent = result.ok
+      ? `Loaded ${file.name} (${text.length.toLocaleString()} characters) — Job Title, Key Skills, Location, and Seniority above were auto-filled too.`
+      : `Loaded ${file.name} (${text.length.toLocaleString()} characters).`;
+    if (result.ok){
+      reviewEl.className = 'autofill-review';
+      reviewEl.innerHTML = renderAutofillReviewHTML(file.name, result);
+      reviewEl.style.display = '';
+    }
+  } catch(err){
+    statusEl.textContent = `Could not read ${file.name} (${(err && err.message) || 'parsing failed'}) — try a different format, or paste the text manually instead.`;
+  }
+}
+
+let pdfjsLibPromise = null;
+function loadPdfJs(){
+  if (pdfjsLibPromise) return pdfjsLibPromise;
+  pdfjsLibPromise = import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.min.mjs').then(mod => {
+    mod.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs';
+    return mod;
+  }).catch(err => { pdfjsLibPromise = null; throw new Error('failed to load PDF library'); });
+  return pdfjsLibPromise;
+}
+async function extractPdfText(file){
+  const pdfjsLib = await loadPdfJs();
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  let text = '';
+  for (let i=1; i<=pdf.numPages; i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(it => it.str).join(' ') + '\n\n';
+  }
+  return text.trim();
+}
+
+let mammothPromise = null;
+function loadMammoth(){
+  if (window.mammoth) return Promise.resolve(window.mammoth);
+  if (mammothPromise) return mammothPromise;
+  mammothPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.11.0/mammoth.browser.min.js';
+    s.onload = () => resolve(window.mammoth);
+    s.onerror = () => { mammothPromise = null; reject(new Error('failed to load DOCX library')); };
+    document.head.appendChild(s);
+  });
+  return mammothPromise;
+}
+async function extractDocxText(file){
+  const mammoth = await loadMammoth();
+  const buf = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({arrayBuffer: buf});
+  return (result.value || '').trim();
+}
+
+let xlsxLibPromise = null;
+function loadXlsxLib(){
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxLibPromise) return xlsxLibPromise;
+  xlsxLibPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = () => resolve(window.XLSX);
+    s.onerror = () => { xlsxLibPromise = null; reject(new Error('failed to load spreadsheet library')); };
+    document.head.appendChild(s);
+  });
+  return xlsxLibPromise;
+}
+
+/* ============================================================
+   JD AUTO-FILL — accept a JD in (almost) any file format and use it
+   to auto-populate Job Title / Key Skills / Location / Seniority.
+   Shares extractPdfText/extractDocxText above with the Resume Match
+   tab's JD upload; adds CSV/TSV/XLSX parsing and field-guessing on top.
+   ============================================================ */
+function parseDelimitedText(text, delim){
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  const str = String(text);
+  for (let i = 0; i < str.length; i++){
+    const c = str[i];
+    if (inQuotes){
+      if (c === '"'){
+        if (str[i+1] === '"'){ field += '"'; i++; } else inQuotes = false;
+      } else field += c;
+    } else if (c === '"'){
+      inQuotes = true;
+    } else if (c === delim){
+      row.push(field); field = '';
+    } else if (c === '\n' || c === '\r'){
+      if (c === '\r' && str[i+1] === '\n') i++;
+      row.push(field); field = '';
+      rows.push(row); row = [];
+    } else field += c;
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(f => String(f).trim() !== ''));
+}
+// Turns spreadsheet-style rows into "Label: Value" text so the same label-matching
+// regexes used for plain-text JDs (guessTitleFromText etc.) work on Excel/CSV exports too.
+function tabularRowsToText(rows){
+  if (!rows || !rows.length) return '';
+  const clean = rows.map(r => r.map(c => (c===undefined||c===null) ? '' : String(c)));
+  if (clean.every(r => r.length <= 2) && clean.some(r => r.length === 2)){
+    return clean.filter(r=>r.length===2).map(r => `${r[0]}: ${r[1]}`).join('\n');
+  }
+  const header = clean[0];
+  const dataRow = clean[1] || [];
+  const paired = header.map((h,i) => `${h}: ${dataRow[i] || ''}`).join('\n');
+  const allCells = clean.map(r => r.join(' ')).join('\n');
+  return paired + '\n\n' + allCells;
+}
+async function extractXlsxText(file){
+  const XLSX = await loadXlsxLib();
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, {type:'array'});
+  const parts = [];
+  wb.SheetNames.forEach(name => {
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, blankrows:false, defval:''});
+    if (rows.length) parts.push(tabularRowsToText(rows));
+  });
+  return parts.join('\n\n').trim();
+}
+async function extractTextFromAnyFile(file){
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if (ext === 'pdf') return await extractPdfText(file);
+  if (ext === 'docx') return await extractDocxText(file);
+  if (ext === 'doc') throw new Error("legacy .doc isn't readable in-browser — re-save as .docx, .pdf, or .txt and upload again");
+  if (ext === 'xlsx' || ext === 'xls') return await extractXlsxText(file);
+  if (ext === 'csv') return tabularRowsToText(parseDelimitedText(await file.text(), ','));
+  if (ext === 'tsv') return tabularRowsToText(parseDelimitedText(await file.text(), '\t'));
+  // .txt, .json, .rtf, .md, or any other/unknown type — best-effort plain-text read
+  return await file.text();
+}
+
+function guessTitleFromText(text){
+  // NOTE: only [ \t]* (never \s*) is used around the colon/dash — \s* also matches newlines,
+  // which would let a label like "About the role:\nWe are looking for..." skip past the empty
+  // rest-of-line and wrongly capture the *next* line's sentence as the "value".
+  const labeled = text.match(/\b(?:job[ \t]*)?title[ \t]*[:\-][ \t]*([^\n\r]{2,90})/i)
+    || text.match(/\bposition(?:[ \t]*name)?[ \t]*[:\-][ \t]*([^\n\r]{2,90})/i)
+    || text.match(/\brole[ \t]*[:\-][ \t]*([^\n\r]{2,90})/i);
+  if (labeled) return labeled[1].trim().replace(/["'.:;]+$/,'').trim();
+  const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  for (const line of lines.slice(0,6)){
+    if (line.length >= 4 && line.length <= 80 && !/[.!?]$/.test(line) &&
+        !/^(we are|about us|company overview|overview|summary|description|job description|responsibilities|requirements|qualifications)\b/i.test(line)){
+      return line.replace(/^[-•*#\s]+/, '').trim();
+    }
+  }
+  return '';
+}
+// ~120 major US cities not always paired with a state abbreviation in a JD ("based in Chicago").
+// Checked only after every more-explicit signal (label, "City, ST", full state name) has failed.
+const MAJOR_US_CITIES = [
+  ["New York","NY"],["Los Angeles","CA"],["Chicago","IL"],["Houston","TX"],["Phoenix","AZ"],
+  ["Philadelphia","PA"],["San Antonio","TX"],["San Diego","CA"],["Dallas","TX"],["Austin","TX"],
+  ["San Jose","CA"],["Fort Worth","TX"],["Jacksonville","FL"],["Columbus","OH"],["Charlotte","NC"],
+  ["San Francisco","CA"],["Indianapolis","IN"],["Seattle","WA"],["Denver","CO"],["Washington","DC"],
+  ["Boston","MA"],["Nashville","TN"],["El Paso","TX"],["Detroit","MI"],["Oklahoma City","OK"],
+  ["Portland","OR"],["Las Vegas","NV"],["Memphis","TN"],["Louisville","KY"],["Baltimore","MD"],
+  ["Milwaukee","WI"],["Albuquerque","NM"],["Tucson","AZ"],["Fresno","CA"],["Sacramento","CA"],
+  ["Kansas City","MO"],["Mesa","AZ"],["Atlanta","GA"],["Omaha","NE"],["Colorado Springs","CO"],
+  ["Raleigh","NC"],["Miami","FL"],["Long Beach","CA"],["Virginia Beach","VA"],["Oakland","CA"],
+  ["Minneapolis","MN"],["Tulsa","OK"],["Tampa","FL"],["Arlington","TX"],["New Orleans","LA"],
+  ["Wichita","KS"],["Cleveland","OH"],["Bakersfield","CA"],["Aurora","CO"],["Anaheim","CA"],
+  ["Honolulu","HI"],["Santa Ana","CA"],["Riverside","CA"],["Corpus Christi","TX"],["Lexington","KY"],
+  ["Stockton","CA"],["Henderson","NV"],["Saint Paul","MN"],["St. Louis","MO"],["Cincinnati","OH"],
+  ["Pittsburgh","PA"],["Greensboro","NC"],["Anchorage","AK"],["Plano","TX"],["Lincoln","NE"],
+  ["Orlando","FL"],["Irvine","CA"],["Newark","NJ"],["Durham","NC"],["Chula Vista","CA"],
+  ["Toledo","OH"],["Fort Wayne","IN"],["St. Petersburg","FL"],["Laredo","TX"],["Jersey City","NJ"],
+  ["Chandler","AZ"],["Madison","WI"],["Lubbock","TX"],["Buffalo","NY"],["Scottsdale","AZ"],
+  ["Reno","NV"],["Glendale","AZ"],["Gilbert","AZ"],["Winston-Salem","NC"],["Norfolk","VA"],
+  ["Chesapeake","VA"],["Garland","TX"],["Irving","TX"],["Hialeah","FL"],["Fremont","CA"],
+  ["Boise","ID"],["Richmond","VA"],["Baton Rouge","LA"],["Spokane","WA"],["Des Moines","IA"],
+  ["Tacoma","WA"],["San Bernardino","CA"],["Modesto","CA"],["Fontana","CA"],["Grand Rapids","MI"],
+  ["Ann Arbor","MI"],["Rochester","NY"],["Salt Lake City","UT"],["Knoxville","TN"],["Providence","RI"],
+  ["Akron","OH"],["Worcester","MA"],["Chattanooga","TN"],["Huntsville","AL"],["Tallahassee","FL"],
+  ["Grand Prairie","TX"],["Overland Park","KS"],["Cape Coral","FL"],["Mobile","AL"]
+];
+function guessLocationFromText(text){
+  // Normalize a raw capture: trim stray punctuation, and if it's a bare known city with no state
+  // attached, look up its state from MAJOR_US_CITIES so the result is always usable directly.
+  const finalizeLocation = (raw) => {
+    let loc = String(raw).trim().replace(/["'.;]+$/,'').trim();
+    if (loc && !/,\s*[A-Z]{2}$/.test(loc)){
+      const cityHit = MAJOR_US_CITIES.find(([city]) => city.toLowerCase() === loc.toLowerCase());
+      if (cityHit) loc = `${cityHit[0]}, ${cityHit[1]}`;
+    }
+    return loc;
+  };
+
+  // Same [ \t]*-not-\s* fix as guessTitleFromText, to avoid swallowing a newline into the capture.
+  const directLabel = text.match(/\blocation[ \t]*[:\-][ \t]*([^\n\r]{2,60})/i)
+    || text.match(/\bwork[ \t]*location[ \t]*[:\-][ \t]*([^\n\r]{2,60})/i)
+    || text.match(/\bcity[ \t]*[:\-][ \t]*([^\n\r,.]{2,50})/i);
+  if (directLabel) return finalizeLocation(directLabel[1]);
+
+  // "based in <Place>" has no colon/newline to bound it, so a loose capture (e.g. up to the next
+  // comma or period) can run on and swallow the rest of the sentence — "based in Huntsville and
+  // supports defense radar programs." would otherwise capture "Huntsville and supports defense
+  // radar programs" instead of just "Huntsville". Anchoring the capture to a run of Capitalized
+  // words (a proper-noun sequence) stops it at the first lowercase word instead.
+  const basedInAnchor = text.match(/\bbased[ \t]*in[ \t]*[:\-]?[ \t]*/i);
+  if (basedInAnchor){
+    const rest = text.slice(basedInAnchor.index + basedInAnchor[0].length);
+    const properNoun = rest.match(/^([A-Z][A-Za-z.]*(?:[ \t]+[A-Z][A-Za-z.]*)*(?:,[ \t]*[A-Z]{2})?)/);
+    if (properNoun) return finalizeLocation(properNoun[1]);
+  }
+
+  const abbrs = US_STATES.map(s=>s[0]).join('|');
+  const cityState = new RegExp('\\b([A-Z][A-Za-z.\\s]{1,25}),\\s*(' + abbrs + ')\\b(?!\\w)');
+  const m = text.match(cityState);
+  if (m) return `${m[1].trim()}, ${m[2]}`;
+  for (const [abbr, name] of US_STATES){
+    if (new RegExp('\\b' + name.replace(/\s+/g,'\\s+') + '\\b', 'i').test(text)) return name;
+  }
+  // Bare city mention with no state alongside it ("...team is based in Chicago.")
+  for (const [city, abbr] of MAJOR_US_CITIES){
+    if (new RegExp('\\b' + city.replace(/[.\s]+/g,'[.\\s]*') + '\\b', 'i').test(text)) return `${city}, ${abbr}`;
+  }
+  if (/\bremote\b/i.test(text)) return 'Remote';
+  return '';
+}
+function guessSeniorityFromText(titleGuess, text){
+  const probe = (titleGuess + ' ' + text.slice(0, 800)).toLowerCase();
+  const CHECKS = [
+    {level:'executive', re:/\b(chief|c-level|vice\s*president|\bvp\b|svp|evp|executive\s*director|head\s*of)\b/},
+    {level:'manager', re:/\b(manager|director)\b/},
+    {level:'lead', re:/\b(lead|principal|staff)\b/},
+    {level:'senior', re:/\b(senior|sr\.?)\b/},
+    {level:'entry', re:/\b(entry[- ]level|junior|\bjr\.?\b|associate|intern(ship)?)\b/},
+    {level:'mid', re:/\b(mid[- ]level|intermediate)\b/}
+  ];
+  for (const c of CHECKS){ if (c.re.test(probe)) return c.level; }
+  return '';
+}
+function titleCaseWords(s){ return String(s).replace(/\b\w/g, c => c.toUpperCase()); }
+// Structural metadata lines (Title:, Location:, Salary:, etc.) pollute frequency-based keyword
+// mining with non-skill noise (e.g. a city name), so strip them before falling back to it.
+const AUTOFILL_LABEL_LINE_RE = /^[ \t]*(job[ \t]*)?(title|position|role|location|city|state|seniority|level|salary|compensation|employment[ \t]*type|job[ \t]*type|department|req(uisition)?[ \t]*(id|no\.?|number)?|date[ \t]*posted|posted[ \t]*(on|date)?)[ \t]*[:\-]/i;
+function stripAutofillLabelLines(text){
+  return String(text).split(/\r?\n/).filter(line => !AUTOFILL_LABEL_LINE_RE.test(line)).join('\n');
+}
+// Known-skill dictionary spanning the industries this toolkit targets (tech/eng, embedded/defense,
+// sales/marketing, healthcare, logistics/driving, finance, and general business) — a direct lookup
+// against real skill/tool names is far more reliable than statistical word-frequency guessing.
+const SKILL_LEXICON = [
+  "JavaScript","TypeScript","Python","Java","C++","C#",".NET","Go","Rust","Ruby","PHP","Swift","Kotlin",
+  "SQL","NoSQL","MongoDB","PostgreSQL","MySQL","Redis","AWS","Azure","GCP","Docker","Kubernetes","Terraform",
+  "Jenkins","CI/CD","Git","REST API","GraphQL","Microservices","React","Angular","Vue","Node.js","Django",
+  "Flask","Spring Boot","TensorFlow","PyTorch","scikit-learn","Machine Learning","Deep Learning","NLP",
+  "Data Science","Data Engineering","ETL","Airflow","Snowflake","Databricks","Spark","Hadoop","Tableau",
+  "Power BI","Looker","Excel","VBA","Linux","Bash","API Integration",
+  "FPGA","RF","Embedded C","Firmware","RTOS","VxWorks","Verilog","VHDL","DSP","PCB Design",
+  "Hardware Debugging","MATLAB","Simulink","JTAG","ARM","Microcontroller","Signal Processing","Radar",
+  "SIGINT","Avionics",
+  "SaaS","Enterprise Sales","Salesforce","HubSpot","CRM","Quota","Pipeline Generation","Cold Calling",
+  "Account Management","Business Development","Lead Generation","Demand Generation","SEO","SEM",
+  "Google Ads","Paid Social","Email Marketing","Content Marketing","Marketing Automation","Negotiation",
+  "ICU","ACLS","BLS","PALS","Critical Care","Patient Assessment","Ventilator Management","EMR","Epic",
+  "Cerner","Med-Surg","Triage","CPR","Wound Care","Phlebotomy","HIPAA","RN","BSN",
+  "CDL-A","CDL-B","DOT Compliance","Hazmat","Flatbed","OTR","ELD","Forklift","Warehouse Management",
+  "Supply Chain","Inventory Management","Route Planning","Dispatch",
+  "GAAP","Accounts Payable","Accounts Receivable","Financial Modeling","Budgeting","Forecasting",
+  "QuickBooks","SAP","Audit","Reconciliation","Bookkeeping",
+  "Project Management","Agile","Scrum","Kanban","Stakeholder Management","Cross-functional Collaboration",
+  "Customer Service","Vendor Management","Six Sigma","Lean",
+  "PMP","CPA","MBA","CISSP","CFA","SHRM-CP"
+];
+function matchLexiconSkills(text){
+  const lower = text.toLowerCase();
+  return SKILL_LEXICON.filter(term => textHasTerm(lower, term));
+}
+// Scans EVERY "Requirements:" / "Qualifications:" / "Skills:" / etc. bulleted section in the
+// document (not just the first one found) and pulls the comma-separated terms out of each bullet.
+function extractAllBulletSkillTerms(text){
+  const lines = text.split(/\r?\n/);
+  const headerRe = /^[ \t]*(requirements|qualifications|must[ \t]*have|nice[ \t]*to[ \t]*have|preferred[ \t]*(qualifications|skills)?|skills?|you'?ll[ \t]*need|what[ \t]*you'?ll[ \t]*bring)[ \t]*[:\-]?[ \t]*$/i;
+  const terms = [];
+  for (let h = 0; h < lines.length; h++){
+    if (!headerRe.test(lines[h].trim())) continue;
+    for (let i = h+1; i < Math.min(lines.length, h+14); i++){
+      const l = lines[i].trim();
+      if (!l) continue;
+      if (!/^[-•*]/.test(l)) break; // stop at the first non-bullet line — that's the end of this list
+      const stripped = l.replace(/^[-•*]\s*/, '')
+        .replace(/^\d+\+?\s*years?\s*(of\s*)?experience\s*(in|with)?\s*/i, '')
+        .replace(/^(strong\s+|proven\s+|solid\s+)?(background|experience|proficiency|expertise)\s+(in|with)\s+/i, '')
+        .replace(/^(knowledge|understanding)\s+of\s+/i, '')
+        .replace(/^familiarity\s+with\s+/i, '');
+      stripped.split(/[,;]| and /i)
+        .map(s => s.trim()
+          .replace(/\s*\([^)]*\)\s*$/, '')      // drop a trailing "(...)" aside — usually restates a term already captured elsewhere
+          .replace(/^\(|[)]$/g, '')             // drop a stray unmatched paren left over from the split
+          .replace(/\s+(required|preferred)$/i, '')) // "Active Secret Clearance Required" -> "Active Secret Clearance"
+        .filter(s => s && s.length >= 2 && s.length <= 40)
+        .forEach(s => terms.push(s));
+    }
+  }
+  return terms;
+}
+function guessSkillsFromText(text){
+  // 1) An explicit single-line "Skills:" / "Key Skills:" / "Technical Skills:" value is the
+  //    highest-confidence signal — the JD's own author already listed them, so use it as-is.
+  const singleLine = text.match(/\b(?:key[ \t]*|required[ \t]*|technical[ \t]*)?skills?[ \t]*[:\-][ \t]*([^\n\r]{2,220})/i);
+  if (singleLine){
+    const parts = singleLine[1].split(/[,;]/).map(s=>s.trim()).filter(Boolean);
+    if (parts.length >= 2) return parts.slice(0, 16).map(titleCaseWords);
+  }
+  // 2) Merge two independent signals across the WHOLE document: (a) a direct lookup against a
+  //    ~150-term multi-industry skills dictionary, and (b) every bulleted requirements/skills
+  //    section, not just the first. Together these catch both "named tools/technologies" and
+  //    "requirements phrased as bullets" — which is most real-world JDs.
+  const lexiconHits = matchLexiconSkills(text);
+  const bulletTerms = extractAllBulletSkillTerms(text).map(titleCaseWords);
+  const merged = [];
+  const seen = new Set();
+  [...lexiconHits, ...bulletTerms].forEach(t => {
+    const k = t.toLowerCase();
+    if (!seen.has(k)){ seen.add(k); merged.push(t); }
+  });
+  if (merged.length >= 2) return merged.slice(0, 18);
+  // 3) Last resort: frequency-based keyword mining (same engine the Resume Match tab uses), with
+  //    structural metadata lines stripped first so they don't pollute the results. Only reached
+  //    for JDs with no explicit skills line, no bulleted requirements, and no dictionary hits.
+  return extractJDKeywords(stripAutofillLabelLines(text), []).slice(0, 10).map(titleCaseWords);
+}
+
+function applyJDAutofill(text, filename){
+  const clean = (text || '').trim();
+  if (!clean){
+    return {ok:false, message: `${filename} loaded, but no readable text was found — it may be a scanned/image file or an unsupported layout. Try a different format, or fill in the fields manually.`};
+  }
+  const title = guessTitleFromText(clean);
+  const skills = guessSkillsFromText(clean);
+  const location = guessLocationFromText(clean);
+  const seniority = guessSeniorityFromText(title, clean);
+
+  if (title) el('title').value = title;
+  if (skills.length) el('skills').value = skills.join(', ');
+  if (location) el('location').value = location;
+  if (seniority) el('seniority').value = seniority;
+
+  // If the detected location is a specific state, also tighten the States refinement grid.
+  let stateChecked = '';
+  const stateMatch = US_STATES.find(([abbr,name]) => location === name || location.endsWith(', '+abbr));
+  if (stateMatch){
+    document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === stateMatch[0]); });
+    updateStatesSummary();
+    stateChecked = stateMatch[1];
+  }
+  return {ok:true, title, skills, location, seniority, stateChecked};
+}
+
+// Shared by both JD-upload controls (the Source/Ad Kit auto-fill box and the Resume Match tab's
+// single "Upload JD" button) so the review banner looks and reads identically either way.
+function renderAutofillReviewHTML(filename, result){
+  const rows = [
+    ['Job Title', result.title || '— not detected, please fill in'],
+    ['Key Skills', result.skills.length ? result.skills.join(', ') : '— not detected, please fill in'],
+    ['Location', result.location || '— not detected, leave blank for nationwide'],
+    ['Seniority', result.seniority ? SENIORITY_LABELS[result.seniority] : '— not detected, defaulted to Any level'],
+  ];
+  return `
+      <strong>Auto-filled from ${escapeHTML(filename)} — review before generating:</strong>
+      <ul class="autofill-list">
+        ${rows.map(([k,v]) => `<li><span class="autofill-key">${k}:</span> ${escapeHTML(v)}</li>`).join('')}
+      </ul>
+      ${result.stateChecked ? `<p style="margin:6px 0 0;">Also checked <strong>${escapeHTML(result.stateChecked)}</strong> in the Location refinement filter (Source Candidates tab) — clear it there if you want a nationwide search instead.</p>` : ''}
+      <p style="margin:6px 0 0;">This is a best-effort read of the file's text — double-check the fields above (and edit freely) before you click Generate.</p>`;
+}
+async function handleJDAutofillUpload(evt){
+  const file = evt.target.files[0];
+  evt.target.value = "";
+  if (!file) return;
+  const statusEl = el('jdAutofillStatus');
+  const reviewEl = el('jdAutofillReview');
+  reviewEl.style.display = 'none';
+  statusEl.textContent = `Reading ${file.name}…`;
+  try {
+    const text = await extractTextFromAnyFile(file);
+    const result = applyJDAutofill(text, file.name);
+    if (!result.ok){
+      statusEl.textContent = result.message;
+      return;
+    }
+    statusEl.textContent = `Read ${file.name} (${text.length.toLocaleString()} characters).`;
+    reviewEl.className = 'autofill-review';
+    reviewEl.innerHTML = renderAutofillReviewHTML(file.name, result);
+    reviewEl.style.display = '';
+  } catch(err){
+    statusEl.textContent = `Could not read ${file.name} (${(err && err.message) || 'parsing failed'}) — try a different format, or fill in the fields manually.`;
+  }
+}
+
+/* ============================================================
+   GENERATE (all tabs at once, so switching tabs never shows stale/empty output)
+   ============================================================ */
+function generate(){
+  generateSourcing();
+  generateAdkit();
+  generateMatch();
+}
+
+/* ============================================================
+   CLIPBOARD + TOAST
+   ============================================================ */
+function copyText(text, btn){
+  const done = () => {
+    if (btn){ const orig = btn.textContent; btn.textContent = "Copied ✓"; btn.classList.add('copied'); setTimeout(()=>{btn.textContent = orig; btn.classList.remove('copied');}, 1200); }
+    showToast("Copied to clipboard");
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+function fallbackCopy(text, cb){
+  const ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); } catch(e){}
+  document.body.removeChild(ta);
+  if (cb) cb();
+}
+let toastTimer;
+function showToast(msg){
+  const t = el('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* ============================================================
+   RESET / SAVE / LOAD
+   ============================================================ */
+function resetForm(){
+  ['title','skills','location','mustHave','niceToHave','excludeTerms','companiesInclude','companiesExclude','salary','jdText'].forEach(id => el(id).value = "");
+  el('jdFileStatus').textContent = "";
+  el('jdAutofillStatus').textContent = "";
+  el('jdAutofillReview').style.display = 'none';
+  el('jdMatchAutofillReview').style.display = 'none';
+  resetCandidates();
+  el('seniority').value = "";
+  el('niceRequired').checked = false;
+  el('clearance').value = "none";
+  el('workAuthOnly').checked = false;
+  el('openToWorkOnly').checked = false;
+  el('bakeAdvanced').checked = false;
+  el('remoteOk').checked = false;
+  el('splitPerState').checked = false;
+  document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
+  updateStatesSummary();
+  ['p_linkedin','p_googleli','p_indeed'].forEach(id => el(id).checked = true);
+  ['p_googleresume','p_github','p_clearancejobs','p_monster','p_zip'].forEach(id => el(id).checked = false);
+  el('category').value = "corporate";
+  el('type').value = "Full-time";
+  el('urgent').checked = false;
+  el('sourceResults').innerHTML = `<div class="results-empty">Fill in the role details on the left, then click <strong>Generate</strong>.</div>`;
+  el('adkitResults').innerHTML = `<div class="results-empty">Fill in the role details on the left, then click <strong>Generate</strong>.</div>`;
+  el('matchResults').innerHTML = `<div class="results-empty">Paste or upload a job description and a resume on the left, then click <strong>Generate</strong>.</div>`;
+  el('presetSelect').value = "";
+  updateAdvancedSummary();
+}
+
+function saveProfile(){
+  const shared = readShared();
+  const raw = {
+    title: el('title').value, skills: el('skills').value, location: el('location').value, seniority: shared.seniority,
+    mustHave: el('mustHave').value, niceToHave: el('niceToHave').value, niceRequired: el('niceRequired').checked,
+    excludeTerms: el('excludeTerms').value, clearance: el('clearance').value, workAuthOnly: el('workAuthOnly').checked,
+    openToWorkOnly: el('openToWorkOnly').checked, bakeAdvanced: el('bakeAdvanced').checked,
+    companiesInclude: el('companiesInclude').value, companiesExclude: el('companiesExclude').value,
+    states: Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value),
+    remoteOk: el('remoteOk').checked, splitPerState: el('splitPerState').checked,
+    platforms: { linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
+      github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
+      monster: el('p_monster').checked, zip: el('p_zip').checked },
+    category: el('category').value, type: el('type').value, salary: el('salary').value, urgent: el('urgent').checked
+  };
+  const blob = new Blob([JSON.stringify(raw, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const nameGuess = (parseCSV(raw.title)[0] || "role-profile").toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  a.download = `${nameGuess}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast("Profile saved");
+}
+
+function loadProfile(evt){
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { applyProfile(JSON.parse(reader.result)); showToast("Profile loaded"); }
+    catch(e){ showToast("Could not read that file"); }
+  };
+  reader.readAsText(file);
+  evt.target.value = "";
+}
+
+function applyProfile(d){
+  el('title').value = d.title || "";
+  el('skills').value = d.skills || "";
+  el('location').value = d.location || "";
+  el('seniority').value = d.seniority || "";
+  el('mustHave').value = d.mustHave || "";
+  el('niceToHave').value = d.niceToHave || "";
+  el('niceRequired').checked = !!d.niceRequired;
+  el('excludeTerms').value = d.excludeTerms || "";
+  el('clearance').value = d.clearance || "none";
+  el('workAuthOnly').checked = !!d.workAuthOnly;
+  el('openToWorkOnly').checked = !!d.openToWorkOnly;
+  el('bakeAdvanced').checked = !!d.bakeAdvanced;
+  el('companiesInclude').value = d.companiesInclude || "";
+  el('companiesExclude').value = d.companiesExclude || "";
+  document.querySelectorAll('.stateChk').forEach(c => c.checked = (d.states || []).includes(c.value));
+  updateStatesSummary();
+  el('remoteOk').checked = !!d.remoteOk;
+  el('splitPerState').checked = !!d.splitPerState;
+  const plt = d.platforms || {};
+  el('p_linkedin').checked = !!plt.linkedin;
+  el('p_googleli').checked = !!plt.googleli;
+  el('p_googleresume').checked = !!plt.googleresume;
+  el('p_github').checked = !!plt.github;
+  el('p_indeed').checked = !!plt.indeed;
+  el('p_clearancejobs').checked = !!plt.clearancejobs;
+  el('p_monster').checked = !!plt.monster;
+  el('p_zip').checked = !!plt.zip;
+  el('category').value = d.category || "corporate";
+  el('type').value = d.type || "Full-time";
+  el('salary').value = d.salary || "";
+  el('urgent').checked = !!d.urgent;
+  updateAdvancedSummary();
+}
+
+/* ============================================================
+   PRESETS (fill both tabs' fields at once)
+   ============================================================ */
+const PRESETS = {
+  embedded: {
+    title: "Embedded Software Engineer, Firmware Engineer, Embedded Systems Engineer",
+    skills: "FPGA, RF, embedded C, firmware development",
+    location: "", seniority: "senior",
+    mustHave: "FPGA, field programmable gate array\nRF, radio frequency\nembedded C, firmware development",
+    niceToHave: "RTOS, VxWorks, hardware debugging, PCIe, high-speed hardware", niceRequired: false,
+    excludeTerms: "recruiter, staffing agency, internship", clearance: "willing", workAuthOnly: true,
+    companiesInclude: "Abaco Systems, Curtiss-Wright, Mercury Systems, Elbit Systems, L3Harris", companiesExclude: "",
+    states: ["AL","VA","CA","MA","AZ"], remoteOk: false, splitPerState: false,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:true, indeed:true, clearancejobs:true, monster:false, zip:false },
+    category: "tech", type: "Full-time", salary: "", urgent: false
+  },
+  nurse: {
+    title: "ICU Registered Nurse, Critical Care RN",
+    skills: "ICU, intensive care, BSN, ADN",
+    location: "Dallas, TX", seniority: "mid",
+    mustHave: "ICU, intensive care\nBSN, ADN", niceToHave: "CCRN, ventilator management", niceRequired: false,
+    excludeTerms: "travel nurse agency, LVN", clearance: "none", workAuthOnly: false,
+    companiesInclude: "", companiesExclude: "",
+    states: ["TX"], remoteOk: false, splitPerState: false,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:false, indeed:true, clearancejobs:false, monster:false, zip:false },
+    category: "healthcare", type: "Full-time", salary: "", urgent: true
+  },
+  sales: {
+    title: "Enterprise Account Executive, Enterprise Sales Executive, Strategic AE",
+    skills: "SaaS, enterprise sales, Salesforce",
+    location: "", seniority: "senior",
+    mustHave: "SaaS, software as a service\nenterprise sales, quota", niceToHave: "Salesforce, MEDDIC, six figure deals", niceRequired: false,
+    excludeTerms: "SDR, BDR", clearance: "none", workAuthOnly: false,
+    companiesInclude: "", companiesExclude: "",
+    states: ["NY","CA","IL","TX"], remoteOk: true, splitPerState: true,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:false, indeed:false, clearancejobs:false, monster:false, zip:false },
+    category: "sales", type: "Remote", salary: "$120K–$160K + commission", urgent: false
+  },
+  datasci: {
+    title: "Senior Data Scientist, Applied Scientist",
+    skills: "machine learning, Python, SQL",
+    location: "", seniority: "senior",
+    mustHave: "machine learning, ML\nPython\nSQL, data warehousing", niceToHave: "PyTorch, TensorFlow, NLP, LLM", niceRequired: true,
+    excludeTerms: "bootcamp, internship", clearance: "none", workAuthOnly: false,
+    companiesInclude: "", companiesExclude: "",
+    states: [], remoteOk: true, splitPerState: false,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:true, indeed:false, clearancejobs:false, monster:false, zip:false },
+    category: "tech", type: "Remote", salary: "", urgent: false
+  },
+  cdl: {
+    title: "CDL-A Truck Driver, Class A Driver",
+    skills: "CDL-A, Class A license, OTR",
+    location: "", seniority: "",
+    mustHave: "CDL-A, Class A license\nOTR, regional", niceToHave: "hazmat, tanker endorsement", niceRequired: false,
+    excludeTerms: "CDL school, training required", clearance: "none", workAuthOnly: false,
+    companiesInclude: "", companiesExclude: "",
+    states: ["OH","IN","GA","TX"], remoteOk: false, splitPerState: true,
+    platforms: { linkedin:false, googleli:false, googleresume:false, github:false, indeed:true, clearancejobs:false, monster:true, zip:true },
+    category: "retail", type: "Full-time", salary: "", urgent: true
+  }
+};
+
+el('presetSelect').addEventListener('change', (e) => {
+  const key = e.target.value;
+  if (!key || !PRESETS[key]) return;
+  applyProfile(PRESETS[key]);
+  generate();
+});
+
+/* ============================================================
+   INTERVIEW FEEDBACK LOG (Interview Feedback tab)
+   Standalone — not tied to Resume Match candidates, so feedback can be logged
+   for anyone interviewed, whether or not they went through ATS scoring at all.
+   In-memory only, same as the rest of the toolkit's live state — use Copy log
+   or Download CSV to keep a record beyond this browser session.
+   ============================================================ */
+let INTERVIEW_FEEDBACK = [];
+let FEEDBACK_SEQ = 0;
+const FB_RATING_CLASS = { 'Strong Yes':'strong-yes', 'Yes':'yes', 'Neutral':'neutral', 'No':'no', 'Strong No':'strong-no' };
+
+function resetFeedbackForm(){
+  el('fbCandidate').value = '';
+  el('fbEmail').value = '';
+  el('fbRating').value = '';
+  el('fbInterviewer').value = '';
+  el('fbNotes').value = '';
+  el('fbStage').value = 'Phone Screen';
+  el('fbDate').valueAsDate = new Date();
+}
+function addFeedbackEntry(){
+  const name = el('fbCandidate').value.trim();
+  if (!name){ el('fbCandidate').focus(); return; }
+  const entry = {
+    id: ++FEEDBACK_SEQ,
+    name,
+    email: el('fbEmail').value.trim(),
+    stage: el('fbStage').value,
+    rating: el('fbRating').value,
+    interviewer: el('fbInterviewer').value.trim(),
+    date: el('fbDate').value,
+    notes: el('fbNotes').value.trim()
+  };
+  INTERVIEW_FEEDBACK.unshift(entry);
+  resetFeedbackForm();
+  renderFeedbackList();
+  el('fbCandidate').focus();
+}
+function removeFeedbackEntry(id){
+  INTERVIEW_FEEDBACK = INTERVIEW_FEEDBACK.filter(f => f.id !== id);
+  renderFeedbackList();
+}
+function clearAllFeedback(){
+  if (INTERVIEW_FEEDBACK.length && !confirm('Clear all logged interview feedback? This cannot be undone.')) return;
+  INTERVIEW_FEEDBACK = [];
+  renderFeedbackList();
+}
+// Builds the subject/body for a candidate email. The recruiter reviews and sends it themselves
+// (via the Copy buttons below) — nothing here is sent automatically.
+function buildCandidateEmail(f, kind){
+  const roleTitle = (el('title').value || '').split(',')[0].trim();
+  const roleLabel = roleTitle || 'this role';
+  const rolePhrase = roleTitle ? `the ${roleTitle} position` : 'this position';
+  const company = (el('fbCompany').value || '').trim();
+  const atCompany = company ? ` at ${company}` : '';
+  const signOffName = f.interviewer || 'The Hiring Team';
+  const signature = `Warm regards,\n${signOffName}${company ? `\n${company}` : ''}`;
+  if (kind === 'reject'){
+    return {
+      subject: `Your application${atCompany} — ${roleLabel}`,
+      body: `Dear ${f.name},\n\nThank you for the time and effort you invested in interviewing for ${rolePhrase}${atCompany}. We enjoyed learning about your background and appreciate you sharing your experience with us.\n\nAfter careful consideration, we've decided to move forward with another candidate whose experience more closely aligns with our current needs. This was not an easy decision, and it in no way reflects a lack of appreciation for your qualifications.\n\nWe'll keep your resume on file and would welcome the opportunity to consider you for future openings that may be a better fit. We wish you continued success in your job search.\n\n${signature}`
+    };
+  }
+  return {
+    subject: `Job Offer${atCompany} — ${roleLabel}`,
+    body: `Dear ${f.name},\n\nWe're delighted to let you know that, after careful consideration, we would like to move forward with you for ${rolePhrase}${atCompany}. Your background, experience, and the way you presented yourself throughout the interview process stood out to our team.\n\nWe'll be in touch shortly with the formal offer details and next steps. In the meantime, please don't hesitate to reach out with any questions.\n\nWe're looking forward to the possibility of welcoming you to the team.\n\n${signature}`
+  };
+}
+// "mailto:" links only work if the browser/OS has a default mail app or web handler registered —
+// on many machines nothing happens when one fires, with no error to explain why. Copying the
+// composed email to the clipboard instead always works, matching every other "Copy ___" button
+// already in this toolkit: paste it into Gmail/Outlook/whatever you actually use and hit send.
+function copyCandidateEmail(id, kind, btn){
+  const f = INTERVIEW_FEEDBACK.find(x => x.id === id);
+  if (!f) return;
+  const { subject, body } = buildCandidateEmail(f, kind);
+  const text = `To: ${f.email || '(add candidate email)'}\nSubject: ${subject}\n\n${body}`;
+  copyText(text, btn);
+}
+function fbCardHTML(f){
+  const ratingClass = FB_RATING_CLASS[f.rating] || 'unrated';
+  const ratingLabel = f.rating || 'Not rated';
+  const metaBits = [f.stage, f.interviewer ? `Interviewer: ${f.interviewer}` : '', f.date || ''].filter(Boolean);
+  return `
+    <div class="fb-card">
+      <div class="fb-card-head">
+        <span class="fb-name">${escapeHTML(f.name)}</span>
+        <span class="fb-rating ${ratingClass}">${escapeHTML(ratingLabel)}</span>
+        <button class="fb-remove" title="Delete entry" onclick="removeFeedbackEntry(${f.id})">✕</button>
+      </div>
+      <div class="fb-meta">${metaBits.map(escapeHTML).join(' · ')}${f.email ? ` · ${escapeHTML(f.email)}` : ''}</div>
+      ${f.notes ? `<div class="fb-notes">${escapeHTML(f.notes)}</div>` : ''}
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-secondary" onclick="copyCandidateEmail(${f.id},'select',this)">📋 Copy Selected Email</button>
+        <button class="btn btn-ghost" onclick="copyCandidateEmail(${f.id},'reject',this)">📋 Copy Rejection Email</button>
+      </div>
+      <div class="hint" style="margin-top:6px;">Copies the To/Subject/Body text to your clipboard — paste into Gmail, Outlook, or whatever you use, then send.</div>
+      ${!f.email ? `<div class="hint" style="margin-top:2px;">No email on file — add one above so the To: line is filled in.</div>` : ''}
+    </div>`;
+}
+function renderFeedbackList(){
+  const target = el('feedbackResults');
+  if (!INTERVIEW_FEEDBACK.length){
+    target.innerHTML = `<div class="results-empty">No interview feedback logged yet. Fill in the form on the left and click <strong>Add Feedback</strong>.</div>`;
+    return;
+  }
+  target.innerHTML = `
+    <div class="fb-summary">
+      <span class="hint" style="margin:0;">${INTERVIEW_FEEDBACK.length} feedback entr${INTERVIEW_FEEDBACK.length===1?'y':'ies'} logged</span>
+      <div class="btn-row" style="margin:0;">
+        <button class="btn btn-secondary" onclick="copyFeedbackLog(this)">📋 Copy log</button>
+        <button class="btn btn-secondary" onclick="downloadFeedbackCSV()">⬇ Download CSV</button>
+        <button class="btn btn-ghost" onclick="clearAllFeedback()">Clear all</button>
+      </div>
+    </div>
+    ${INTERVIEW_FEEDBACK.map(fbCardHTML).join('')}`;
+}
+function copyFeedbackLog(btn){
+  const lines = INTERVIEW_FEEDBACK.map(f =>
+    `${f.name}${f.email ? ` <${f.email}>` : ''} — ${f.rating || 'Not rated'} (${f.stage}${f.interviewer ? `, interviewer: ${f.interviewer}` : ''}${f.date ? `, ${f.date}` : ''})${f.notes ? `\n  ${f.notes}` : ''}`
+  );
+  const text = `Interview Feedback Log\n\n` + lines.join('\n\n') + `\n\nGenerated by the Plan AIQ Recruiting Toolkit.`;
+  copyText(text, btn);
+}
+function downloadFeedbackCSV(){
+  const header = ['Candidate','Email','Rating','Stage','Interviewer','Date','Notes'];
+  const rows = INTERVIEW_FEEDBACK.map(f => [f.name, f.email, f.rating, f.stage, f.interviewer, f.date, f.notes]);
+  const csvEscape = v => { const s = String(v||''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+  const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'interview-feedback-log.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('CSV downloaded');
+}
+el('fbDate').valueAsDate = new Date();
+
+/* Seed the Resume Match tab with one blank candidate card on load. */
+addCandidateCard();
+</script>
+</body>
+</html>

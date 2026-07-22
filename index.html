@@ -1097,10 +1097,35 @@ function buildCards(s, batch){
       note: "Surfaces publicly posted resumes/CVs matching your criteria." + otwNoteGeneric + advNote + overrideNote });
   }
   if (s.platforms.github){
-    const skillTerms = [...s.titles, ...s.mustHaveGroups.flat()];
-    let q = squeeze(`${skillTerms.map(quote).join(" ")} ${batch.locParam ? `location:"${batch.locParam}"` : ""} type:user`);
+    // GitHub people-search is NOT a resume/full-text database: free text only matches a user's
+    // name/login/email (and loosely their bio), while `language:` filters by the languages in
+    // their public repos. AND-ing many quoted skill phrases or job titles — or a literal
+    // `type:user` (the user type is already set by &type=users) — returns nothing. Build a lean,
+    // high-recall query instead: recognized programming languages become `language:` filters,
+    // plus optional self-reported location.
+    const GH_LANGS = {python:'Python',javascript:'JavaScript',typescript:'TypeScript',java:'Java',
+      'c++':'C++','c#':'C#',go:'Go',golang:'Go',rust:'Rust',ruby:'Ruby',php:'PHP',swift:'Swift',
+      kotlin:'Kotlin',scala:'Scala',r:'R',matlab:'MATLAB',julia:'Julia',perl:'Perl',c:'C',
+      'objective-c':'Objective-C',dart:'Dart',elixir:'Elixir',erlang:'Erlang',haskell:'Haskell',
+      clojure:'Clojure',lua:'Lua',groovy:'Groovy',solidity:'Solidity',verilog:'Verilog',vhdl:'VHDL',
+      assembly:'Assembly',fortran:'Fortran',cobol:'COBOL',shell:'Shell',bash:'Shell',powershell:'PowerShell'};
+    const ghLangs = [];
+    s.mustHaveGroups.flat().forEach(t => {
+      const g = GH_LANGS[String(t).trim().toLowerCase()];
+      if (g && !ghLangs.includes(g)) ghLangs.push(g);
+    });
+    const langPart = ghLangs.slice(0,3).map(l => `language:${l}`).join(" ");
+    const locPart = batch.locParam ? `location:"${batch.locParam}"` : "";
+    let q = squeeze(`${langPart} ${locPart}`);
+    if (!q){ // no recognized language and no location — fall back to one broad name/bio keyword
+      const kw = String(s.mustHaveGroups.flat()[0] || s.titles[0] || "").trim();
+      q = kw ? quote(kw) : "";
+    }
+    const ghNote = ghLangs.length
+      ? "Matches candidates by the programming languages in their public repos" + (locPart ? " and self-reported location" : "") + ". Widen by removing a `language:` filter; narrow by adding location. "
+      : "No programming language was recognized in Key Skills, so this is a broad name/bio search — add a language (e.g. Python, Go, Rust) to Key Skills for sharper results. ";
     cards.push({ name: "GitHub — Developer Search", live: true, query: q, url: "https://github.com/search?q=" + encodeURIComponent(q) + "&type=users",
-      note: "Best for engineering roles with public code activity; location tags are self-reported." + overrideNote });
+      note: ghNote + "GitHub isn't a resume database — job titles and non-code skills (SQL, “data warehousing”) aren't searchable in profiles. Best for engineering roles with public code activity." + overrideNote });
   }
   if (s.platforms.indeed){
     let q = squeeze(`${liveCore} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);

@@ -53,9 +53,9 @@
   .brandbar .madeby{font-size:12px; color:var(--ink-soft); text-align:right;}
   .brandbar .madeby strong{color:var(--ink); font-weight:700;}
 
-  header.intro{padding:28px 24px 6px;}
-  header.intro h1{font-size:22px; margin:0 0 6px; letter-spacing:-0.01em; color:var(--navy);}
-  header.intro p{margin:0; color:var(--ink-soft); font-size:14px; max-width:860px;}
+  .intro{padding:28px 24px 6px;}
+  .intro h1{font-size:22px; margin:0 0 6px; letter-spacing:-0.01em; color:var(--navy);}
+  .intro p{margin:0; color:var(--ink-soft); font-size:14px; max-width:860px;}
 
   /* ---- Tabs ---- */
   .tabbar{display:flex; gap:8px; padding:18px 24px 0; border-bottom:1px solid var(--line); margin-top:14px;}
@@ -270,6 +270,7 @@
   .fb-rating.unrated{background:var(--chip); color:var(--ink-soft);}
   .fb-remove{margin-left:auto; background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:14px; padding:2px 4px;}
   .fb-remove:hover{color:#b3261e;}
+  .fb-role{font-size:12.5px; font-weight:700; color:var(--accent-deep); margin:2px 0 4px;}
   .fb-meta{font-size:12px; color:var(--ink-soft); margin-bottom:6px;}
   .fb-notes{font-size:13.5px; color:var(--ink); white-space:pre-wrap;}
 
@@ -309,7 +310,7 @@
     position:sticky; top:0; z-index:30;
     background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(10px);
     -webkit-backdrop-filter:saturate(180%) blur(10px);
-    padding:14px 28px; border-bottom:1px solid var(--header-line);
+    padding:16px 40px; border-bottom:1px solid var(--header-line);
   }
   .logo-mark{
     width:42px; height:42px; border-radius:11px;
@@ -323,14 +324,14 @@
   .brandbar .madeby{font-size:11.5px; line-height:1.5;}
 
   /* ---- Hero ---- */
-  header.intro{padding:34px 28px 4px;}
-  header.intro h1{
+  .intro{padding:36px 40px 8px;}
+  .intro h1{
     font-size:30px; font-weight:800; letter-spacing:-.025em; line-height:1.12;
     margin:14px 0 10px;
     background:linear-gradient(180deg,#0f172a 0%,#334155 100%);
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   }
-  header.intro p{font-size:15px; line-height:1.65; max-width:820px;}
+  .intro p{font-size:15px; line-height:1.65; max-width:820px;}
   .badge{
     background:var(--accent-soft); color:var(--accent-deep);
     border:1px solid rgba(122,30,46,.16); padding:5px 12px; font-size:10.5px;
@@ -341,7 +342,7 @@
   /* ---- Tabs: pill / segmented enterprise style, sticky under brand bar ---- */
   .tabbar{
     position:sticky; top:71px; z-index:20;
-    gap:4px; padding:12px 28px; margin-top:22px;
+    gap:4px; padding:12px 40px; margin-top:22px;
     background:rgba(255,255,255,.9); backdrop-filter:saturate(180%) blur(8px);
     -webkit-backdrop-filter:saturate(180%) blur(8px);
     border-top:1px solid var(--line); border-bottom:1px solid var(--line);
@@ -361,8 +362,8 @@
   .tabbtn.active:hover{color:#fff;}
 
   /* ---- Layout / panels ---- */
-  .app-body{padding:26px 28px 0;}
-  @media (max-width:720px){ .app-body,header.intro{padding-left:18px; padding-right:18px;} .tabbar{padding-left:18px; padding-right:18px;} .brandbar{padding-left:18px; padding-right:18px;} }
+  .app-body{padding:28px 40px 0;}
+  @media (max-width:720px){ .app-body,.intro,.tabbar,.brandbar,.tab-intro{padding-left:20px; padding-right:20px;} }
   .grid{gap:22px;}
   .panel{
     border:1px solid var(--line); border-radius:16px; padding:22px;
@@ -401,6 +402,22 @@
   .platform-list label:hover{border-color:var(--accent); box-shadow:var(--shadow-sm);}
   .platform-list label:has(input:checked){border-color:var(--accent); background:var(--accent-soft);}
   .jd-autofill-box{border:1px dashed #c9d2df; border-radius:14px; background:linear-gradient(180deg,#fbfcfe,#f4f7fb);}
+
+  /* ---- Collapsible optional form sections (keeps the sourcing form compact) ---- */
+  details.form-section{border:1px solid var(--line); border-radius:12px; margin:10px 0; background:var(--paper); overflow:hidden;}
+  details.form-section > summary{
+    cursor:pointer; list-style:none; padding:12px 14px;
+    font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink);
+    display:flex; align-items:center; gap:8px;
+  }
+  details.form-section > summary::-webkit-details-marker{display:none;}
+  details.form-section > summary::after{content:"⌄"; margin-left:auto; color:var(--ink-soft); font-size:15px; line-height:1; transform:translateY(-2px) rotate(0deg); transition:transform .18s ease;}
+  details.form-section[open] > summary::after{transform:translateY(1px) rotate(180deg);}
+  details.form-section[open] > summary{border-bottom:1px solid var(--line); background:var(--paper-alt);}
+  details.form-section > summary:hover{background:var(--paper-alt);}
+  details.form-section .fs-tag{font-size:10px; font-weight:600; letter-spacing:.02em; text-transform:none; color:var(--ink-soft);}
+  .fs-body{padding:14px;}
+  .fs-body > h2:first-child, .fs-body > .hint:first-child{margin-top:0;}
 
   /* ---- Buttons ---- */
   .btn{border-radius:10px; padding:10px 16px; font-weight:600; transition:transform .08s ease, box-shadow .15s ease, background .15s ease, filter .15s ease;}
@@ -467,13 +484,12 @@
 
   /* ---- Per-tab guidance strip ---- */
   .tab-intro{
-    padding:14px 28px; font-size:14px; color:var(--ink-soft); line-height:1.55;
+    padding:14px 40px; font-size:14px; color:var(--ink-soft); line-height:1.55;
     background:linear-gradient(180deg,#fbfcfe,#f4f7fb); border-bottom:1px solid var(--line);
     display:flex; gap:10px; align-items:baseline;
   }
   .tab-intro::before{content:"›"; color:var(--accent); font-weight:800; font-size:18px; line-height:1;}
   .tab-intro strong{color:var(--ink); font-weight:700;}
-  @media (max-width:720px){ .tab-intro{padding-left:18px; padding-right:18px;} }
 
   /* ---- Motion + focus preferences ---- */
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; scroll-behavior:auto !important;} }
@@ -528,11 +544,19 @@
         <label class="field-label" for="presetSelect">Load an example</label>
         <select id="presetSelect">
           <option value="">— Choose an example to auto-fill —</option>
-          <option value="embedded">Embedded Software / RF / FPGA Engineer (defense)</option>
-          <option value="nurse">ICU Registered Nurse</option>
-          <option value="sales">Enterprise SaaS Sales Executive</option>
-          <option value="datasci">Senior Data Scientist</option>
-          <option value="cdl">CDL-A Truck Driver</option>
+          <optgroup label="Manufacturing &amp; Skilled Trades">
+            <option value="mfgeng">Manufacturing / Process Engineer</option>
+            <option value="cnc">CNC Machinist / Production Operator</option>
+          </optgroup>
+          <optgroup label="Technology &amp; Engineering">
+            <option value="embedded">Embedded Software / RF / FPGA Engineer (defense)</option>
+            <option value="datasci">Senior Data Scientist</option>
+          </optgroup>
+          <optgroup label="Healthcare, Sales &amp; Logistics">
+            <option value="nurse">ICU Registered Nurse</option>
+            <option value="sales">Enterprise SaaS Sales Executive</option>
+            <option value="cdl">CDL-A Truck Driver</option>
+          </optgroup>
         </select>
         </div>
 
@@ -578,53 +602,67 @@
 
         <!-- ============ SOURCING-ONLY FIELDS ============ -->
         <div id="sourceFields">
-          <h2 style="margin-top:26px;">Eligibility (optional)</h2>
-          <div class="row">
-            <div>
-              <label class="field-label">Security Clearance</label>
-              <select id="clearance">
-                <option value="none">Not required</option>
-                <option value="any">Any active clearance</option>
-                <option value="public-trust">Public Trust</option>
-                <option value="secret">Active Secret</option>
-                <option value="top-secret">Active Top Secret</option>
-                <option value="tssci">Active TS/SCI</option>
-                <option value="willing">Willing/eligible to obtain</option>
-              </select>
-            </div>
-          </div>
-          <div class="checkline"><input type="checkbox" id="workAuthOnly"><label for="workAuthOnly">US Citizens / Green Card only — adds citizenship terms, excludes H1B/OPT/CPT/sponsorship language</label></div>
-          <div class="checkline">
-            <input type="checkbox" id="openToWorkOnly">
-            <label for="openToWorkOnly">Only "Open to Work" candidates <span class="hint">— keyword proxy (#opentowork etc.), not LinkedIn's Recruiter-only flag</span></label>
-          </div>
+          <p class="hint" style="margin:20px 0 4px;">Optional filters — expand only what you need. The defaults already produce a solid nationwide search.</p>
 
-          <h2>Companies (optional)</h2>
-          <div class="row">
-            <div>
-              <label class="field-label">Target companies <span class="hint">(comma-separated)</span></label>
-              <input type="text" id="companiesInclude" placeholder="Abaco Systems, Curtiss-Wright, Mercury Systems">
+          <details class="form-section" id="secEligibility">
+            <summary>Eligibility <span class="fs-tag">clearance · work authorization</span></summary>
+            <div class="fs-body">
+              <div class="row">
+                <div>
+                  <label class="field-label">Security Clearance</label>
+                  <select id="clearance">
+                    <option value="none">Not required</option>
+                    <option value="any">Any active clearance</option>
+                    <option value="public-trust">Public Trust</option>
+                    <option value="secret">Active Secret</option>
+                    <option value="top-secret">Active Top Secret</option>
+                    <option value="tssci">Active TS/SCI</option>
+                    <option value="willing">Willing/eligible to obtain</option>
+                  </select>
+                </div>
+              </div>
+              <div class="checkline"><input type="checkbox" id="workAuthOnly"><label for="workAuthOnly">US Citizens / Green Card only — adds citizenship terms, excludes H1B/OPT/CPT/sponsorship language</label></div>
+              <div class="checkline">
+                <input type="checkbox" id="openToWorkOnly">
+                <label for="openToWorkOnly">Only "Open to Work" candidates <span class="hint">— keyword proxy (#opentowork etc.), not LinkedIn's Recruiter-only flag</span></label>
+              </div>
             </div>
-          </div>
-          <div class="row" style="margin-top:8px;">
-            <div>
-              <label class="field-label">Exclude companies <span class="hint">(recruiting agencies, current employer, etc.)</span></label>
-              <input type="text" id="companiesExclude" placeholder="Robert Half, TEKsystems">
-            </div>
-          </div>
+          </details>
 
-          <h2>Location refinement</h2>
-          <p class="hint">Leave states unchecked for a nationwide search. Selecting states narrows results; "separate search per state" gives the most thorough coverage.</p>
-          <fieldset>
-            <legend>States (optional multi-select)</legend>
-            <div class="states-toolbar">
-              <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
-              <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
+          <details class="form-section" id="secCompanies">
+            <summary>Companies <span class="fs-tag">target &amp; exclude employers</span></summary>
+            <div class="fs-body">
+              <div class="row">
+                <div>
+                  <label class="field-label">Target companies <span class="hint">(comma-separated)</span></label>
+                  <input type="text" id="companiesInclude" placeholder="Abaco Systems, Curtiss-Wright, Mercury Systems">
+                </div>
+              </div>
+              <div class="row" style="margin-top:8px;">
+                <div>
+                  <label class="field-label">Exclude companies <span class="hint">(recruiting agencies, current employer, etc.)</span></label>
+                  <input type="text" id="companiesExclude" placeholder="Robert Half, TEKsystems">
+                </div>
+              </div>
             </div>
-            <div class="states-grid" id="statesGrid"></div>
-          </fieldset>
-          <div class="checkline"><input type="checkbox" id="remoteOk"><label for="remoteOk">Include remote candidates</label></div>
-          <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
+          </details>
+
+          <details class="form-section" id="secLocation">
+            <summary>Location refinement <span class="fs-tag">states · remote</span></summary>
+            <div class="fs-body">
+              <p class="hint">Leave states unchecked for a nationwide search. Selecting states narrows results; "separate search per state" gives the most thorough coverage.</p>
+              <fieldset>
+                <legend>States (optional multi-select)</legend>
+                <div class="states-toolbar">
+                  <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
+                  <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
+                </div>
+                <div class="states-grid" id="statesGrid"></div>
+              </fieldset>
+              <div class="checkline"><input type="checkbox" id="remoteOk"><label for="remoteOk">Include remote candidates</label></div>
+              <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
+            </div>
+          </details>
 
           <h2>Search Platforms <span class="req" title="Select at least one platform">*</span> <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(select at least one)</span></h2>
           <div class="platform-list">
@@ -719,10 +757,18 @@
           <h2 style="margin-top:0;">Log Interview Feedback</h2>
           <p class="hint" style="margin:-4px 0 14px;">A simple log of how each interview went — not tied to Resume Match, so you can log feedback for anyone you've interviewed.</p>
 
-          <label class="field-label" for="fbCompany">Company Name <span class="hint">(shown in the sign-off of the Selected/Rejection emails below)</span></label>
-          <input type="text" id="fbCompany" placeholder="Acme Corp" style="margin-bottom:14px;">
+          <div class="row">
+            <div>
+              <label class="field-label" for="fbRole">Job Role <span class="hint">(appears in the Selected/Rejection emails)</span></label>
+              <input type="text" id="fbRole" placeholder="Manufacturing Engineer">
+            </div>
+            <div>
+              <label class="field-label" for="fbJobId">Job ID / Req # <span class="hint">(optional)</span></label>
+              <input type="text" id="fbJobId" placeholder="REQ-1042">
+            </div>
+          </div>
 
-          <label class="field-label" for="fbCandidate">Candidate Name <span class="req" title="Required">*</span></label>
+          <label class="field-label" style="margin-top:14px;" for="fbCandidate">Candidate Name <span class="req" title="Required">*</span></label>
           <input type="text" id="fbCandidate" placeholder="Jane Doe">
 
           <label class="field-label" style="margin-top:10px;" for="fbEmail">Candidate Email <span class="hint">(optional — needed to send a follow-up email)</span></label>
@@ -2552,12 +2598,40 @@ function applyProfile(d){
   el('salary').value = d.salary || "";
   el('urgent').checked = !!d.urgent;
   updateAdvancedSummary();
+  // Auto-expand any collapsible section a preset/profile actually populated, so the applied
+  // values aren't hidden behind a collapsed header.
+  const openIf = (id, cond) => { const s = el(id); if (s) s.open = !!cond; };
+  openIf('secEligibility', (d.clearance && d.clearance !== 'none') || d.workAuthOnly || d.openToWorkOnly);
+  openIf('secCompanies',   (d.companiesInclude || '').trim() || (d.companiesExclude || '').trim());
+  openIf('secLocation',    (d.states && d.states.length) || d.remoteOk || d.splitPerState);
 }
 
 /* ============================================================
    PRESETS (fill both tabs' fields at once)
    ============================================================ */
 const PRESETS = {
+  mfgeng: {
+    title: "Manufacturing Engineer, Process Engineer, Production Engineer",
+    skills: "lean manufacturing, Six Sigma, SolidWorks, GD&T",
+    location: "", seniority: "mid",
+    mustHave: "lean manufacturing, lean\nSix Sigma, process improvement\nSolidWorks, AutoCAD, CAD", niceToHave: "GD&T, PLC, CNC, injection molding, ISO 9001, APQP, PPAP", niceRequired: false,
+    excludeTerms: "staffing agency, recruiter, internship", clearance: "none", workAuthOnly: false,
+    companiesInclude: "Bosch, Siemens, Emerson, Parker Hannifin, Flex, Magna", companiesExclude: "",
+    states: ["MI","OH","IN","WI"], remoteOk: false, splitPerState: false,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:false, indeed:true, clearancejobs:false, monster:false, zip:false },
+    category: "tech", type: "Full-time", salary: "", urgent: false
+  },
+  cnc: {
+    title: "CNC Machinist, CNC Operator, Machinist",
+    skills: "CNC machining, Mazak, Haas, blueprint reading",
+    location: "Grand Rapids, MI", seniority: "mid",
+    mustHave: "CNC, CNC machining\nMazak, Haas, Fanuc, Okuma\nblueprint reading, GD&T", niceToHave: "5-axis, lathe, mill, Mastercam, micrometer, deburring", niceRequired: false,
+    excludeTerms: "staffing agency, temp agency, trainee", clearance: "none", workAuthOnly: false,
+    companiesInclude: "", companiesExclude: "",
+    states: ["MI"], remoteOk: false, splitPerState: false,
+    platforms: { linkedin:true, googleli:true, googleresume:false, github:false, indeed:true, clearancejobs:false, monster:true, zip:true },
+    category: "retail", type: "Full-time", salary: "", urgent: false
+  },
   embedded: {
     title: "Embedded Software Engineer, Firmware Engineer, Embedded Systems Engineer",
     skills: "FPGA, RF, embedded C, firmware development",
@@ -2642,6 +2716,8 @@ function resetFeedbackForm(){
   el('fbNotes').value = '';
   el('fbStage').value = 'Phone Screen';
   el('fbDate').valueAsDate = new Date();
+  // Job Role and Job ID intentionally persist between entries — you usually log several
+  // candidates against the same requisition, so keep them filled after each Add.
 }
 function addFeedbackEntry(){
   const name = el('fbCandidate').value.trim();
@@ -2649,6 +2725,8 @@ function addFeedbackEntry(){
   const entry = {
     id: ++FEEDBACK_SEQ,
     name,
+    role: el('fbRole').value.trim(),
+    jobId: el('fbJobId').value.trim(),
     email: el('fbEmail').value.trim(),
     stage: el('fbStage').value,
     rating: el('fbRating').value,
@@ -2673,22 +2751,22 @@ function clearAllFeedback(){
 // Builds the subject/body for a candidate email. The recruiter reviews and sends it themselves
 // (via the Copy buttons below) — nothing here is sent automatically.
 function buildCandidateEmail(f, kind){
-  const roleTitle = (el('title').value || '').split(',')[0].trim();
+  // Prefer the per-entry Job Role; fall back to the Role Basics title if this entry has none.
+  const roleTitle = (f.role || (el('title').value || '').split(',')[0] || '').trim();
   const roleLabel = roleTitle || 'this role';
   const rolePhrase = roleTitle ? `the ${roleTitle} position` : 'this position';
-  const company = (el('fbCompany').value || '').trim();
-  const atCompany = company ? ` at ${company}` : '';
+  const reqTag = f.jobId ? ` (${f.jobId})` : '';
   const signOffName = f.interviewer || 'The Hiring Team';
-  const signature = `Warm regards,\n${signOffName}${company ? `\n${company}` : ''}`;
+  const signature = `Warm regards,\n${signOffName}`;
   if (kind === 'reject'){
     return {
-      subject: `Your application${atCompany} — ${roleLabel}`,
-      body: `Dear ${f.name},\n\nThank you for the time and effort you invested in interviewing for ${rolePhrase}${atCompany}. We enjoyed learning about your background and appreciate you sharing your experience with us.\n\nAfter careful consideration, we've decided to move forward with another candidate whose experience more closely aligns with our current needs. This was not an easy decision, and it in no way reflects a lack of appreciation for your qualifications.\n\nWe'll keep your resume on file and would welcome the opportunity to consider you for future openings that may be a better fit. We wish you continued success in your job search.\n\n${signature}`
+      subject: `Your application — ${roleLabel}${reqTag}`,
+      body: `Dear ${f.name},\n\nThank you for the time and effort you invested in interviewing for ${rolePhrase}${reqTag}. We enjoyed learning about your background and appreciate you sharing your experience with us.\n\nAfter careful consideration, we've decided to move forward with another candidate whose experience more closely aligns with our current needs. This was not an easy decision, and it in no way reflects a lack of appreciation for your qualifications.\n\nWe'll keep your resume on file and would welcome the opportunity to consider you for future openings that may be a better fit. We wish you continued success in your job search.\n\n${signature}`
     };
   }
   return {
-    subject: `Job Offer${atCompany} — ${roleLabel}`,
-    body: `Dear ${f.name},\n\nWe're delighted to let you know that, after careful consideration, we would like to move forward with you for ${rolePhrase}${atCompany}. Your background, experience, and the way you presented yourself throughout the interview process stood out to our team.\n\nWe'll be in touch shortly with the formal offer details and next steps. In the meantime, please don't hesitate to reach out with any questions.\n\nWe're looking forward to the possibility of welcoming you to the team.\n\n${signature}`
+    subject: `Job Offer — ${roleLabel}${reqTag}`,
+    body: `Dear ${f.name},\n\nWe're delighted to let you know that, after careful consideration, we would like to move forward with you for ${rolePhrase}${reqTag}. Your background, experience, and the way you presented yourself throughout the interview process stood out to our team.\n\nWe'll be in touch shortly with the formal offer details and next steps. In the meantime, please don't hesitate to reach out with any questions.\n\nWe're looking forward to the possibility of welcoming you to the team.\n\n${signature}`
   };
 }
 // "mailto:" links only work if the browser/OS has a default mail app or web handler registered —
@@ -2705,6 +2783,7 @@ function copyCandidateEmail(id, kind, btn){
 function fbCardHTML(f){
   const ratingClass = FB_RATING_CLASS[f.rating] || 'unrated';
   const ratingLabel = f.rating || 'Not rated';
+  const roleBits = [f.role, f.jobId ? `#${f.jobId}` : ''].filter(Boolean);
   const metaBits = [f.stage, f.interviewer ? `Interviewer: ${f.interviewer}` : '', f.date || ''].filter(Boolean);
   return `
     <div class="fb-card">
@@ -2713,6 +2792,7 @@ function fbCardHTML(f){
         <span class="fb-rating ${ratingClass}">${escapeHTML(ratingLabel)}</span>
         <button class="fb-remove" title="Delete entry" onclick="removeFeedbackEntry(${f.id})">✕</button>
       </div>
+      ${roleBits.length ? `<div class="fb-role">${roleBits.map(escapeHTML).join(' · ')}</div>` : ''}
       <div class="fb-meta">${metaBits.map(escapeHTML).join(' · ')}${f.email ? ` · ${escapeHTML(f.email)}` : ''}</div>
       ${f.notes ? `<div class="fb-notes">${escapeHTML(f.notes)}</div>` : ''}
       <div class="btn-row" style="margin-top:10px;">
@@ -2742,14 +2822,14 @@ function renderFeedbackList(){
 }
 function copyFeedbackLog(btn){
   const lines = INTERVIEW_FEEDBACK.map(f =>
-    `${f.name}${f.email ? ` <${f.email}>` : ''} — ${f.rating || 'Not rated'} (${f.stage}${f.interviewer ? `, interviewer: ${f.interviewer}` : ''}${f.date ? `, ${f.date}` : ''})${f.notes ? `\n  ${f.notes}` : ''}`
+    `${f.name}${f.email ? ` <${f.email}>` : ''}${f.role ? ` — ${f.role}` : ''}${f.jobId ? ` (#${f.jobId})` : ''} — ${f.rating || 'Not rated'} (${f.stage}${f.interviewer ? `, interviewer: ${f.interviewer}` : ''}${f.date ? `, ${f.date}` : ''})${f.notes ? `\n  ${f.notes}` : ''}`
   );
   const text = `Interview Feedback Log\n\n` + lines.join('\n\n') + `\n\nGenerated by the Plan AIQ Recruiting Toolkit.`;
   copyText(text, btn);
 }
 function downloadFeedbackCSV(){
-  const header = ['Candidate','Email','Rating','Stage','Interviewer','Date','Notes'];
-  const rows = INTERVIEW_FEEDBACK.map(f => [f.name, f.email, f.rating, f.stage, f.interviewer, f.date, f.notes]);
+  const header = ['Candidate','Job Role','Job ID','Email','Rating','Stage','Interviewer','Date','Notes'];
+  const rows = INTERVIEW_FEEDBACK.map(f => [f.name, f.role, f.jobId, f.email, f.rating, f.stage, f.interviewer, f.date, f.notes]);
   const csvEscape = v => { const s = String(v||''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
   const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
   const blob = new Blob([csv], {type:'text/csv'});

@@ -538,13 +538,14 @@
     </div>
     <h1 id="heroHeading">Recruiting Toolkit</h1>
     <p class="hero-lead">Describe a role once, and get everything you need to fill it — <strong>candidate searches, job-ad copy, resume scoring, and interview notes</strong> — generated instantly, right in your browser. No signup, no seat limits, and nothing ever sent to a server.</p>
-    <div class="hero-features" role="tablist" aria-label="Recruiting tools">
-      <button type="button" class="hero-tab active" id="tabBtnSource" role="tab" aria-selected="true" aria-controls="appBody" aria-label="Source Candidates" tabindex="0" onclick="switchTab('source')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🔎</span><span><span class="hf-t">Source Candidates</span><span class="hf-d">Ready-to-run Boolean &amp; X-ray searches for LinkedIn, Google, GitHub, Indeed, and more.</span></span></button>
-      <button type="button" class="hero-tab" id="tabBtnAdkit" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Job Ad Kit" tabindex="-1" onclick="switchTab('adkit')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">📣</span><span><span class="hf-t">Job Ad Kit</span><span class="hf-d">Platform-matched ad copy, sized to each job board, with an inclusive-language check.</span></span></button>
-      <button type="button" class="hero-tab" id="tabBtnMatch" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Resume Match" tabindex="-1" onclick="switchTab('match')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🎯</span><span><span class="hf-t">Resume Match</span><span class="hf-d">Score any resume against the job description and see matched vs. missing keywords.</span></span></button>
-      <button type="button" class="hero-tab" id="tabBtnFeedback" role="tab" aria-selected="false" aria-controls="appBody" aria-label="Interview Feedback" tabindex="-1" onclick="switchTab('feedback')" onkeydown="tabKey(event)"><span class="hf-ico" aria-hidden="true">🗣️</span><span><span class="hf-t">Interview Feedback</span><span class="hf-d">Capture structured ratings and notes to compare candidates side by side.</span></span></button>
-    </div>
   </section>
+
+  <div class="tabbar" role="tablist" aria-label="Recruiting tools">
+    <button type="button" class="tabbtn active" id="tabBtnSource" role="tab" aria-selected="true" aria-controls="appBody" tabindex="0" onclick="switchTab('source')" onkeydown="tabKey(event)"><span aria-hidden="true">🔎</span> Source Candidates</button>
+    <button type="button" class="tabbtn" id="tabBtnAdkit" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('adkit')" onkeydown="tabKey(event)"><span aria-hidden="true">📣</span> Job Ad Kit</button>
+    <button type="button" class="tabbtn" id="tabBtnMatch" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('match')" onkeydown="tabKey(event)"><span aria-hidden="true">🎯</span> Resume Match</button>
+    <button type="button" class="tabbtn" id="tabBtnFeedback" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('feedback')" onkeydown="tabKey(event)"><span aria-hidden="true">🗣️</span> Interview Feedback</button>
+  </div>
 
   <p class="tab-intro" id="tabIntro" aria-live="polite"><span><strong>Source Candidates.</strong> Enter the role details on the left, then Generate ready-to-run search strings for each platform — copy them or open the search in one click.</span></p>
 
@@ -596,10 +597,6 @@
 
         <div class="row" style="margin-top:10px;">
           <div>
-            <label class="field-label" for="location">Location <span class="hint">(US — city/state, or blank for nationwide)</span></label>
-            <input type="text" id="location" placeholder="Austin, TX">
-          </div>
-          <div>
             <label class="field-label" for="seniority">Seniority</label>
             <select id="seniority">
               <option value="">Any level</option>
@@ -611,37 +608,82 @@
               <option value="executive">Executive</option>
             </select>
           </div>
+          <div>
+            <label class="field-label" for="experience">Years of experience</label>
+            <select id="experience">
+              <option value="">Any experience</option>
+              <option value="0-2">0–2 years (early career)</option>
+              <option value="2-5">2–5 years</option>
+              <option value="5-8">5–8 years</option>
+              <option value="8-12">8–12 years</option>
+              <option value="12+">12+ years</option>
+            </select>
+          </div>
         </div>
+
+        <details class="form-section" id="secLocation" style="margin-top:12px;">
+          <summary>Location <span class="fs-tag">nationwide · state · city · ZIP</span></summary>
+          <div class="fs-body">
+            <label class="field-label" for="locScope">Search scope</label>
+            <select id="locScope" onchange="updateLocScope()">
+              <option value="nationwide">Nationwide — entire country</option>
+              <option value="state">Specific state(s)</option>
+              <option value="city">City / metro area</option>
+              <option value="zip">ZIP / postal code (pincode)</option>
+            </select>
+
+            <div id="locCityWrap" style="display:none; margin-top:10px;">
+              <label class="field-label" for="location">City / State <span class="hint">(e.g. Austin, TX)</span></label>
+              <input type="text" id="location" placeholder="Austin, TX">
+            </div>
+
+            <div id="locZipWrap" style="display:none; margin-top:10px;">
+              <div class="row">
+                <div>
+                  <label class="field-label" for="zipCode">ZIP / postal code (pincode)</label>
+                  <input type="text" id="zipCode" placeholder="e.g. 49503">
+                </div>
+                <div>
+                  <label class="field-label" for="zipRadius">Search radius</label>
+                  <select id="zipRadius">
+                    <option value="">Exact code</option>
+                    <option value="10">Within 10 mi</option>
+                    <option value="25">Within 25 mi</option>
+                    <option value="50">Within 50 mi</option>
+                    <option value="100">Within 100 mi</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div id="locStateWrap" style="display:none; margin-top:10px;">
+              <fieldset>
+                <legend>Select state(s)</legend>
+                <div class="states-toolbar">
+                  <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected.</span>
+                  <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
+                </div>
+                <div class="states-grid" id="statesGrid"></div>
+                <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
+              </fieldset>
+            </div>
+
+            <div class="checkline" style="margin-top:10px;"><input type="checkbox" id="remoteOk"><label for="remoteOk">Also include remote candidates</label></div>
+          </div>
+        </details>
         </div>
 
         <!-- ============ SOURCING-ONLY FIELDS ============ -->
         <div id="sourceFields">
           <p class="hint" style="margin:20px 0 4px;">Optional filters — expand only what you need. The defaults already produce a solid nationwide search.</p>
 
-          <details class="form-section" id="secEligibility">
-            <summary>Eligibility <span class="fs-tag">clearance · work authorization</span></summary>
-            <div class="fs-body">
-              <div class="row">
-                <div>
-                  <label class="field-label">Security Clearance</label>
-                  <select id="clearance">
-                    <option value="none">Not required</option>
-                    <option value="any">Any active clearance</option>
-                    <option value="public-trust">Public Trust</option>
-                    <option value="secret">Active Secret</option>
-                    <option value="top-secret">Active Top Secret</option>
-                    <option value="tssci">Active TS/SCI</option>
-                    <option value="willing">Willing/eligible to obtain</option>
-                  </select>
-                </div>
-              </div>
-              <div class="checkline"><input type="checkbox" id="workAuthOnly"><label for="workAuthOnly">US Citizens / Green Card only — adds citizenship terms, excludes H1B/OPT/CPT/sponsorship language</label></div>
-              <div class="checkline">
-                <input type="checkbox" id="openToWorkOnly">
-                <label for="openToWorkOnly">Only "Open to Work" candidates <span class="hint">— keyword proxy (#opentowork etc.), not LinkedIn's Recruiter-only flag</span></label>
-              </div>
-            </div>
-          </details>
+          <!-- Eligibility (clearance / work authorization) removed from the UI. Inputs kept
+               hidden and defaulted so clearance-aware logic and saved profiles keep working. -->
+          <div hidden aria-hidden="true">
+            <select id="clearance"><option value="none" selected>Not required</option></select>
+            <input type="checkbox" id="workAuthOnly">
+            <input type="checkbox" id="openToWorkOnly">
+          </div>
 
           <details class="form-section" id="secCompanies">
             <summary>Companies <span class="fs-tag">target &amp; exclude employers</span></summary>
@@ -658,23 +700,6 @@
                   <input type="text" id="companiesExclude" placeholder="Robert Half, TEKsystems">
                 </div>
               </div>
-            </div>
-          </details>
-
-          <details class="form-section" id="secLocation">
-            <summary>Location refinement <span class="fs-tag">states · remote</span></summary>
-            <div class="fs-body">
-              <p class="hint">Leave states unchecked for a nationwide search. Selecting states narrows results; "separate search per state" gives the most thorough coverage.</p>
-              <fieldset>
-                <legend>States (optional multi-select)</legend>
-                <div class="states-toolbar">
-                  <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
-                  <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
-                </div>
-                <div class="states-grid" id="statesGrid"></div>
-              </fieldset>
-              <div class="checkline"><input type="checkbox" id="remoteOk"><label for="remoteOk">Include remote candidates</label></div>
-              <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
             </div>
           </details>
 
@@ -919,6 +944,11 @@ const SENIORITY_LABELS = {
   lead:"Lead/Principal", manager:"Manager/Director", executive:"Executive"
 };
 
+const EXPERIENCE_LABELS = {
+  "": "", "0-2":"0–2 years", "2-5":"2–5 years", "5-8":"5–8 years",
+  "8-12":"8–12 years", "12+":"12+ years"
+};
+
 // LinkedIn's official "Open to Work" filter (the green-frame Spotlights toggle) only exists
 // inside a full paid LinkedIn Recruiter seat — not Recruiter Lite, not standard search — and
 // has no public URL. For everything else, this keyword set is the practical proxy recruiters
@@ -942,6 +972,28 @@ const AD_PLATFORMS = [
 ];
 
 function el(id){ return document.getElementById(id); }
+function elVal(id){ const e = el(id); return e ? e.value : ''; }
+
+// Show only the input(s) relevant to the chosen Location scope.
+function updateLocScope(){
+  const scope = elVal('locScope') || 'nationwide';
+  const show = (id, on) => { const w = el(id); if (w) w.style.display = on ? '' : 'none'; };
+  show('locCityWrap', scope === 'city');
+  show('locZipWrap', scope === 'zip');
+  show('locStateWrap', scope === 'state');
+}
+
+// Human-readable location string for the current scope — used by Resume Match's location signal.
+function effectiveLocation(){
+  const scope = elVal('locScope') || 'nationwide';
+  if (scope === 'city') return elVal('location').trim();
+  if (scope === 'zip')  return elVal('zipCode').trim();
+  if (scope === 'state'){
+    const st = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
+    return stateFullNames(st).join(', ');
+  }
+  return '';
+}
 
 /* ============================================================
    TAB SWITCHING
@@ -1024,6 +1076,7 @@ function buildStatesGrid(){
   ).join('');
 }
 buildStatesGrid();
+updateLocScope();
 
 /* ============================================================
    STATES SELECTION — visible summary + quick clear
@@ -1114,9 +1167,19 @@ function readSourceForm(){
   const bakeAdvanced = el('bakeAdvanced').checked;
   const companiesInclude = parseCSV(el('companiesInclude').value);
   const companiesExclude = parseCSV(el('companiesExclude').value);
-  const states = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
   const remoteOk = el('remoteOk').checked;
   const splitPerState = el('splitPerState').checked;
+  const experience = elVal('experience');
+  // Location scope (nationwide | state | city | zip). Map the chosen scope onto the
+  // existing metro/states plumbing so the query builders don't each need to know about scope.
+  const locScope = elVal('locScope') || 'nationwide';
+  const zipCode = elVal('zipCode').trim();
+  const zipRadius = elVal('zipRadius');
+  const checkedStates = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
+  let metro = '', states = [];
+  if (locScope === 'city') metro = shared.location;
+  else if (locScope === 'zip') metro = zipCode;
+  else if (locScope === 'state') states = checkedStates;
   const platforms = {
     linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
     github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
@@ -1126,8 +1189,8 @@ function readSourceForm(){
   const usingAdvancedMustHave = mustHaveGroups.length > 0;
   const effectiveMustHave = usingAdvancedMustHave ? mustHaveGroups : (shared.skills.length ? [shared.skills] : []);
   return { titles: shared.titles, mustHaveGroups: effectiveMustHave, usingAdvancedMustHave, niceToHave, niceRequired, excludeTerms,
-           seniority: shared.seniority, clearance, workAuthOnly, openToWorkOnly, bakeAdvanced,
-           companiesInclude, companiesExclude, metro: shared.location, states, remoteOk, splitPerState, platforms };
+           seniority: shared.seniority, experience, clearance, workAuthOnly, openToWorkOnly, bakeAdvanced,
+           companiesInclude, companiesExclude, metro, states, locScope, zipCode, zipRadius, remoteOk, splitPerState, platforms };
 }
 
 function buildCoreQuery(s){
@@ -1179,9 +1242,10 @@ function hasMultipleMustGroups(s){
 
 function advancedNoteText(s){
   if (s.bakeAdvanced) return "";
-  const groups = buildAdvancedGroups(s);
-  if (!groups.length) return "";
-  return " Also apply manually: " + groups.map(g => `${g.label} (${g.terms.slice(0,3).join(", ")}${g.terms.length>3?"…":""})`).join("; ") + " — these are rarely written verbatim on a profile, so ANDing them into the search text usually returns zero results. Use each platform's own filters, or mention the requirement in your outreach message instead.";
+  const bits = buildAdvancedGroups(s).map(g => `${g.label} (${g.terms.slice(0,3).join(", ")}${g.terms.length>3?"…":""})`);
+  if (s.experience) bits.push(`Experience (${EXPERIENCE_LABELS[s.experience] || s.experience})`);
+  if (!bits.length) return "";
+  return " Also apply manually: " + bits.join("; ") + " — these are rarely written verbatim on a profile, so ANDing them into the search text usually returns zero results. Use each platform's own filters, or mention the requirement in your outreach message instead.";
 }
 
 function buildExcludeAll(s){
@@ -1320,8 +1384,9 @@ function buildCards(s, batch){
   }
   if (s.platforms.indeed){
     let q = squeeze(`${liveCore} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
+    const radiusParam = (s.locScope === 'zip' && s.zipRadius) ? "&radius=" + encodeURIComponent(s.zipRadius) : "";
     cards.push({ name: "Indeed — Resume Search", live: true, query: q,
-      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (batch.locParam ? "&l=" + encodeURIComponent(batch.locParam) : ""),
+      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (batch.locParam ? "&l=" + encodeURIComponent(batch.locParam) : "") + radiusParam,
       note: "Indeed's resume database is a paid Employer/Recruiter feature — log into an Indeed Employer account with resume access first." + otwNoteGeneric + advNote + overrideNote });
   }
   if (s.platforms.clearancejobs){
@@ -1529,7 +1594,7 @@ function readAdkitForm(){
   return {
     title: shared.titles[0] || 'this role',
     category: el('category').value,
-    location: shared.location || 'the USA',
+    location: effectiveLocation() || 'the USA',
     type: el('type').value,
     seniority: SENIORITY_LABELS[shared.seniority] || '',
     salary: el('salary').value.trim(),
@@ -1867,9 +1932,10 @@ function buildMatchSignals(shared, jdText, resumeText){
     const hit = SENIORITY_TERMS[shared.seniority].some(t => textHasTerm(resumeText.toLowerCase(), t));
     signals.push({icon: hit ? 'ok':'info', text: `Seniority (${SENIORITY_LABELS[shared.seniority]}): ${hit ? 'resume language matches this level.' : 'no explicit language for this level found — not necessarily disqualifying.'}`});
   }
-  if (shared.location){
-    const locHit = textHasTerm(resumeText.toLowerCase(), shared.location) || textHasTerm(resumeText.toLowerCase(), 'remote');
-    signals.push({icon: locHit ? 'ok':'info', text: `Location (${escapeHTML(shared.location)}): ${locHit ? 'resume mentions this location or "remote."' : 'no mention of this location or remote work found — confirm separately.'}`});
+  const loc = effectiveLocation();
+  if (loc){
+    const locHit = textHasTerm(resumeText.toLowerCase(), loc) || textHasTerm(resumeText.toLowerCase(), 'remote');
+    signals.push({icon: locHit ? 'ok':'info', text: `Location (${escapeHTML(loc)}): ${locHit ? 'resume mentions this location or "remote."' : 'no mention of this location or remote work found — confirm separately.'}`});
   }
   return signals;
 }
@@ -1888,7 +1954,8 @@ function buildOutreachMessage(result, shared){
   const skillsMention = [...matchedSkills, ...matchedAuto].slice(0,4);
   const firstName = (result.name||'').trim().split(/\s+/)[0] || 'there';
   const skillsPhrase = skillsMention.length ? `your background in ${humanJoin(skillsMention)}` : 'your background';
-  const locPhrase = shared.location ? ` (${shared.location})` : '';
+  const loc = effectiveLocation();
+  const locPhrase = loc ? ` (${loc})` : '';
   return `Hi ${firstName},
 
 I came across your background while researching candidates for a ${title} role${locPhrase} and wanted to reach out directly — ${skillsPhrase} stood out as a strong fit for what we're looking for.
@@ -2475,17 +2542,25 @@ function applyJDAutofill(text, filename){
 
   if (title) el('title').value = title;
   if (skills.length) el('skills').value = skills.join(', ');
-  if (location) el('location').value = location;
   if (seniority) el('seniority').value = seniority;
 
-  // If the detected location is a specific state, also tighten the States refinement grid.
+  // Set the Location scope to match what was detected so the value is actually visible:
+  // an exact state name -> State scope; a "City, ST" or other place -> City scope.
   let stateChecked = '';
-  const stateMatch = US_STATES.find(([abbr,name]) => location === name || location.endsWith(', '+abbr));
-  if (stateMatch){
-    document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === stateMatch[0]); });
+  const exactState = location ? US_STATES.find(([abbr,name]) => location === name) : null;
+  const cityState  = location ? US_STATES.find(([abbr,name]) => location.endsWith(', '+abbr)) : null;
+  if (exactState){
+    document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === exactState[0]); });
     updateStatesSummary();
-    stateChecked = stateMatch[1];
+    stateChecked = exactState[1];
+    if (el('locScope')) el('locScope').value = 'state';
+  } else if (location){
+    el('location').value = location;
+    // Pre-tick the matching state too, so switching to State scope later is one click.
+    if (cityState){ document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === cityState[0]); }); updateStatesSummary(); }
+    if (el('locScope')) el('locScope').value = 'city';
   }
+  updateLocScope();
   return {ok:true, title, skills, location, seniority, stateChecked};
 }
 
@@ -2503,7 +2578,7 @@ function renderAutofillReviewHTML(filename, result){
       <ul class="autofill-list">
         ${rows.map(([k,v]) => `<li><span class="autofill-key">${k}:</span> ${escapeHTML(v)}</li>`).join('')}
       </ul>
-      ${result.stateChecked ? `<p style="margin:6px 0 0;">Also checked <strong>${escapeHTML(result.stateChecked)}</strong> in the Location refinement filter (Source Candidates tab) — clear it there if you want a nationwide search instead.</p>` : ''}
+      ${result.stateChecked ? `<p style="margin:6px 0 0;">Also set <strong>Location → Specific state(s)</strong> to <strong>${escapeHTML(result.stateChecked)}</strong> — change the Location scope there if you want a nationwide search instead.</p>` : ''}
       <p style="margin:6px 0 0;">This is a best-effort read of the file's text — double-check the fields above (and edit freely) before you click Generate.</p>`;
 }
 async function handleJDAutofillUpload(evt){
@@ -2577,6 +2652,7 @@ function resetForm(){
   el('jdMatchAutofillReview').style.display = 'none';
   resetCandidates();
   el('seniority').value = "";
+  el('experience').value = "";
   el('niceRequired').checked = false;
   el('clearance').value = "none";
   el('workAuthOnly').checked = false;
@@ -2584,6 +2660,10 @@ function resetForm(){
   el('bakeAdvanced').checked = false;
   el('remoteOk').checked = false;
   el('splitPerState').checked = false;
+  el('locScope').value = "nationwide";
+  el('zipCode').value = "";
+  el('zipRadius').value = "";
+  updateLocScope();
   document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
   updateStatesSummary();
   ['p_linkedin','p_googleli','p_indeed'].forEach(id => el(id).checked = true);
@@ -2602,10 +2682,12 @@ function saveProfile(){
   const shared = readShared();
   const raw = {
     title: el('title').value, skills: el('skills').value, location: el('location').value, seniority: shared.seniority,
+    experience: el('experience').value,
     mustHave: el('mustHave').value, niceToHave: el('niceToHave').value, niceRequired: el('niceRequired').checked,
     excludeTerms: el('excludeTerms').value, clearance: el('clearance').value, workAuthOnly: el('workAuthOnly').checked,
     openToWorkOnly: el('openToWorkOnly').checked, bakeAdvanced: el('bakeAdvanced').checked,
     companiesInclude: el('companiesInclude').value, companiesExclude: el('companiesExclude').value,
+    locScope: el('locScope').value, zipCode: el('zipCode').value, zipRadius: el('zipRadius').value,
     states: Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value),
     remoteOk: el('remoteOk').checked, splitPerState: el('splitPerState').checked,
     platforms: { linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
@@ -2639,6 +2721,7 @@ function applyProfile(d){
   el('skills').value = d.skills || "";
   el('location').value = d.location || "";
   el('seniority').value = d.seniority || "";
+  el('experience').value = d.experience || "";
   el('mustHave').value = d.mustHave || "";
   el('niceToHave').value = d.niceToHave || "";
   el('niceRequired').checked = !!d.niceRequired;
@@ -2653,6 +2736,12 @@ function applyProfile(d){
   updateStatesSummary();
   el('remoteOk').checked = !!d.remoteOk;
   el('splitPerState').checked = !!d.splitPerState;
+  // Location scope: use the saved scope if present, otherwise infer from what the profile set
+  // (a city string -> City; states -> State; neither -> Nationwide).
+  el('locScope').value = d.locScope || (String(d.location||'').trim() ? 'city' : ((d.states && d.states.length) ? 'state' : 'nationwide'));
+  el('zipCode').value = d.zipCode || "";
+  el('zipRadius').value = d.zipRadius || "";
+  updateLocScope();
   const plt = d.platforms || {};
   el('p_linkedin').checked = !!plt.linkedin;
   el('p_googleli').checked = !!plt.googleli;
@@ -2670,9 +2759,8 @@ function applyProfile(d){
   // Auto-expand any collapsible section a preset/profile actually populated, so the applied
   // values aren't hidden behind a collapsed header.
   const openIf = (id, cond) => { const s = el(id); if (s) s.open = !!cond; };
-  openIf('secEligibility', (d.clearance && d.clearance !== 'none') || d.workAuthOnly || d.openToWorkOnly);
   openIf('secCompanies',   (d.companiesInclude || '').trim() || (d.companiesExclude || '').trim());
-  openIf('secLocation',    (d.states && d.states.length) || d.remoteOk || d.splitPerState);
+  openIf('secLocation',    (el('locScope').value !== 'nationwide') || d.remoteOk);
 }
 
 /* ============================================================

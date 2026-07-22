@@ -434,14 +434,56 @@
     border-top:1px solid var(--line); background:var(--paper-alt);
   }
 
+  /* ---- Accessibility helpers ---- */
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  .skip-link{
+    position:absolute; left:16px; top:-56px; z-index:60;
+    background:var(--accent); color:#fff; font-weight:700; font-size:13px; text-decoration:none;
+    padding:10px 16px; border-radius:0 0 10px 10px; box-shadow:var(--shadow-md);
+    transition:top .16s ease;
+  }
+  .skip-link:focus{top:0; outline:2px solid #fff; outline-offset:-4px;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .tabbtn:focus-visible{outline-offset:-2px;}
+
+  /* ---- Hero content ---- */
+  .hero-badges{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:6px;}
+  .hero-badges .badge,.hero-badges .privacy-badge{margin:0;}
+  .hero-lead{font-size:16px; line-height:1.6; color:var(--ink-soft); max-width:780px; margin:4px 0 22px;}
+  .hero-lead strong{color:var(--ink); font-weight:700;}
+  .hero-features{
+    list-style:none; margin:0 0 4px; padding:0;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; max-width:1040px;
+  }
+  .hero-features li{
+    display:flex; gap:12px; align-items:flex-start;
+    background:var(--paper-alt); border:1px solid var(--line); border-radius:14px; padding:14px 16px;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  .hero-features li:hover{border-color:#cdd6e2; box-shadow:var(--shadow-sm); transform:translateY(-1px);}
+  .hero-features .hf-ico{font-size:20px; line-height:1.1; flex-shrink:0;}
+  .hero-features .hf-t{font-weight:700; font-size:13.5px; color:var(--ink); display:block; margin-bottom:3px;}
+  .hero-features .hf-d{font-size:12.5px; color:var(--ink-soft); line-height:1.48;}
+
+  /* ---- Per-tab guidance strip ---- */
+  .tab-intro{
+    padding:14px 28px; font-size:14px; color:var(--ink-soft); line-height:1.55;
+    background:linear-gradient(180deg,#fbfcfe,#f4f7fb); border-bottom:1px solid var(--line);
+    display:flex; gap:10px; align-items:baseline;
+  }
+  .tab-intro::before{content:"›"; color:var(--accent); font-weight:800; font-size:18px; line-height:1;}
+  .tab-intro strong{color:var(--ink); font-weight:700;}
+  @media (max-width:720px){ .tab-intro{padding-left:18px; padding-right:18px;} }
+
   /* ---- Motion + focus preferences ---- */
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; scroll-behavior:auto !important;} }
 </style>
 </head>
 <body>
+<a href="#appBody" class="skip-link">Skip to main content</a>
 <div class="app">
 
-  <div class="brandbar">
+  <header class="brandbar" role="banner">
     <div class="brand">
       <div class="logo-mark" aria-hidden="true"><span>Pi</span></div>
       <div>
@@ -450,23 +492,33 @@
       </div>
     </div>
     <div class="madeby">Built by <strong>Plan AIQ</strong><br>Recruiting Toolkit</div>
-  </div>
-
-  <header class="intro">
-    <span class="badge">Sourcing + Ad Kit + Resume Match + Interview Feedback, one workflow</span>
-    <span class="privacy-badge" title="This page runs entirely in your browser — searches, ad copy, and resume matching are all computed locally. Nothing you type or upload is ever sent to a server."><span class="dot"></span> 🔒 Private by design — nothing you type or upload ever leaves your browser</span>
-    <h1>Recruiting Toolkit</h1>
-    <p>Describe the role once — title, skills, location, seniority — and get a ready-to-run candidate sourcing plan (Boolean &amp; X-ray searches across LinkedIn, Google, GitHub, Indeed, and more), platform-matched job ad copy sized to fit each board, and a keyword match score for any resume against a job description. No signup, no seat limits, nothing stored on a server — switch tabs any time; results stay in sync with the same role profile.</p>
   </header>
 
-  <div class="tabbar">
-    <button class="tabbtn active" id="tabBtnSource" onclick="switchTab('source')">🔎 Source Candidates</button>
-    <button class="tabbtn" id="tabBtnAdkit" onclick="switchTab('adkit')">📣 Job Ad Kit</button>
-    <button class="tabbtn" id="tabBtnMatch" onclick="switchTab('match')">🎯 Resume Match</button>
-    <button class="tabbtn" id="tabBtnFeedback" onclick="switchTab('feedback')">🗣️ Interview Feedback</button>
+  <section class="intro" aria-labelledby="heroHeading">
+    <div class="hero-badges">
+      <span class="badge">One role profile · four recruiting tools</span>
+      <span class="privacy-badge" title="This page runs entirely in your browser — searches, ad copy, and resume matching are all computed locally. Nothing you type or upload is ever sent to a server."><span class="dot"></span> 🔒 Private by design — nothing you type or upload ever leaves your browser</span>
+    </div>
+    <h1 id="heroHeading">Recruiting Toolkit</h1>
+    <p class="hero-lead">Describe a role once, and get everything you need to fill it — <strong>candidate searches, job-ad copy, resume scoring, and interview notes</strong> — generated instantly, right in your browser. No signup, no seat limits, and nothing ever sent to a server.</p>
+    <ul class="hero-features">
+      <li><span class="hf-ico" aria-hidden="true">🔎</span><span><span class="hf-t">Source Candidates</span><span class="hf-d">Ready-to-run Boolean &amp; X-ray searches for LinkedIn, Google, GitHub, Indeed, and more.</span></span></li>
+      <li><span class="hf-ico" aria-hidden="true">📣</span><span><span class="hf-t">Job Ad Kit</span><span class="hf-d">Platform-matched ad copy, sized to each job board, with an inclusive-language check.</span></span></li>
+      <li><span class="hf-ico" aria-hidden="true">🎯</span><span><span class="hf-t">Resume Match</span><span class="hf-d">Score any resume against the job description and see matched vs. missing keywords.</span></span></li>
+      <li><span class="hf-ico" aria-hidden="true">🗣️</span><span><span class="hf-t">Interview Feedback</span><span class="hf-d">Capture structured ratings and notes to compare candidates side by side.</span></span></li>
+    </ul>
+  </section>
+
+  <div class="tabbar" role="tablist" aria-label="Recruiting tools">
+    <button class="tabbtn active" id="tabBtnSource" role="tab" aria-selected="true" aria-controls="appBody" tabindex="0" onclick="switchTab('source')" onkeydown="tabKey(event)"><span aria-hidden="true">🔎</span> Source Candidates</button>
+    <button class="tabbtn" id="tabBtnAdkit" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('adkit')" onkeydown="tabKey(event)"><span aria-hidden="true">📣</span> Job Ad Kit</button>
+    <button class="tabbtn" id="tabBtnMatch" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('match')" onkeydown="tabKey(event)"><span aria-hidden="true">🎯</span> Resume Match</button>
+    <button class="tabbtn" id="tabBtnFeedback" role="tab" aria-selected="false" aria-controls="appBody" tabindex="-1" onclick="switchTab('feedback')" onkeydown="tabKey(event)"><span aria-hidden="true">🗣️</span> Interview Feedback</button>
   </div>
 
-  <div class="app-body">
+  <p class="tab-intro" id="tabIntro" aria-live="polite"><span><strong>Source Candidates.</strong> Enter the role details on the left, then Generate ready-to-run search strings for each platform — copy them or open the search in one click.</span></p>
+
+  <main class="app-body" id="appBody" role="tabpanel" tabindex="-1" aria-labelledby="tabBtnSource">
     <div class="grid">
 
       <!-- FORM PANEL -->
@@ -757,7 +809,7 @@
         </div>
       </section>
     </div>
-  </div>
+  </main>
 
   <footer class="appfoot">
     <p>Recruiting Toolkit — <span class="fbrand">Plan<span>AIQ</span></span> · Built in Michigan, serving nationwide.</p>
@@ -861,6 +913,45 @@ function switchTab(tab){
   el('matchResults').style.display = tab==='match' ? '' : 'none';
   el('feedbackResults').style.display = tab==='feedback' ? '' : 'none';
   el('resultsHeading').textContent = tab==='source' ? 'Generated Searches' : tab==='adkit' ? 'Recommended Platforms & Ad Copy' : tab==='match' ? 'Resume ↔ Job Description Match' : 'Interview Feedback Log';
+
+  // ---- Accessibility state: ARIA selection, roving tabindex, panel labelling ----
+  const TAB_IDS = { source:'tabBtnSource', adkit:'tabBtnAdkit', match:'tabBtnMatch', feedback:'tabBtnFeedback' };
+  Object.entries(TAB_IDS).forEach(([key,id]) => {
+    const btn = el(id); if (!btn) return;
+    const on = (key === tab);
+    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    btn.tabIndex = on ? 0 : -1;
+  });
+  const appBody = el('appBody');
+  if (appBody) appBody.setAttribute('aria-labelledby', TAB_IDS[tab]);
+
+  // ---- Per-tab guidance strip ----
+  const introText = {
+    source:   '<strong>Source Candidates.</strong> Enter the role details on the left, then Generate ready-to-run search strings for each platform — copy them or open the search in one click.',
+    adkit:    '<strong>Job Ad Kit.</strong> Turn the same role into job-board-ready ad copy, automatically sized to each platform and checked for inclusive language.',
+    match:    '<strong>Resume Match.</strong> Upload a job description and one or more resumes to score each candidate and see which keywords match or are missing.',
+    feedback: '<strong>Interview Feedback.</strong> Log structured ratings and notes for each candidate so your team can compare them side by side.'
+  };
+  const introEl = el('tabIntro');
+  if (introEl) introEl.innerHTML = '<span>' + (introText[tab] || '') + '</span>';
+}
+
+// Keyboard navigation for the tablist (WAI-ARIA tabs pattern):
+// Left/Right (and Up/Down) move focus between tabs; Home/End jump to first/last.
+function tabKey(e){
+  const order = ['tabBtnSource','tabBtnAdkit','tabBtnMatch','tabBtnFeedback'];
+  const tabs  = ['source','adkit','match','feedback'];
+  const i = order.indexOf(e.currentTarget.id);
+  if (i < 0) return;
+  let ni = null;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') ni = (i + 1) % order.length;
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ni = (i - 1 + order.length) % order.length;
+  else if (e.key === 'Home') ni = 0;
+  else if (e.key === 'End') ni = order.length - 1;
+  if (ni === null) return;
+  e.preventDefault();
+  switchTab(tabs[ni]);
+  el(order[ni]).focus();
 }
 
 /* ============================================================

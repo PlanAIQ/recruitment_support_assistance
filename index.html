@@ -584,11 +584,23 @@
 
       <!-- FORM PANEL -->
       <section class="panel">
-        <div id="quickStartBlock">
-        <h2>Quick Start</h2>
-        <label class="field-label" for="presetSelect">Load an example</label>
+        <div class="jd-autofill-box" id="jdAutofillBox">
+          <h2>Auto-fill from a JD file <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(optional — any file format)</span></h2>
+          <p class="hint">Upload a job description as a <strong>PDF, Word (.docx), Excel/CSV, plain text — or almost any other file type</strong>, and Job Title, Key Skills, Location, and Seniority below will be auto-filled from it. <span class="hint">(On the Resume Match tab, use the single "Upload JD" button below instead — it does this automatically.)</span></p>
+          <div class="upload-row">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('jdAutofillFile').click()">📂 Upload JD to auto-fill <span class="hint" style="text-transform:none; font-weight:400;">(.pdf/.docx/.xlsx/.csv/.txt/…)</span></button>
+            <input type="file" id="jdAutofillFile" accept=".txt,.csv,.tsv,.pdf,.docx,.doc,.xlsx,.xls,.rtf,.json,.md" style="display:none" onchange="handleJDAutofillUpload(event)">
+          </div>
+          <div class="file-status" id="jdAutofillStatus"></div>
+          <div id="jdAutofillReview" style="display:none;"></div>
+        </div>
+
+        <div id="roleBasicsBlock">
+        <h2>Role Basics <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(shared by all three tabs)</span></h2>
+
+        <label class="field-label" for="presetSelect">Profiles and roles <span class="hint">(load a ready-made example to auto-fill the fields below)</span></label>
         <select id="presetSelect">
-          <option value="">— Choose an example to auto-fill —</option>
+          <option value="">— Choose a profile / role to auto-fill —</option>
           <optgroup label="Manufacturing &amp; Skilled Trades">
             <option value="mfgeng">Manufacturing / Process Engineer</option>
             <option value="cnc">CNC Machinist / Production Operator</option>
@@ -603,22 +615,8 @@
             <option value="cdl">CDL-A Truck Driver</option>
           </optgroup>
         </select>
-        </div>
 
-        <div class="jd-autofill-box" id="jdAutofillBox">
-          <h2>Auto-fill from a JD file <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(optional — any file format)</span></h2>
-          <p class="hint">Upload a job description as a <strong>PDF, Word (.docx), Excel/CSV, plain text — or almost any other file type</strong>, and Job Title, Key Skills, Location, and Seniority below will be auto-filled from it. <span class="hint">(On the Resume Match tab, use the single "Upload JD" button below instead — it does this automatically.)</span></p>
-          <div class="upload-row">
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('jdAutofillFile').click()">📂 Upload JD to auto-fill <span class="hint" style="text-transform:none; font-weight:400;">(.pdf/.docx/.xlsx/.csv/.txt/…)</span></button>
-            <input type="file" id="jdAutofillFile" accept=".txt,.csv,.tsv,.pdf,.docx,.doc,.xlsx,.xls,.rtf,.json,.md" style="display:none" onchange="handleJDAutofillUpload(event)">
-          </div>
-          <div class="file-status" id="jdAutofillStatus"></div>
-          <div id="jdAutofillReview" style="display:none;"></div>
-        </div>
-
-        <div id="roleBasicsBlock">
-        <h2>Role Basics <span class="hint" style="text-transform:none; font-weight:400; letter-spacing:0;">(shared by all three tabs)</span></h2>
-        <p class="req-legend"><span class="req">*</span> required — fill in at least one of Job Title or Key Skills to generate candidate searches; Job Description and Resume are required on the Resume Match tab.</p>
+        <p class="req-legend" style="margin-top:12px;"><span class="req">*</span> required — fill in at least one of Job Title or Key Skills to generate candidate searches; Job Description and Resume are required on the Resume Match tab.</p>
         <label class="field-label" for="title">Job Title(s) / Synonyms <span class="req" title="Required — or fill in Key Skills instead">*</span> <span class="hint">(comma-separated)</span></label>
         <textarea id="title" placeholder="Embedded Software Engineer, Firmware Engineer, Embedded Systems Engineer" style="min-height:44px;"></textarea>
 
@@ -666,16 +664,15 @@
           </div>
 
           <details class="form-section" id="secLocation" open>
-            <summary>Location <span class="fs-tag">nationwide · state/city · ZIP</span></summary>
+            <summary>Location <span class="fs-tag">nationwide · state · city · ZIP</span></summary>
             <div class="fs-body">
               <label class="field-label" for="locScope">Search scope</label>
               <select id="locScope" onchange="updateLocScope()">
                 <option value="nationwide">Nationwide — entire country</option>
-                <option value="city">State or City</option>
-                <option value="zip">ZIP / postal code (pincode)</option>
+                <option value="city">State, City or ZIP</option>
               </select>
 
-              <!-- STATE-or-CITY scope: pick state(s), optionally narrow to cities, plus free-text -->
+              <!-- STATE / CITY / ZIP scope: pick state(s), optionally narrow to cities, plus free-text (city or ZIP) -->
               <div id="locCityWrap" style="display:none; margin-top:10px;">
                 <label class="field-label">State(s) <span class="hint">(pick states — leave cities empty to search the whole state)</span></label>
                 <div class="ms" id="cityStateMs">
@@ -687,30 +684,10 @@
                   <button type="button" class="ms-toggle" id="cityToggle" onclick="toggleMs('cityMs')">Select cities ▾</button>
                   <div class="ms-menu" id="cityMenu" hidden><p class="ms-empty">Select a state first.</p></div>
                 </div>
-                <label class="field-label" style="margin-top:12px;" for="location">Or type a city <span class="hint">(free text, optional)</span></label>
-                <input type="text" id="location" placeholder="e.g. Grand Rapids, MI">
+                <label class="field-label" style="margin-top:12px;" for="location">Or type a city or ZIP code <span class="hint">(free text, optional)</span></label>
+                <input type="text" id="location" placeholder="e.g. Grand Rapids, MI — or 94102" oninput="onLocationInput()">
+                <p class="hint" id="zipResolved" style="margin:6px 0 0;"></p>
                 <div class="checkline" style="margin-top:10px;"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state <span class="hint">(when no cities are picked)</span></label></div>
-              </div>
-
-              <!-- ZIP scope -->
-              <div id="locZipWrap" style="display:none; margin-top:10px;">
-                <div class="row">
-                  <div>
-                    <label class="field-label" for="zipCode">ZIP / postal code (pincode)</label>
-                    <input type="text" id="zipCode" placeholder="e.g. 94102" oninput="onZipInput()">
-                  </div>
-                  <div>
-                    <label class="field-label" for="zipRadius">Search radius</label>
-                    <select id="zipRadius">
-                      <option value="">Exact code</option>
-                      <option value="10">Within 10 mi</option>
-                      <option value="25">Within 25 mi</option>
-                      <option value="50">Within 50 mi</option>
-                      <option value="100">Within 100 mi</option>
-                    </select>
-                  </div>
-                </div>
-                <p class="hint" id="zipResolved" style="margin:8px 0 0;"></p>
               </div>
 
               <div class="checkline" style="margin-top:12px;"><input type="checkbox" id="remoteOk"><label for="remoteOk">Also include remote candidates</label></div>
@@ -766,6 +743,9 @@
         <!-- ============ AD-KIT-ONLY FIELDS ============ -->
         <div id="adkitFields" style="display:none;">
           <h2 style="margin-top:26px;">Ad Kit Details</h2>
+          <label class="field-label" for="adkitLocation">Location <span class="hint">(city, state, or ZIP — appears in the ad copy)</span></label>
+          <input type="text" id="adkitLocation" placeholder="e.g. Grand Rapids, MI — or 94102" oninput="onAdkitLocationInput()">
+          <p class="hint" id="adkitLocResolved" style="margin:6px 0 10px;"></p>
           <label class="field-label" for="category">Role category <span class="hint">(used to rank which platforms fit best)</span></label>
           <select id="category">
             <option value="corporate">Corporate / Office / General</option>
@@ -1068,9 +1048,10 @@ function updateLocScope(){
   const scope = elVal('locScope') || 'nationwide';
   const show = (id, on) => { const w = el(id); if (w) w.style.display = on ? '' : 'none'; };
   show('locCityWrap', scope === 'city');
-  show('locZipWrap', scope === 'zip');
-  if (scope === 'city' && el('cityStateMenu') && !el('cityStateMenu').dataset.built) buildCityStateMenu();
-  if (scope === 'zip') onZipInput();
+  if (scope === 'city'){
+    if (el('cityStateMenu') && !el('cityStateMenu').dataset.built) buildCityStateMenu();
+    onLocationInput();
+  }
 }
 
 /* ---- Generic multi-select dropdown open/close (State-or-City scope: states + cities) ---- */
@@ -1122,19 +1103,26 @@ function updateLocToggles(){
   const cBtn = el('cityToggle'); if (cBtn) cBtn.textContent = (ct.length ? `${ct.length} cit${ct.length>1?'ies':'y'} selected` : 'Select cities') + ' ▾';
 }
 
+// Parse a free-text location value that may be a city string OR a 5-digit ZIP.
+// Returns { city, zip, place } — for a ZIP, `place` is its resolved "City, ST" (or the raw ZIP
+// if unrecognized) and `zip` is the raw code (used for Indeed's ZIP filter).
+function parseFreeLocation(raw){
+  const t = String(raw || '').trim();
+  if (!t) return { city:'', zip:'', place:'' };
+  if (/^\d{5}$/.test(t)){ const place = resolveZip(t); return { city:'', zip:t, place: place || t }; }
+  return { city:t, zip:'', place:t };
+}
+
 // Human-readable location string for the current scope — used by Resume Match's location signal.
 function effectiveLocation(){
   const scope = elVal('locScope') || 'nationwide';
   if (scope === 'city'){
-    const cities = [...selectedCities(), ...(elVal('location').trim() ? [elVal('location').trim()] : [])];
+    const cities = [...selectedCities()];
+    const fl = parseFreeLocation(elVal('location'));
+    if (fl.place) cities.push(fl.place);
     if (cities.length) return cities.join(', ');
-    // No cities picked → fall back to the selected states (whole-state search).
+    // Nothing specific → fall back to the selected states (whole-state search).
     return stateFullNames(selectedCityStates()).join(', ');
-  }
-  if (scope === 'zip'){
-    const z = elVal('zipCode').trim();
-    const place = resolveZip(z);
-    return place ? `${z} (${place})` : z;
   }
   return '';
 }
@@ -1192,15 +1180,19 @@ function resolveZip(zip){
   const city = ZIP3_CITY[z3];
   return city ? `${city}, ${st}` : stateFullNames([st])[0];
 }
-// Live hint under the ZIP field so the recruiter sees what geography the ZIP resolves to.
-function onZipInput(){
-  const out = el('zipResolved'); if (!out) return;
-  const z = elVal('zipCode').trim();
-  if (!z){ out.textContent = ''; return; }
-  const place = resolveZip(z);
-  if (place) out.innerHTML = `📍 Resolves to <strong>${escapeHTML(place)}</strong>. Radius applies on Indeed & resume databases; X-ray/LinkedIn searches use this place name (they can't filter by a bare ZIP).`;
-  else out.innerHTML = `⚠ Not a recognized 5-digit US ZIP — enter a valid ZIP so the search can target the right area.`;
+// Shared hint renderer: shows what a typed ZIP resolves to (only for 5-digit ZIP input).
+function renderLocHint(outId, raw){
+  const out = el(outId); if (!out) return;
+  const t = String(raw || '').trim();
+  if (!/^\d{5}$/.test(t)){ out.textContent = ''; return; }  // plain city text needs no hint
+  const place = resolveZip(t);
+  if (place) out.innerHTML = `📍 ZIP ${escapeHTML(t)} → <strong>${escapeHTML(place)}</strong>. X-ray/LinkedIn target this place name; Indeed filters by the ZIP directly.`;
+  else out.innerHTML = `⚠ ${escapeHTML(t)} isn't a recognized US ZIP — check the digits.`;
 }
+// Live hint under the Source "city or ZIP" free-text field.
+function onLocationInput(){ renderLocHint('zipResolved', elVal('location')); }
+// Live hint under the Job Ad Kit location field.
+function onAdkitLocationInput(){ renderLocHint('adkitLocResolved', elVal('adkitLocation')); }
 
 /* ============================================================
    TAB SWITCHING
@@ -1220,7 +1212,6 @@ function switchTab(tab){
   // everything specific to the other three tabs (including the shared Generate/Reset/Save row)
   // rather than showing controls that don't apply to it.
   el('roleBasicsBlock').style.display = tab==='feedback' ? 'none' : '';
-  el('quickStartBlock').style.display = tab==='feedback' ? 'none' : '';
   el('mainActionRows').style.display = tab==='feedback' ? 'none' : '';
   // Resume Match has its own single "Upload JD" button that both fills the JD text box and
   // auto-fills Role Basics — showing the shared auto-fill uploader too would mean two
@@ -1348,20 +1339,22 @@ function readSourceForm(){
   const remoteOk = el('remoteOk').checked;
   const splitPerState = el('splitPerState').checked;
   const experience = elVal('experience');
-  // Location scope (nationwide | city | zip). Map the chosen scope onto the metro/states/cities
-  // plumbing so the query builders don't each need to know about scope.
+  // Location scope (nationwide | city). "State, City or ZIP": picked cities and/or a free-text
+  // city or ZIP; if nothing specific, the whole selected state(s).
   const locScope = elVal('locScope') || 'nationwide';
-  const zipCode = elVal('zipCode').trim();
-  const zipRadius = elVal('zipRadius');
-  let metro = '', states = [], cities = [];
+  let metro = '', states = [], cities = [], zipCode = '';
   if (locScope === 'city'){
-    // "State or City": specific cities if any are picked, otherwise the whole selected state(s).
-    cities = [...selectedCities(), ...(shared.location ? [shared.location] : [])];
+    cities = [...selectedCities()];
+    const fl = parseFreeLocation(shared.location);
+    if (fl.zip){
+      // Free-text ZIP: resolve to a real place for X-ray/LinkedIn (they can't filter a bare
+      // ZIP), and keep the raw ZIP for Indeed's location+radius filter.
+      zipCode = fl.zip;
+      if (fl.place) cities.push(fl.place);
+    } else if (fl.city){
+      cities.push(fl.city);
+    }
     if (!cities.length) states = selectedCityStates();
-  } else if (locScope === 'zip'){
-    // Resolve the ZIP to a real place so X-ray/LinkedIn can geo-target it (they can't filter a
-    // bare ZIP); Indeed & resume DBs still get the raw ZIP + radius below.
-    metro = resolveZip(zipCode) || zipCode;
   }
   const platforms = {
     linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
@@ -1373,7 +1366,7 @@ function readSourceForm(){
   const effectiveMustHave = usingAdvancedMustHave ? mustHaveGroups : (shared.skills.length ? [shared.skills] : []);
   return { titles: shared.titles, mustHaveGroups: effectiveMustHave, usingAdvancedMustHave, niceToHave, niceRequired, excludeTerms,
            seniority: shared.seniority, experience, clearance, workAuthOnly, openToWorkOnly, bakeAdvanced,
-           companiesInclude, companiesExclude, metro, states, cities, locScope, zipCode, zipRadius, remoteOk, splitPerState, platforms };
+           companiesInclude, companiesExclude, metro, states, cities, locScope, zipCode, remoteOk, splitPerState, platforms };
 }
 
 function buildCoreQuery(s){
@@ -1460,11 +1453,10 @@ function makeBatches(s){
   const cities = s.cities || [];
   const loc = locationClause({ states:s.states, metro:s.metro, cities, remoteOk:s.remoteOk });
   let label, locParam;
-  if (s.locScope === 'zip' && s.zipCode){
-    label = s.zipCode + (s.metro && s.metro !== s.zipCode ? ` · ${s.metro}` : '') + (s.zipRadius ? ` (+${s.zipRadius} mi)` : '');
-    locParam = s.metro || s.zipCode;
+  if (cities.length){
+    label = cities.join(" / ") + (s.zipCode ? ` (ZIP ${s.zipCode})` : "");
+    locParam = cities[0];
   }
-  else if (cities.length){ label = cities.join(" / "); locParam = cities[0]; }
   else if (s.metro){ label = s.metro; locParam = s.metro; }
   else if (s.states.length){ label = stateFullNames(s.states).join(" / "); locParam = stateFullNames(s.states).join(", "); }
   else { label = "Nationwide (USA)"; locParam = ""; }
@@ -1578,13 +1570,12 @@ function buildCards(s, batch){
   }
   if (s.platforms.indeed){
     let q = squeeze(`${liveCore} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
-    // For ZIP scope, feed Indeed the raw ZIP (its location box + radius filter geo-target it
-    // precisely); otherwise use the batch's place name.
-    const indeedLoc = (s.locScope === 'zip' && s.zipCode) ? s.zipCode : batch.locParam;
-    const radiusParam = (s.locScope === 'zip' && s.zipRadius) ? "&radius=" + encodeURIComponent(s.zipRadius) : "";
-    const zipNote = (s.locScope === 'zip') ? " Indeed filters by the ZIP and radius directly." : "";
+    // If a ZIP was entered, feed Indeed the raw ZIP (its location box geo-targets it precisely);
+    // otherwise use the batch's place name.
+    const indeedLoc = s.zipCode ? s.zipCode : batch.locParam;
+    const zipNote = s.zipCode ? " Indeed filters by the ZIP directly (set a radius in Indeed's own filters if needed)." : "";
     cards.push({ name: "Indeed — Resume Search", live: true, query: q,
-      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (indeedLoc ? "&l=" + encodeURIComponent(indeedLoc) : "") + radiusParam,
+      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (indeedLoc ? "&l=" + encodeURIComponent(indeedLoc) : ""),
       note: "Indeed's resume database is a paid Employer/Recruiter feature — log into an Indeed Employer account with resume access first." + zipNote + otwNoteGeneric + advNote + overrideNote });
   }
   if (s.platforms.clearancejobs){
@@ -1789,10 +1780,12 @@ function generateSourcing(){
    ============================================================ */
 function readAdkitForm(){
   const shared = readShared();
+  // Job Ad Kit has its own Location field; a typed ZIP is resolved to a real place for the copy.
+  const adkitLoc = parseFreeLocation(elVal('adkitLocation')).place;
   return {
     title: shared.titles[0] || 'this role',
     category: el('category').value,
-    location: effectiveLocation() || 'the USA',
+    location: adkitLoc || 'the USA',
     type: el('type').value,
     seniority: SENIORITY_LABELS[shared.seniority] || '',
     salary: el('salary').value.trim(),
@@ -2845,7 +2838,7 @@ function showToast(msg){
    RESET / SAVE / LOAD
    ============================================================ */
 function resetForm(){
-  ['title','skills','location','mustHave','niceToHave','excludeTerms','companiesInclude','companiesExclude','salary','jdText'].forEach(id => el(id).value = "");
+  ['title','skills','location','adkitLocation','mustHave','niceToHave','excludeTerms','companiesInclude','companiesExclude','salary','jdText'].forEach(id => el(id).value = "");
   el('jdFileStatus').textContent = "";
   el('jdAutofillStatus').textContent = "";
   el('jdAutofillReview').style.display = 'none';
@@ -2861,12 +2854,11 @@ function resetForm(){
   el('remoteOk').checked = false;
   el('splitPerState').checked = false;
   el('locScope').value = "nationwide";
-  el('zipCode').value = "";
-  el('zipRadius').value = "";
   document.querySelectorAll('.cityStateChk').forEach(c => c.checked = false);
   if (el('cityStateMenu') && el('cityStateMenu').dataset.built) rebuildCityMenu();
   updateLocToggles();
-  onZipInput();
+  onLocationInput();
+  onAdkitLocationInput();
   updateLocScope();
   ['p_linkedin','p_googleli','p_indeed'].forEach(id => el(id).checked = true);
   ['p_googleresume','p_github','p_clearancejobs','p_monster','p_zip'].forEach(id => el(id).checked = false);
@@ -2889,14 +2881,15 @@ function saveProfile(){
     excludeTerms: el('excludeTerms').value, clearance: el('clearance').value, workAuthOnly: el('workAuthOnly').checked,
     openToWorkOnly: el('openToWorkOnly').checked, bakeAdvanced: el('bakeAdvanced').checked,
     companiesInclude: el('companiesInclude').value, companiesExclude: el('companiesExclude').value,
-    locScope: el('locScope').value, zipCode: el('zipCode').value, zipRadius: el('zipRadius').value,
+    locScope: el('locScope').value,
     cityStates: selectedCityStates(), cities: selectedCities(),
     states: selectedCityStates(), // compat alias for older readers
     remoteOk: el('remoteOk').checked, splitPerState: el('splitPerState').checked,
     platforms: { linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
       github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
       monster: el('p_monster').checked, zip: el('p_zip').checked },
-    category: el('category').value, type: el('type').value, salary: el('salary').value, urgent: el('urgent').checked
+    category: el('category').value, type: el('type').value, salary: el('salary').value, urgent: el('urgent').checked,
+    adkitLocation: el('adkitLocation').value
   };
   const blob = new Blob([JSON.stringify(raw, null, 2)], {type: "application/json"});
   const a = document.createElement("a");
@@ -2922,7 +2915,10 @@ function loadProfile(evt){
 function applyProfile(d){
   el('title').value = d.title || "";
   el('skills').value = d.skills || "";
-  el('location').value = d.location || "";
+  // ZIP is now merged into the free-text location box; fall back to a legacy saved zipCode.
+  el('location').value = d.location || d.zipCode || "";
+  // Ad Kit has its own location; seed it from the role's location if none was saved separately.
+  if (el('adkitLocation')) el('adkitLocation').value = d.adkitLocation || d.location || d.zipCode || "";
   el('seniority').value = d.seniority || "";
   el('experience').value = d.experience || "";
   el('mustHave').value = d.mustHave || "";
@@ -2937,18 +2933,14 @@ function applyProfile(d){
   el('companiesExclude').value = d.companiesExclude || "";
   el('remoteOk').checked = !!d.remoteOk;
   el('splitPerState').checked = !!d.splitPerState;
-  // Location scope: use the saved scope if present (the old "state" scope now maps onto the
-  // combined "city" State-or-City scope), else infer from what the profile set.
-  let savedScope = d.locScope === 'state' ? 'city' : d.locScope;
+  // Location scope: the old "state"/"zip" scopes both map onto the single combined scope now.
+  let savedScope = (d.locScope === 'state' || d.locScope === 'zip') ? 'city' : d.locScope;
   if (!savedScope){
-    if (d.zipCode) savedScope = 'zip';
-    else if ((d.cities && d.cities.length) || (d.cityStates && d.cityStates.length) || (d.states && d.states.length) || String(d.location||'').trim()) savedScope = 'city';
+    if ((d.cities && d.cities.length) || (d.cityStates && d.cityStates.length) || (d.states && d.states.length) || String(d.location||'').trim() || d.zipCode) savedScope = 'city';
     else savedScope = 'nationwide';
   }
   el('locScope').value = savedScope;
-  el('zipCode').value = d.zipCode || "";
-  el('zipRadius').value = d.zipRadius || "";
-  // Restore the State-or-City cascade: selected states → cities (fall back to legacy `states`).
+  // Restore the State/City cascade: selected states → cities (fall back to legacy `states`).
   buildCityStateMenu();
   const cityStates = (d.cityStates && d.cityStates.length) ? d.cityStates : (d.states || []);
   document.querySelectorAll('.cityStateChk').forEach(c => c.checked = cityStates.includes(c.value));
@@ -2956,7 +2948,8 @@ function applyProfile(d){
   const savedCities = d.cities || [];
   document.querySelectorAll('.cityChk').forEach(c => c.checked = savedCities.includes(c.value));
   updateLocToggles();
-  onZipInput();
+  onLocationInput();
+  onAdkitLocationInput();
   updateLocScope();
   const plt = d.platforms || {};
   el('p_linkedin').checked = !!plt.linkedin;

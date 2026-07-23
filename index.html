@@ -665,38 +665,31 @@
             <input type="checkbox" id="openToWorkOnly">
           </div>
 
-          <details class="form-section" id="secLocation">
-            <summary>Location <span class="fs-tag">nationwide · state · city · ZIP</span></summary>
+          <details class="form-section" id="secLocation" open>
+            <summary>Location <span class="fs-tag">nationwide · state/city · ZIP</span></summary>
             <div class="fs-body">
               <label class="field-label" for="locScope">Search scope</label>
               <select id="locScope" onchange="updateLocScope()">
                 <option value="nationwide">Nationwide — entire country</option>
-                <option value="state">Specific state(s)</option>
-                <option value="city">City (within states)</option>
+                <option value="city">State or City</option>
                 <option value="zip">ZIP / postal code (pincode)</option>
               </select>
 
-              <!-- STATE scope: popup picker -->
-              <div id="locStateWrap" style="display:none; margin-top:10px;">
-                <button type="button" class="btn btn-secondary" onclick="openStateModal()">🗺 Select states…</button>
-                <p class="hint" id="stateScopeSummary" style="margin:8px 0 0;">No states selected — nationwide.</p>
-                <div class="checkline" style="margin-top:8px;"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
-              </div>
-
-              <!-- CITY scope: pick state(s) → pick cities, plus free-text -->
+              <!-- STATE-or-CITY scope: pick state(s), optionally narrow to cities, plus free-text -->
               <div id="locCityWrap" style="display:none; margin-top:10px;">
-                <label class="field-label">State(s) <span class="hint">(choose states, then pick cities)</span></label>
+                <label class="field-label">State(s) <span class="hint">(pick states — leave cities empty to search the whole state)</span></label>
                 <div class="ms" id="cityStateMs">
                   <button type="button" class="ms-toggle" id="cityStateToggle" onclick="toggleMs('cityStateMs')">Select states ▾</button>
                   <div class="ms-menu" id="cityStateMenu" hidden></div>
                 </div>
-                <label class="field-label" style="margin-top:12px;">Cities <span class="hint">(from the states above)</span></label>
+                <label class="field-label" style="margin-top:12px;">Cities <span class="hint">(optional — narrows to specific cities in the states above)</span></label>
                 <div class="ms" id="cityMs">
                   <button type="button" class="ms-toggle" id="cityToggle" onclick="toggleMs('cityMs')">Select cities ▾</button>
                   <div class="ms-menu" id="cityMenu" hidden><p class="ms-empty">Select a state first.</p></div>
                 </div>
                 <label class="field-label" style="margin-top:12px;" for="location">Or type a city <span class="hint">(free text, optional)</span></label>
                 <input type="text" id="location" placeholder="e.g. Grand Rapids, MI">
+                <div class="checkline" style="margin-top:10px;"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state <span class="hint">(when no cities are picked)</span></label></div>
               </div>
 
               <!-- ZIP scope -->
@@ -704,7 +697,7 @@
                 <div class="row">
                   <div>
                     <label class="field-label" for="zipCode">ZIP / postal code (pincode)</label>
-                    <input type="text" id="zipCode" placeholder="e.g. 49503">
+                    <input type="text" id="zipCode" placeholder="e.g. 94102" oninput="onZipInput()">
                   </div>
                   <div>
                     <label class="field-label" for="zipRadius">Search radius</label>
@@ -717,6 +710,7 @@
                     </select>
                   </div>
                 </div>
+                <p class="hint" id="zipResolved" style="margin:8px 0 0;"></p>
               </div>
 
               <div class="checkline" style="margin-top:12px;"><input type="checkbox" id="remoteOk"><label for="remoteOk">Also include remote candidates</label></div>
@@ -942,24 +936,6 @@
 
 <div class="toast" id="toast">Copied</div>
 
-<!-- State picker popup (opened from the Location → Specific state(s) scope) -->
-<div class="modal-overlay" id="stateModal" hidden onclick="if(event.target===this)closeStateModal()">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stateModalTitle">
-    <div class="modal-head">
-      <strong id="stateModalTitle">Select states</strong>
-      <button type="button" class="modal-x" onclick="closeStateModal()" aria-label="Close">✕</button>
-    </div>
-    <div class="states-toolbar">
-      <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
-      <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
-    </div>
-    <div class="states-grid" id="statesGrid"></div>
-    <div class="modal-foot">
-      <button type="button" class="btn btn-primary" onclick="closeStateModal()">Done</button>
-    </div>
-  </div>
-</div>
-
 <script>
 /* ============================================================
    SHARED CONSTANTS
@@ -1093,16 +1069,11 @@ function updateLocScope(){
   const show = (id, on) => { const w = el(id); if (w) w.style.display = on ? '' : 'none'; };
   show('locCityWrap', scope === 'city');
   show('locZipWrap', scope === 'zip');
-  show('locStateWrap', scope === 'state');
   if (scope === 'city' && el('cityStateMenu') && !el('cityStateMenu').dataset.built) buildCityStateMenu();
+  if (scope === 'zip') onZipInput();
 }
 
-/* ---- State picker popup (State scope) ---- */
-function openStateModal(){ const m = el('stateModal'); if (m){ m.hidden = false; document.addEventListener('keydown', stateModalEsc); } }
-function closeStateModal(){ const m = el('stateModal'); if (m){ m.hidden = true; document.removeEventListener('keydown', stateModalEsc); } }
-function stateModalEsc(e){ if (e.key === 'Escape') closeStateModal(); }
-
-/* ---- Generic multi-select dropdown open/close (City scope: states + cities) ---- */
+/* ---- Generic multi-select dropdown open/close (State-or-City scope: states + cities) ---- */
 function toggleMs(msId){
   const ms = el(msId); if (!ms) return;
   const menu = ms.querySelector('.ms-menu');
@@ -1155,15 +1126,80 @@ function updateLocToggles(){
 function effectiveLocation(){
   const scope = elVal('locScope') || 'nationwide';
   if (scope === 'city'){
-    const list = [...selectedCities(), ...(elVal('location').trim() ? [elVal('location').trim()] : [])];
-    return list.join(', ');
+    const cities = [...selectedCities(), ...(elVal('location').trim() ? [elVal('location').trim()] : [])];
+    if (cities.length) return cities.join(', ');
+    // No cities picked → fall back to the selected states (whole-state search).
+    return stateFullNames(selectedCityStates()).join(', ');
   }
-  if (scope === 'zip')  return elVal('zipCode').trim();
-  if (scope === 'state'){
-    const st = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
-    return stateFullNames(st).join(', ');
+  if (scope === 'zip'){
+    const z = elVal('zipCode').trim();
+    const place = resolveZip(z);
+    return place ? `${z} (${place})` : z;
   }
   return '';
+}
+
+/* ============================================================
+   ZIP → place resolution
+   ZIP/radius geo-filtering only works on platforms with a real radius filter
+   (Indeed & the resume DBs). Search-engine X-ray/LinkedIn can't filter by a bare
+   ZIP number, so we resolve the ZIP to "City, ST" (or at least the state) and use
+   THAT as the geographic keyword — otherwise a number like 94102 matches nothing
+   and the engine falls back to unrelated results (e.g. Austin).
+   ZIP3 (first 3 digits) → state is deterministic; a curated ZIP3 → metro map adds
+   a city for the major markets.
+   ============================================================ */
+// ZIP3 prefix ranges → state (USPS allocation; [start, end, ST]).
+const ZIP3_STATE_RANGES = [
+  [5,5,'NY'],[6,9,'PR'],[10,27,'MA'],[28,29,'RI'],[30,38,'NH'],[39,49,'ME'],[50,59,'VT'],
+  [60,69,'CT'],[70,89,'NJ'],[100,149,'NY'],[150,196,'PA'],[197,199,'DE'],[200,205,'DC'],
+  [206,219,'MD'],[220,246,'VA'],[247,268,'WV'],[270,289,'NC'],[290,299,'SC'],[300,319,'GA'],
+  [320,349,'FL'],[350,369,'AL'],[370,385,'TN'],[386,397,'MS'],[398,399,'GA'],[400,427,'KY'],
+  [430,459,'OH'],[460,479,'IN'],[480,499,'MI'],[500,528,'IA'],[530,549,'WI'],[550,567,'MN'],
+  [570,577,'SD'],[580,588,'ND'],[590,599,'MT'],[600,629,'IL'],[630,658,'MO'],[660,679,'KS'],
+  [680,693,'NE'],[700,714,'LA'],[716,729,'AR'],[730,749,'OK'],[750,799,'TX'],[800,816,'CO'],
+  [820,831,'WY'],[832,838,'ID'],[840,847,'UT'],[850,865,'AZ'],[870,884,'NM'],[889,898,'NV'],
+  [900,961,'CA'],[967,968,'HI'],[970,979,'OR'],[980,994,'WA'],[995,999,'AK']
+];
+// Curated ZIP3 → major metro city for the biggest markets.
+const ZIP3_CITY = {
+  100:'New York',101:'New York',102:'New York',103:'Staten Island',104:'Bronx',112:'Brooklyn',113:'Queens',
+  191:'Philadelphia',152:'Pittsburgh',212:'Baltimore',200:'Washington',201:'Washington',
+  22:'Boston',21:'Boston',20:'Boston',24:'Worcester',28:'Providence',
+  70:'Newark',71:'Newark',300:'Atlanta',303:'Atlanta',331:'Miami',327:'Orlando',336:'Tampa',322:'Jacksonville',
+  372:'Nashville',381:'Memphis',352:'Birmingham',
+  606:'Chicago',630:'St. Louis',641:'Kansas City',
+  432:'Columbus',441:'Cleveland',452:'Cincinnati',482:'Detroit',495:'Grand Rapids',
+  462:'Indianapolis',553:'Minneapolis',532:'Milwaukee',
+  770:'Houston',752:'Dallas',761:'Fort Worth',782:'San Antonio',787:'Austin',799:'El Paso',
+  850:'Phoenix',857:'Tucson',802:'Denver',841:'Salt Lake City',
+  891:'Las Vegas',895:'Reno',871:'Albuquerque',
+  900:'Los Angeles',902:'Los Angeles',906:'Long Beach',926:'Irvine',921:'San Diego',
+  941:'San Francisco',945:'Oakland',950:'San Jose',958:'Sacramento',937:'Fresno',
+  980:'Seattle',981:'Seattle',972:'Portland',970:'Portland',995:'Anchorage',968:'Honolulu'
+};
+function zip3State(z3){
+  for (const [a,b,st] of ZIP3_STATE_RANGES){ if (z3 >= a && z3 <= b) return st; }
+  return '';
+}
+// Returns "City, ST" or "State" for a 5-digit ZIP, or '' if it isn't a valid US ZIP.
+function resolveZip(zip){
+  const z = String(zip || '').trim();
+  if (!/^\d{5}$/.test(z)) return '';
+  const z3 = parseInt(z.slice(0,3), 10);
+  const st = zip3State(z3);
+  if (!st) return '';
+  const city = ZIP3_CITY[z3];
+  return city ? `${city}, ${st}` : stateFullNames([st])[0];
+}
+// Live hint under the ZIP field so the recruiter sees what geography the ZIP resolves to.
+function onZipInput(){
+  const out = el('zipResolved'); if (!out) return;
+  const z = elVal('zipCode').trim();
+  if (!z){ out.textContent = ''; return; }
+  const place = resolveZip(z);
+  if (place) out.innerHTML = `📍 Resolves to <strong>${escapeHTML(place)}</strong>. Radius applies on Indeed & resume databases; X-ray/LinkedIn searches use this place name (they can't filter by a bare ZIP).`;
+  else out.innerHTML = `⚠ Not a recognized 5-digit US ZIP — enter a valid ZIP so the search can target the right area.`;
 }
 
 /* ============================================================
@@ -1237,42 +1273,8 @@ function tabKey(e){
   el(order[ni]).focus();
 }
 
-/* ============================================================
-   STATES GRID
-   ============================================================ */
-function buildStatesGrid(){
-  const grid = el('statesGrid');
-  grid.innerHTML = US_STATES.map(([abbr,name]) =>
-    `<label><input type="checkbox" class="stateChk" value="${abbr}" data-name="${name}"> ${abbr}</label>`
-  ).join('');
-}
-buildStatesGrid();
+// Build the State-or-City cascade menus and apply the default scope on load.
 updateLocScope();
-
-/* ============================================================
-   STATES SELECTION — visible summary + quick clear
-   (The checkbox list is a scrollable 50-state grid; states checked earlier
-   by a preset/profile load can scroll out of view and stay checked without
-   the person noticing, silently widening "one state" searches to several.)
-   ============================================================ */
-function updateStatesSummary(){
-  const checked = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
-  const html = checked.length
-    ? `<span class="states-selected-badge">${checked.length} state${checked.length>1?'s':''} selected:</span> ${checked.join(', ')}`
-    : 'No states selected — nationwide.';
-  const modalSummary = el('statesSelectedSummary'); if (modalSummary) modalSummary.innerHTML = html;
-  // Mirror the count onto the in-form summary shown under the "Select states…" button.
-  const formSummary = el('stateScopeSummary');
-  if (formSummary) formSummary.textContent = checked.length
-    ? `${checked.length} state${checked.length>1?'s':''} selected: ${checked.join(', ')}`
-    : 'No states selected — nationwide.';
-}
-function clearStates(){
-  document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
-  updateStatesSummary();
-}
-el('statesGrid').addEventListener('change', updateStatesSummary);
-updateStatesSummary();
 
 /* ============================================================
    ADVANCED BOOLEAN — visible "active override" indicator
@@ -1346,18 +1348,21 @@ function readSourceForm(){
   const remoteOk = el('remoteOk').checked;
   const splitPerState = el('splitPerState').checked;
   const experience = elVal('experience');
-  // Location scope (nationwide | state | city | zip). Map the chosen scope onto the
-  // existing metro/states plumbing so the query builders don't each need to know about scope.
+  // Location scope (nationwide | city | zip). Map the chosen scope onto the metro/states/cities
+  // plumbing so the query builders don't each need to know about scope.
   const locScope = elVal('locScope') || 'nationwide';
   const zipCode = elVal('zipCode').trim();
   const zipRadius = elVal('zipRadius');
-  const checkedStates = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
   let metro = '', states = [], cities = [];
   if (locScope === 'city'){
-    // Selected cities from the cascade + the optional free-text city box.
+    // "State or City": specific cities if any are picked, otherwise the whole selected state(s).
     cities = [...selectedCities(), ...(shared.location ? [shared.location] : [])];
-  } else if (locScope === 'zip') metro = zipCode;
-  else if (locScope === 'state') states = checkedStates;
+    if (!cities.length) states = selectedCityStates();
+  } else if (locScope === 'zip'){
+    // Resolve the ZIP to a real place so X-ray/LinkedIn can geo-target it (they can't filter a
+    // bare ZIP); Indeed & resume DBs still get the raw ZIP + radius below.
+    metro = resolveZip(zipCode) || zipCode;
+  }
   const platforms = {
     linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
     github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
@@ -1455,7 +1460,11 @@ function makeBatches(s){
   const cities = s.cities || [];
   const loc = locationClause({ states:s.states, metro:s.metro, cities, remoteOk:s.remoteOk });
   let label, locParam;
-  if (cities.length){ label = cities.join(" / "); locParam = cities[0]; }
+  if (s.locScope === 'zip' && s.zipCode){
+    label = s.zipCode + (s.metro && s.metro !== s.zipCode ? ` · ${s.metro}` : '') + (s.zipRadius ? ` (+${s.zipRadius} mi)` : '');
+    locParam = s.metro || s.zipCode;
+  }
+  else if (cities.length){ label = cities.join(" / "); locParam = cities[0]; }
   else if (s.metro){ label = s.metro; locParam = s.metro; }
   else if (s.states.length){ label = stateFullNames(s.states).join(" / "); locParam = stateFullNames(s.states).join(", "); }
   else { label = "Nationwide (USA)"; locParam = ""; }
@@ -1569,10 +1578,14 @@ function buildCards(s, batch){
   }
   if (s.platforms.indeed){
     let q = squeeze(`${liveCore} ${excludeAll.map(t=>"-"+quote(t)).join(" ")}`);
+    // For ZIP scope, feed Indeed the raw ZIP (its location box + radius filter geo-target it
+    // precisely); otherwise use the batch's place name.
+    const indeedLoc = (s.locScope === 'zip' && s.zipCode) ? s.zipCode : batch.locParam;
     const radiusParam = (s.locScope === 'zip' && s.zipRadius) ? "&radius=" + encodeURIComponent(s.zipRadius) : "";
+    const zipNote = (s.locScope === 'zip') ? " Indeed filters by the ZIP and radius directly." : "";
     cards.push({ name: "Indeed — Resume Search", live: true, query: q,
-      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (batch.locParam ? "&l=" + encodeURIComponent(batch.locParam) : "") + radiusParam,
-      note: "Indeed's resume database is a paid Employer/Recruiter feature — log into an Indeed Employer account with resume access first." + otwNoteGeneric + advNote + overrideNote });
+      url: "https://www.indeed.com/resumes?q=" + encodeURIComponent(q) + (indeedLoc ? "&l=" + encodeURIComponent(indeedLoc) : "") + radiusParam,
+      note: "Indeed's resume database is a paid Employer/Recruiter feature — log into an Indeed Employer account with resume access first." + zipNote + otwNoteGeneric + advNote + overrideNote });
   }
   if (s.platforms.clearancejobs){
     let q = fullCore; if (excludeAll.length) q += ` NOT ${orGroup(excludeAll)}`;
@@ -2729,23 +2742,25 @@ function applyJDAutofill(text, filename){
   if (skills.length) el('skills').value = skills.join(', ');
   if (seniority) el('seniority').value = seniority;
 
-  // Set the Location scope to match what was detected so the value is actually visible:
-  // an exact state name -> State scope; a "City, ST" or other place -> City scope.
+  // Set the Location scope to match what was detected (everything geographic is the single
+  // "State or City" scope now): an exact state name -> pick that state; a "City, ST" (or any
+  // other place) -> free-text city, pre-selecting its state when we can map it.
   let stateChecked = '';
   const exactState = location ? US_STATES.find(([abbr,name]) => location === name) : null;
   const cityState  = location ? US_STATES.find(([abbr,name]) => location.endsWith(', '+abbr)) : null;
-  if (exactState){
-    document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === exactState[0]); });
-    updateStatesSummary();
-    stateChecked = exactState[1];
-    if (el('locScope')) el('locScope').value = 'state';
-  } else if (location){
-    el('location').value = location;
-    // Pre-tick the matching state too, so switching to State scope later is one click.
-    if (cityState){ document.querySelectorAll('.stateChk').forEach(c => { c.checked = (c.value === cityState[0]); }); updateStatesSummary(); }
+  if (location){
     if (el('locScope')) el('locScope').value = 'city';
+    buildCityStateMenu();
+    const targetAbbr = (exactState || cityState || [])[0];
+    if (targetAbbr){
+      document.querySelectorAll('.cityStateChk').forEach(c => { c.checked = (c.value === targetAbbr); });
+      rebuildCityMenu();
+    }
+    if (exactState){ stateChecked = exactState[1]; el('location').value = ''; }
+    else { el('location').value = location; }
+    updateLocToggles();
+    updateLocScope();
   }
-  updateLocScope();
   return {ok:true, title, skills, location, seniority, stateChecked};
 }
 
@@ -2763,7 +2778,7 @@ function renderAutofillReviewHTML(filename, result){
       <ul class="autofill-list">
         ${rows.map(([k,v]) => `<li><span class="autofill-key">${k}:</span> ${escapeHTML(v)}</li>`).join('')}
       </ul>
-      ${result.stateChecked ? `<p style="margin:6px 0 0;">Also set <strong>Location → Specific state(s)</strong> to <strong>${escapeHTML(result.stateChecked)}</strong> — change the Location scope there if you want a nationwide search instead.</p>` : ''}
+      ${result.stateChecked ? `<p style="margin:6px 0 0;">Also set <strong>Location → State or City</strong> to <strong>${escapeHTML(result.stateChecked)}</strong> — change the Location scope there if you want a nationwide search instead.</p>` : ''}
       <p style="margin:6px 0 0;">This is a best-effort read of the file's text — double-check the fields above (and edit freely) before you click Generate.</p>`;
 }
 async function handleJDAutofillUpload(evt){
@@ -2851,9 +2866,8 @@ function resetForm(){
   document.querySelectorAll('.cityStateChk').forEach(c => c.checked = false);
   if (el('cityStateMenu') && el('cityStateMenu').dataset.built) rebuildCityMenu();
   updateLocToggles();
+  onZipInput();
   updateLocScope();
-  document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
-  updateStatesSummary();
   ['p_linkedin','p_googleli','p_indeed'].forEach(id => el(id).checked = true);
   ['p_googleresume','p_github','p_clearancejobs','p_monster','p_zip'].forEach(id => el(id).checked = false);
   el('category').value = "corporate";
@@ -2876,8 +2890,8 @@ function saveProfile(){
     openToWorkOnly: el('openToWorkOnly').checked, bakeAdvanced: el('bakeAdvanced').checked,
     companiesInclude: el('companiesInclude').value, companiesExclude: el('companiesExclude').value,
     locScope: el('locScope').value, zipCode: el('zipCode').value, zipRadius: el('zipRadius').value,
-    states: Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value),
     cityStates: selectedCityStates(), cities: selectedCities(),
+    states: selectedCityStates(), // compat alias for older readers
     remoteOk: el('remoteOk').checked, splitPerState: el('splitPerState').checked,
     platforms: { linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
       github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
@@ -2921,23 +2935,28 @@ function applyProfile(d){
   el('bakeAdvanced').checked = !!d.bakeAdvanced;
   el('companiesInclude').value = d.companiesInclude || "";
   el('companiesExclude').value = d.companiesExclude || "";
-  document.querySelectorAll('.stateChk').forEach(c => c.checked = (d.states || []).includes(c.value));
-  updateStatesSummary();
   el('remoteOk').checked = !!d.remoteOk;
   el('splitPerState').checked = !!d.splitPerState;
-  // Location scope: use the saved scope if present, otherwise infer from what the profile set
-  // (a city string -> City; states -> State; neither -> Nationwide).
-  el('locScope').value = d.locScope || (((d.cities && d.cities.length) || String(d.location||'').trim()) ? 'city' : ((d.states && d.states.length) ? 'state' : 'nationwide'));
+  // Location scope: use the saved scope if present (the old "state" scope now maps onto the
+  // combined "city" State-or-City scope), else infer from what the profile set.
+  let savedScope = d.locScope === 'state' ? 'city' : d.locScope;
+  if (!savedScope){
+    if (d.zipCode) savedScope = 'zip';
+    else if ((d.cities && d.cities.length) || (d.cityStates && d.cityStates.length) || (d.states && d.states.length) || String(d.location||'').trim()) savedScope = 'city';
+    else savedScope = 'nationwide';
+  }
+  el('locScope').value = savedScope;
   el('zipCode').value = d.zipCode || "";
   el('zipRadius').value = d.zipRadius || "";
-  // Restore the City-scope cascade: selected states → cities.
+  // Restore the State-or-City cascade: selected states → cities (fall back to legacy `states`).
   buildCityStateMenu();
-  const cityStates = d.cityStates || [];
+  const cityStates = (d.cityStates && d.cityStates.length) ? d.cityStates : (d.states || []);
   document.querySelectorAll('.cityStateChk').forEach(c => c.checked = cityStates.includes(c.value));
   rebuildCityMenu();
   const savedCities = d.cities || [];
   document.querySelectorAll('.cityChk').forEach(c => c.checked = savedCities.includes(c.value));
   updateLocToggles();
+  onZipInput();
   updateLocScope();
   const plt = d.platforms || {};
   el('p_linkedin').checked = !!plt.linkedin;
@@ -2957,7 +2976,7 @@ function applyProfile(d){
   // values aren't hidden behind a collapsed header.
   const openIf = (id, cond) => { const s = el(id); if (s) s.open = !!cond; };
   openIf('secCompanies',   (d.companiesInclude || '').trim() || (d.companiesExclude || '').trim());
-  openIf('secLocation',    (el('locScope').value !== 'nationwide') || d.remoteOk);
+  openIf('secLocation', true); // Location stays visible by default
 }
 
 /* ============================================================

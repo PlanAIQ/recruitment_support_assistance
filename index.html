@@ -93,6 +93,36 @@
   .states-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:2px 8px; max-height:170px; overflow-y:auto; padding-right:4px;}
   .states-grid label{display:flex; align-items:center; gap:5px; font-size:12px; padding:2px 0;}
   .states-grid input{width:auto;}
+
+  /* ---- State picker popup ---- */
+  .modal-overlay{position:fixed; inset:0; z-index:100; background:rgba(15,23,42,.5); display:flex; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay[hidden]{display:none;}
+  .modal{background:var(--paper,#fff); border-radius:14px; box-shadow:var(--shadow-lg); width:min(520px,100%); max-height:85vh; display:flex; flex-direction:column; overflow:hidden;}
+  .modal-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--line); font-size:15px;}
+  .modal-x{background:none; border:none; cursor:pointer; font-size:16px; color:var(--ink-soft); padding:4px 8px; border-radius:8px;}
+  .modal-x:hover{background:var(--paper-alt); color:var(--ink);}
+  .modal .states-toolbar{padding:12px 18px 0; margin:0;}
+  .modal .states-grid{max-height:48vh; padding:10px 18px; grid-template-columns:repeat(4,1fr);}
+  .modal-foot{padding:12px 18px; border-top:1px solid var(--line); display:flex; justify-content:flex-end;}
+
+  /* ---- Multi-select dropdown (city scope: states + cities) ---- */
+  .ms{position:relative;}
+  .ms-toggle{
+    width:100%; text-align:left; cursor:pointer; font:inherit; color:var(--ink);
+    background:var(--paper,#fff); border:1px solid var(--line); border-radius:var(--radius-sm,8px);
+    padding:9px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .ms-toggle:hover{border-color:#cdd6e2;}
+  .ms-menu{
+    position:absolute; z-index:30; left:0; right:0; margin-top:4px; max-height:230px; overflow-y:auto;
+    background:var(--paper,#fff); border:1px solid var(--line); border-radius:var(--radius-sm,8px); box-shadow:var(--shadow-md); padding:6px;
+  }
+  .ms-menu[hidden]{display:none;}
+  .ms-menu label{display:flex; align-items:center; gap:7px; font-size:12.5px; padding:5px 8px; border-radius:6px; cursor:pointer;}
+  .ms-menu label:hover{background:var(--paper-alt);}
+  .ms-menu input{width:auto;}
+  .ms-empty{margin:0; padding:8px; font-size:12px; color:var(--ink-soft);}
+  .ms-group{font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); padding:8px 8px 3px;}
   .platform-list{display:flex; flex-direction:column; gap:6px;}
   .platform-list label{display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; cursor:pointer;}
   .platform-list label small{display:block; color:var(--ink-soft); font-weight:400;}
@@ -621,56 +651,6 @@
           </div>
         </div>
 
-        <details class="form-section" id="secLocation" style="margin-top:12px;">
-          <summary>Location <span class="fs-tag">nationwide · state · city · ZIP</span></summary>
-          <div class="fs-body">
-            <label class="field-label" for="locScope">Search scope</label>
-            <select id="locScope" onchange="updateLocScope()">
-              <option value="nationwide">Nationwide — entire country</option>
-              <option value="state">Specific state(s)</option>
-              <option value="city">City / metro area</option>
-              <option value="zip">ZIP / postal code (pincode)</option>
-            </select>
-
-            <div id="locCityWrap" style="display:none; margin-top:10px;">
-              <label class="field-label" for="location">City / State <span class="hint">(e.g. Austin, TX)</span></label>
-              <input type="text" id="location" placeholder="Austin, TX">
-            </div>
-
-            <div id="locZipWrap" style="display:none; margin-top:10px;">
-              <div class="row">
-                <div>
-                  <label class="field-label" for="zipCode">ZIP / postal code (pincode)</label>
-                  <input type="text" id="zipCode" placeholder="e.g. 49503">
-                </div>
-                <div>
-                  <label class="field-label" for="zipRadius">Search radius</label>
-                  <select id="zipRadius">
-                    <option value="">Exact code</option>
-                    <option value="10">Within 10 mi</option>
-                    <option value="25">Within 25 mi</option>
-                    <option value="50">Within 50 mi</option>
-                    <option value="100">Within 100 mi</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div id="locStateWrap" style="display:none; margin-top:10px;">
-              <fieldset>
-                <legend>Select state(s)</legend>
-                <div class="states-toolbar">
-                  <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected.</span>
-                  <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
-                </div>
-                <div class="states-grid" id="statesGrid"></div>
-                <div class="checkline"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
-              </fieldset>
-            </div>
-
-            <div class="checkline" style="margin-top:10px;"><input type="checkbox" id="remoteOk"><label for="remoteOk">Also include remote candidates</label></div>
-          </div>
-        </details>
         </div>
 
         <!-- ============ SOURCING-ONLY FIELDS ============ -->
@@ -684,6 +664,64 @@
             <input type="checkbox" id="workAuthOnly">
             <input type="checkbox" id="openToWorkOnly">
           </div>
+
+          <details class="form-section" id="secLocation">
+            <summary>Location <span class="fs-tag">nationwide · state · city · ZIP</span></summary>
+            <div class="fs-body">
+              <label class="field-label" for="locScope">Search scope</label>
+              <select id="locScope" onchange="updateLocScope()">
+                <option value="nationwide">Nationwide — entire country</option>
+                <option value="state">Specific state(s)</option>
+                <option value="city">City (within states)</option>
+                <option value="zip">ZIP / postal code (pincode)</option>
+              </select>
+
+              <!-- STATE scope: popup picker -->
+              <div id="locStateWrap" style="display:none; margin-top:10px;">
+                <button type="button" class="btn btn-secondary" onclick="openStateModal()">🗺 Select states…</button>
+                <p class="hint" id="stateScopeSummary" style="margin:8px 0 0;">No states selected — nationwide.</p>
+                <div class="checkline" style="margin-top:8px;"><input type="checkbox" id="splitPerState"><label for="splitPerState">Generate a separate search per selected state</label></div>
+              </div>
+
+              <!-- CITY scope: pick state(s) → pick cities, plus free-text -->
+              <div id="locCityWrap" style="display:none; margin-top:10px;">
+                <label class="field-label">State(s) <span class="hint">(choose states, then pick cities)</span></label>
+                <div class="ms" id="cityStateMs">
+                  <button type="button" class="ms-toggle" id="cityStateToggle" onclick="toggleMs('cityStateMs')">Select states ▾</button>
+                  <div class="ms-menu" id="cityStateMenu" hidden></div>
+                </div>
+                <label class="field-label" style="margin-top:12px;">Cities <span class="hint">(from the states above)</span></label>
+                <div class="ms" id="cityMs">
+                  <button type="button" class="ms-toggle" id="cityToggle" onclick="toggleMs('cityMs')">Select cities ▾</button>
+                  <div class="ms-menu" id="cityMenu" hidden><p class="ms-empty">Select a state first.</p></div>
+                </div>
+                <label class="field-label" style="margin-top:12px;" for="location">Or type a city <span class="hint">(free text, optional)</span></label>
+                <input type="text" id="location" placeholder="e.g. Grand Rapids, MI">
+              </div>
+
+              <!-- ZIP scope -->
+              <div id="locZipWrap" style="display:none; margin-top:10px;">
+                <div class="row">
+                  <div>
+                    <label class="field-label" for="zipCode">ZIP / postal code (pincode)</label>
+                    <input type="text" id="zipCode" placeholder="e.g. 49503">
+                  </div>
+                  <div>
+                    <label class="field-label" for="zipRadius">Search radius</label>
+                    <select id="zipRadius">
+                      <option value="">Exact code</option>
+                      <option value="10">Within 10 mi</option>
+                      <option value="25">Within 25 mi</option>
+                      <option value="50">Within 50 mi</option>
+                      <option value="100">Within 100 mi</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="checkline" style="margin-top:12px;"><input type="checkbox" id="remoteOk"><label for="remoteOk">Also include remote candidates</label></div>
+            </div>
+          </details>
 
           <details class="form-section" id="secCompanies">
             <summary>Companies <span class="fs-tag">target &amp; exclude employers</span></summary>
@@ -904,6 +942,24 @@
 
 <div class="toast" id="toast">Copied</div>
 
+<!-- State picker popup (opened from the Location → Specific state(s) scope) -->
+<div class="modal-overlay" id="stateModal" hidden onclick="if(event.target===this)closeStateModal()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stateModalTitle">
+    <div class="modal-head">
+      <strong id="stateModalTitle">Select states</strong>
+      <button type="button" class="modal-x" onclick="closeStateModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="states-toolbar">
+      <span class="hint" id="statesSelectedSummary" style="margin:0;">No states selected — nationwide.</span>
+      <button type="button" class="btn btn-ghost" style="padding:4px 10px; font-size:11.5px;" onclick="clearStates()">Clear all</button>
+    </div>
+    <div class="states-grid" id="statesGrid"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary" onclick="closeStateModal()">Done</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    SHARED CONSTANTS
@@ -920,6 +976,63 @@ const US_STATES = [
   ["SC","South Carolina"],["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],
   ["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]
 ];
+
+// Major cities per state (used by the City scope cascade: pick state → pick cities).
+// A curated shortlist of the largest / best-known metros in each state — not exhaustive;
+// the free-text "Or type a city" box covers anything not listed.
+const US_CITIES = {
+  AL:["Birmingham","Montgomery","Huntsville","Mobile","Tuscaloosa","Auburn","Dothan"],
+  AK:["Anchorage","Fairbanks","Juneau","Wasilla"],
+  AZ:["Phoenix","Tucson","Mesa","Chandler","Scottsdale","Gilbert","Tempe","Glendale","Peoria","Flagstaff"],
+  AR:["Little Rock","Fayetteville","Fort Smith","Springdale","Jonesboro","Rogers","Bentonville"],
+  CA:["Los Angeles","San Diego","San Jose","San Francisco","Fresno","Sacramento","Long Beach","Oakland","Bakersfield","Anaheim","Irvine","Santa Clara","San Mateo","Pasadena","Riverside"],
+  CO:["Denver","Colorado Springs","Aurora","Fort Collins","Boulder","Lakewood","Thornton","Arvada"],
+  CT:["Bridgeport","New Haven","Stamford","Hartford","Waterbury","Norwalk","Danbury"],
+  DE:["Wilmington","Dover","Newark"],
+  DC:["Washington"],
+  FL:["Jacksonville","Miami","Tampa","Orlando","St. Petersburg","Fort Lauderdale","Tallahassee","Gainesville","Sarasota","West Palm Beach"],
+  GA:["Atlanta","Augusta","Columbus","Savannah","Athens","Sandy Springs","Macon","Alpharetta"],
+  HI:["Honolulu","Hilo","Kailua","Kaneohe"],
+  ID:["Boise","Meridian","Nampa","Idaho Falls","Pocatello","Coeur d'Alene"],
+  IL:["Chicago","Aurora","Naperville","Springfield","Peoria","Rockford","Champaign","Schaumburg","Evanston"],
+  IN:["Indianapolis","Fort Wayne","Evansville","South Bend","Carmel","Bloomington","Fishers","Lafayette"],
+  IA:["Des Moines","Cedar Rapids","Davenport","Iowa City","Ames","West Des Moines","Waterloo"],
+  KS:["Wichita","Overland Park","Kansas City","Olathe","Topeka","Lawrence"],
+  KY:["Louisville","Lexington","Bowling Green","Owensboro","Covington"],
+  LA:["New Orleans","Baton Rouge","Shreveport","Lafayette","Lake Charles"],
+  ME:["Portland","Lewiston","Bangor","Augusta"],
+  MD:["Baltimore","Columbia","Germantown","Silver Spring","Rockville","Frederick","Annapolis","Bethesda"],
+  MA:["Boston","Worcester","Springfield","Cambridge","Lowell","Quincy","Somerville","Newton"],
+  MI:["Detroit","Grand Rapids","Ann Arbor","Lansing","Warren","Sterling Heights","Troy","Flint","Kalamazoo","Dearborn"],
+  MN:["Minneapolis","Saint Paul","Rochester","Bloomington","Duluth","Plymouth","Eagan","Maple Grove"],
+  MS:["Jackson","Gulfport","Southaven","Hattiesburg","Biloxi"],
+  MO:["Kansas City","St. Louis","Springfield","Columbia","Independence","Lee's Summit","O'Fallon"],
+  MT:["Billings","Missoula","Great Falls","Bozeman","Helena"],
+  NE:["Omaha","Lincoln","Bellevue","Grand Island"],
+  NV:["Las Vegas","Henderson","Reno","North Las Vegas","Sparks","Carson City"],
+  NH:["Manchester","Nashua","Concord","Portsmouth"],
+  NJ:["Newark","Jersey City","Paterson","Edison","Trenton","Princeton","Hoboken"],
+  NM:["Albuquerque","Las Cruces","Rio Rancho","Santa Fe"],
+  NY:["New York","Buffalo","Rochester","Yonkers","Syracuse","Albany","New Rochelle","White Plains","Ithaca"],
+  NC:["Charlotte","Raleigh","Greensboro","Durham","Winston-Salem","Fayetteville","Cary","Wilmington","Asheville"],
+  ND:["Fargo","Bismarck","Grand Forks","Minot"],
+  OH:["Columbus","Cleveland","Cincinnati","Toledo","Akron","Dayton","Canton","Youngstown"],
+  OK:["Oklahoma City","Tulsa","Norman","Broken Arrow","Edmond","Stillwater"],
+  OR:["Portland","Salem","Eugene","Gresham","Hillsboro","Beaverton","Bend"],
+  PA:["Philadelphia","Pittsburgh","Allentown","Erie","Reading","Scranton","Bethlehem","Harrisburg","King of Prussia"],
+  RI:["Providence","Warwick","Cranston","Pawtucket"],
+  SC:["Charleston","Columbia","Greenville","Mount Pleasant","Rock Hill","Spartanburg"],
+  SD:["Sioux Falls","Rapid City","Aberdeen","Brookings"],
+  TN:["Nashville","Memphis","Knoxville","Chattanooga","Clarksville","Murfreesboro","Franklin"],
+  TX:["Houston","San Antonio","Dallas","Austin","Fort Worth","El Paso","Arlington","Plano","Irving","Frisco","McKinney","Round Rock"],
+  UT:["Salt Lake City","West Valley City","Provo","Orem","Lehi","Sandy","Ogden","St. George"],
+  VT:["Burlington","South Burlington","Montpelier"],
+  VA:["Virginia Beach","Norfolk","Richmond","Arlington","Alexandria","Chesapeake","Reston","Charlottesville"],
+  WA:["Seattle","Spokane","Tacoma","Bellevue","Vancouver","Kirkland","Redmond","Everett","Olympia"],
+  WV:["Charleston","Huntington","Morgantown","Parkersburg"],
+  WI:["Milwaukee","Madison","Green Bay","Kenosha","Racine","Appleton","Waukesha","Eau Claire"],
+  WY:["Cheyenne","Casper","Laramie","Gillette"]
+};
 
 const CLEARANCE_TERMS = {
   "any": ["active clearance","security clearance","cleared"],
@@ -981,12 +1094,70 @@ function updateLocScope(){
   show('locCityWrap', scope === 'city');
   show('locZipWrap', scope === 'zip');
   show('locStateWrap', scope === 'state');
+  if (scope === 'city' && el('cityStateMenu') && !el('cityStateMenu').dataset.built) buildCityStateMenu();
+}
+
+/* ---- State picker popup (State scope) ---- */
+function openStateModal(){ const m = el('stateModal'); if (m){ m.hidden = false; document.addEventListener('keydown', stateModalEsc); } }
+function closeStateModal(){ const m = el('stateModal'); if (m){ m.hidden = true; document.removeEventListener('keydown', stateModalEsc); } }
+function stateModalEsc(e){ if (e.key === 'Escape') closeStateModal(); }
+
+/* ---- Generic multi-select dropdown open/close (City scope: states + cities) ---- */
+function toggleMs(msId){
+  const ms = el(msId); if (!ms) return;
+  const menu = ms.querySelector('.ms-menu');
+  const open = menu.hidden;
+  document.querySelectorAll('.ms-menu').forEach(m => { m.hidden = true; });
+  menu.hidden = !open;
+}
+// Close any open multi-select menu when clicking outside of it.
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ms')) document.querySelectorAll('.ms-menu').forEach(m => { m.hidden = true; });
+});
+
+/* ---- City scope: state list drives the available cities ---- */
+function buildCityStateMenu(){
+  const menu = el('cityStateMenu'); if (!menu) return;
+  menu.innerHTML = US_STATES.map(([abbr,name]) =>
+    `<label><input type="checkbox" class="cityStateChk" value="${abbr}" onchange="rebuildCityMenu()"> ${name}</label>`
+  ).join('');
+  menu.dataset.built = '1';
+  rebuildCityMenu();
+}
+function selectedCityStates(){ return Array.from(document.querySelectorAll('.cityStateChk:checked')).map(c => c.value); }
+function selectedCities(){ return Array.from(document.querySelectorAll('.cityChk:checked')).map(c => c.value); }
+
+function rebuildCityMenu(){
+  const menu = el('cityMenu'); if (!menu) return;
+  const states = selectedCityStates();
+  const stillChecked = new Set(selectedCities());
+  if (!states.length){ menu.innerHTML = '<p class="ms-empty">Select a state first.</p>'; updateLocToggles(); return; }
+  menu.innerHTML = states.map(abbr => {
+    const cities = US_CITIES[abbr] || [];
+    const name = stateFullNames([abbr])[0];
+    const rows = cities.map(city => {
+      const val = `${city}, ${abbr}`;
+      return `<label><input type="checkbox" class="cityChk" value="${escapeAttr(val)}" ${stillChecked.has(val)?'checked':''} onchange="updateLocToggles()"> ${escapeHTML(city)}</label>`;
+    }).join('');
+    return `<div class="ms-group">${escapeHTML(name)}</div>${rows}`;
+  }).join('');
+  updateLocToggles();
+}
+// Reflect current selections in the two dropdown toggle buttons.
+function updateLocToggles(){
+  const st = selectedCityStates();
+  const ct = selectedCities();
+  const sBtn = el('cityStateToggle'); if (sBtn) sBtn.textContent = (st.length ? `${st.length} state${st.length>1?'s':''} selected` : 'Select states') + ' ▾';
+  const cBtn = el('cityToggle'); if (cBtn) cBtn.textContent = (ct.length ? `${ct.length} cit${ct.length>1?'ies':'y'} selected` : 'Select cities') + ' ▾';
 }
 
 // Human-readable location string for the current scope — used by Resume Match's location signal.
 function effectiveLocation(){
   const scope = elVal('locScope') || 'nationwide';
-  if (scope === 'city') return elVal('location').trim();
+  if (scope === 'city'){
+    const list = [...selectedCities(), ...(elVal('location').trim() ? [elVal('location').trim()] : [])];
+    return list.join(', ');
+  }
   if (scope === 'zip')  return elVal('zipCode').trim();
   if (scope === 'state'){
     const st = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
@@ -1086,9 +1257,14 @@ updateLocScope();
    ============================================================ */
 function updateStatesSummary(){
   const checked = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
-  const summaryEl = el('statesSelectedSummary');
-  summaryEl.innerHTML = checked.length
+  const html = checked.length
     ? `<span class="states-selected-badge">${checked.length} state${checked.length>1?'s':''} selected:</span> ${checked.join(', ')}`
+    : 'No states selected — nationwide.';
+  const modalSummary = el('statesSelectedSummary'); if (modalSummary) modalSummary.innerHTML = html;
+  // Mirror the count onto the in-form summary shown under the "Select states…" button.
+  const formSummary = el('stateScopeSummary');
+  if (formSummary) formSummary.textContent = checked.length
+    ? `${checked.length} state${checked.length>1?'s':''} selected: ${checked.join(', ')}`
     : 'No states selected — nationwide.';
 }
 function clearStates(){
@@ -1176,9 +1352,11 @@ function readSourceForm(){
   const zipCode = elVal('zipCode').trim();
   const zipRadius = elVal('zipRadius');
   const checkedStates = Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value);
-  let metro = '', states = [];
-  if (locScope === 'city') metro = shared.location;
-  else if (locScope === 'zip') metro = zipCode;
+  let metro = '', states = [], cities = [];
+  if (locScope === 'city'){
+    // Selected cities from the cascade + the optional free-text city box.
+    cities = [...selectedCities(), ...(shared.location ? [shared.location] : [])];
+  } else if (locScope === 'zip') metro = zipCode;
   else if (locScope === 'state') states = checkedStates;
   const platforms = {
     linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
@@ -1190,7 +1368,7 @@ function readSourceForm(){
   const effectiveMustHave = usingAdvancedMustHave ? mustHaveGroups : (shared.skills.length ? [shared.skills] : []);
   return { titles: shared.titles, mustHaveGroups: effectiveMustHave, usingAdvancedMustHave, niceToHave, niceRequired, excludeTerms,
            seniority: shared.seniority, experience, clearance, workAuthOnly, openToWorkOnly, bakeAdvanced,
-           companiesInclude, companiesExclude, metro, states, locScope, zipCode, zipRadius, remoteOk, splitPerState, platforms };
+           companiesInclude, companiesExclude, metro, states, cities, locScope, zipCode, zipRadius, remoteOk, splitPerState, platforms };
 }
 
 function buildCoreQuery(s){
@@ -1254,13 +1432,16 @@ function buildExcludeAll(s){
   return ex.filter(Boolean);
 }
 
-function locationClause(states, metro, remoteOk){
-  const statePart = states.length ? orGroup(stateFullNames(states)) : "";
-  const metroPart = metro ? quote(metro) : "";
-  let core = "";
-  if (metroPart && statePart) core = `${metroPart} AND ${statePart}`;
-  else core = metroPart || statePart || "";
-  if (remoteOk){ core = core ? `(${core} OR "Remote")` : `"Remote"`; }
+// City / metro / state are mutually exclusive by scope, so precedence (city → metro → state)
+// is sufficient. Multiple cities become an OR group.
+function locationClause(o){
+  o = o || {};
+  const cities = o.cities || [];
+  const cityPart = cities.length ? (cities.length === 1 ? quote(cities[0]) : "(" + cities.map(quote).join(" OR ") + ")") : "";
+  const statePart = (o.states && o.states.length) ? orGroup(stateFullNames(o.states)) : "";
+  const metroPart = o.metro ? quote(o.metro) : "";
+  let core = cityPart || metroPart || statePart || "";
+  if (o.remoteOk){ core = core ? `(${core} OR "Remote")` : `"Remote"`; }
   return core;
 }
 
@@ -1268,12 +1449,16 @@ function makeBatches(s){
   if (s.splitPerState && s.states.length > 1){
     return s.states.map(abbr => {
       const name = stateFullNames([abbr])[0];
-      return { label: name, loc: locationClause([abbr], s.metro, s.remoteOk), locParam: s.metro ? `${s.metro}, ${abbr}` : name };
+      return { label: name, loc: locationClause({ states:[abbr], remoteOk:s.remoteOk }), locParam: name };
     });
   }
-  const loc = locationClause(s.states, s.metro, s.remoteOk);
-  const label = s.metro ? s.metro : (s.states.length ? stateFullNames(s.states).join(" / ") : "Nationwide (USA)");
-  const locParam = s.metro || (s.states.length ? stateFullNames(s.states).join(", ") : "");
+  const cities = s.cities || [];
+  const loc = locationClause({ states:s.states, metro:s.metro, cities, remoteOk:s.remoteOk });
+  let label, locParam;
+  if (cities.length){ label = cities.join(" / "); locParam = cities[0]; }
+  else if (s.metro){ label = s.metro; locParam = s.metro; }
+  else if (s.states.length){ label = stateFullNames(s.states).join(" / "); locParam = stateFullNames(s.states).join(", "); }
+  else { label = "Nationwide (USA)"; locParam = ""; }
   return [{ label, loc, locParam }];
 }
 
@@ -2663,6 +2848,9 @@ function resetForm(){
   el('locScope').value = "nationwide";
   el('zipCode').value = "";
   el('zipRadius').value = "";
+  document.querySelectorAll('.cityStateChk').forEach(c => c.checked = false);
+  if (el('cityStateMenu') && el('cityStateMenu').dataset.built) rebuildCityMenu();
+  updateLocToggles();
   updateLocScope();
   document.querySelectorAll('.stateChk').forEach(c => c.checked = false);
   updateStatesSummary();
@@ -2689,6 +2877,7 @@ function saveProfile(){
     companiesInclude: el('companiesInclude').value, companiesExclude: el('companiesExclude').value,
     locScope: el('locScope').value, zipCode: el('zipCode').value, zipRadius: el('zipRadius').value,
     states: Array.from(document.querySelectorAll('.stateChk:checked')).map(c => c.value),
+    cityStates: selectedCityStates(), cities: selectedCities(),
     remoteOk: el('remoteOk').checked, splitPerState: el('splitPerState').checked,
     platforms: { linkedin: el('p_linkedin').checked, googleli: el('p_googleli').checked, googleresume: el('p_googleresume').checked,
       github: el('p_github').checked, indeed: el('p_indeed').checked, clearancejobs: el('p_clearancejobs').checked,
@@ -2738,9 +2927,17 @@ function applyProfile(d){
   el('splitPerState').checked = !!d.splitPerState;
   // Location scope: use the saved scope if present, otherwise infer from what the profile set
   // (a city string -> City; states -> State; neither -> Nationwide).
-  el('locScope').value = d.locScope || (String(d.location||'').trim() ? 'city' : ((d.states && d.states.length) ? 'state' : 'nationwide'));
+  el('locScope').value = d.locScope || (((d.cities && d.cities.length) || String(d.location||'').trim()) ? 'city' : ((d.states && d.states.length) ? 'state' : 'nationwide'));
   el('zipCode').value = d.zipCode || "";
   el('zipRadius').value = d.zipRadius || "";
+  // Restore the City-scope cascade: selected states → cities.
+  buildCityStateMenu();
+  const cityStates = d.cityStates || [];
+  document.querySelectorAll('.cityStateChk').forEach(c => c.checked = cityStates.includes(c.value));
+  rebuildCityMenu();
+  const savedCities = d.cities || [];
+  document.querySelectorAll('.cityChk').forEach(c => c.checked = savedCities.includes(c.value));
+  updateLocToggles();
   updateLocScope();
   const plt = d.platforms || {};
   el('p_linkedin').checked = !!plt.linkedin;
